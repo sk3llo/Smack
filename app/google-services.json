@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "341383073760",
+    "firebase_url": "https://paper-thoughts.firebaseio.com",
+    "project_id": "paper-thoughts",
+    "storage_bucket": "paper-thoughts.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341383073760:android:cfaaa7d8c155eca0",
+        "android_client_info": {
+          "package_name": "com.example.a_karpenko.smack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "341383073760-13tp5s6atdo9o7vluik50bm276hjct3m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDeebN2mqPnwNBZsSuKG4Sh5jh_0ykfB0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

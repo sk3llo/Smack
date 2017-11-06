@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.widget.Button
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -54,6 +55,7 @@ class App : AppCompatActivity() {
                                     Arrays.asList(AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
                                             AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
                                             AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
+                            .setTheme(R.style.AppThemeFirebaseAuth)
                             .build(),
                     RC_SIGN_IN)
         }

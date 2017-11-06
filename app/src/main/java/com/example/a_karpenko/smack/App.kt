@@ -68,6 +68,7 @@ class App : AppCompatActivity() {
                                     Arrays.asList(AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
                                             AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
                                             AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()))
+                            .setTheme(R.style.AppThemeFirebaseAuth)
                             .build(),
                     RC_SIGN_IN)
         } else {

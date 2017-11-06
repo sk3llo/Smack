@@ -11,7 +11,7 @@
 
     <!-- Login progress -->
     <TextView
-            android:textColor="#65daff"
+            android:textColor="@color/lightBlue"
             android:text="Chat tick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

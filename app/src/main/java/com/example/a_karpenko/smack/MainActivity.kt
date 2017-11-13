@@ -1,13 +1,8 @@
 package com.example.a_karpenko.smack
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.annotation.MainThread
-import android.support.annotation.NonNull
-import android.support.annotation.StringRes
 import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.support.design.widget.NavigationView
@@ -17,19 +12,11 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.ListView
 import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
-import com.firebase.ui.auth.ui.ExtraConstants.EXTRA_IDP_RESPONSE
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_drawer)
         firebase = FirebaseAuth.getInstance()
         user = firebase?.currentUser
 

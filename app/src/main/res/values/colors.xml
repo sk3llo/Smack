@@ -4,6 +4,12 @@
     <color name="colorPrimaryDark">#1e4776</color>
     <color name="colorAccent">#5ea0c9</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
     <color name="lightBlue">#65daff</color>
     <color name="lightGrey">#e5e5e8</color>
+    <color name="foreground_material_light">#000000</color>
+    <color name="primary_text_default_material_light">#deffffff</color>
+    <color name="primary_text_material_light">#deffffff</color>
+    <color name="messageSent">#92d3f5</color>
+    <color name="messageReceived">#a5e8ca</color>
 </resources>

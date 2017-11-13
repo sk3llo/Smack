@@ -65,9 +65,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
         //init recyclerview adapter
         var manager = LinearLayoutManager(this)
-        manager.orientation = LinearLayout.VERTICAL
+        manager.scrollToPosition(MessagesAdapter().itemCount)
         manager.stackFromEnd = true
-        manager.reverseLayout = true
 
         recyclerView?.hasFixedSize()
         recyclerView?.layoutManager = manager
@@ -77,6 +76,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         //send message btn clicked
         sendMessageButton?.setOnClickListener {
 
+            manager.scrollToPosition(MessagesAdapter().itemCount)
 
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
             val user = FirebaseAuth.getInstance().currentUser?.displayName
@@ -108,8 +108,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     }
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
-
     }
+
 
 
     fun onSendClick(chat: Chat) {

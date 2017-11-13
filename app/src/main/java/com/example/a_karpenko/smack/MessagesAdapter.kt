@@ -40,8 +40,14 @@ open class MessagesAdapter : FirestoreRecyclerAdapter<Chat, viewHolder>(options)
 
     override fun onBindViewHolder(holder: viewHolder?, position: Int, model: Chat?) {
 
+        //Time
+        val c = Calendar.getInstance()
+        val minutes = c.get(Calendar.MINUTE)
+        val hour = c.get(Calendar.HOUR).toString()
+        val time = "$hour:$minutes"
+
         holder?.messageSent?.text = model?.message
-        holder?.messageSentTime?.text = model?.timeStamp?.toString()
+        holder?.messageSentTime?.text = time
     }
 
 }

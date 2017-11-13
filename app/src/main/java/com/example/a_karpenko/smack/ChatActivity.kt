@@ -40,6 +40,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     var messageInputText : EditText? = null
     var sendMessageButton : AppCompatImageButton? = null
     var recyclerView : RecyclerView? = null
+    var adapter : MessagesAdapter? = null
 
 
     var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().collection("chats")
@@ -61,22 +62,26 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         messageInputText = findViewById(R.id.messageInputText)
         sendMessageButton = findViewById(R.id.sendMessagebutton)
         recyclerView = findViewById(R.id.messageList)
+        adapter = MessagesAdapter()
 
 
         //init recyclerview adapter
         var manager = LinearLayoutManager(this)
         manager.stackFromEnd = true
 
-        recyclerView?.hasFixedSize()
+        recyclerView?.setHasFixedSize(true)
+        recyclerView?.smoothScrollToPosition(adapter?.itemCount!!)
         recyclerView?.layoutManager = manager
-        recyclerView?.adapter = MessagesAdapter()
+        recyclerView?.adapter = adapter
 
 
         //send message btn clicked
         sendMessageButton?.setOnClickListener {
 
 
-            if (messageInputText != null) {
+            if (messageInputText?.length() != 0) {
+                recyclerView?.smoothScrollToPosition(adapter?.itemCount!!)
+
                 //User's uid,name etc
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 val user = FirebaseAuth.getInstance().currentUser?.displayName
@@ -98,12 +103,16 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     override fun onStart() {
         super.onStart()
 //        if (isSignedIn()) { attachRecyclerViewAdapter(); }
-        MessagesAdapter().startListening()
+        adapter?.startListening()
     }
 
     override fun onStop() {
         super.onStop()
-        MessagesAdapter().stopListening()
+        adapter?.stopListening()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {

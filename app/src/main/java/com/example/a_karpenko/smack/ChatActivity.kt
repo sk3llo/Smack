@@ -28,6 +28,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
@@ -52,7 +53,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
-
         messageSent = findViewById(R.id.messageSentText)
         messageReceived = findViewById(R.id.messageReceivedText)
         messageSentTime = findViewById(R.id.messageSentTime)
@@ -65,7 +65,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
         //init recyclerview adapter
         var manager = LinearLayoutManager(this)
-        manager.scrollToPosition(MessagesAdapter().itemCount)
         manager.stackFromEnd = true
 
         recyclerView?.hasFixedSize()
@@ -76,20 +75,20 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         //send message btn clicked
         sendMessageButton?.setOnClickListener {
 
-            manager.scrollToPosition(MessagesAdapter().itemCount)
 
-            val uid = FirebaseAuth.getInstance().currentUser!!.uid
-            val user = FirebaseAuth.getInstance().currentUser?.displayName
-            val name = "$user " + uid.substring(0, 6)
+            if (messageInputText != null) {
+                //User's uid,name etc
+                val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                val user = FirebaseAuth.getInstance().currentUser?.displayName
+                val name = "$user " + uid.substring(0, 6)
+                val chat = Chat(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
 
-            val chat = Chat(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
+                messageSent?.text = messageInputText?.text.toString()
 
-            messageSent?.text = messageInputText?.text.toString()
-            messageSentTime?.text = DateFormat.getTimeInstance().format(Date()).toString()
+                onSendClick(chat)
 
-            onSendClick(chat)
-
-            messageInputText?.text = null
+                messageInputText?.text = null
+            }
 
         }
 
@@ -109,8 +108,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
     }
-
-
 
     fun onSendClick(chat: Chat) {
         collectionRef?.add(chat)

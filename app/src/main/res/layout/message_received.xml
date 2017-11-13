@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+        android:paddingTop="8dp">
+
+    <TextView
+            android:id="@+id/messageReceivedText"
+            android:text="Received"
+            android:maxWidth="240dp"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="@drawable/message_received"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+    <TextView
+            android:text="11:11"
+            android:textSize="14sp"
+            android:id="@+id/messageReceivedTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@+id/messageReceivedText"
+            android:layout_marginLeft="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/messageReceivedText"
+            />
+
+</android.support.constraint.ConstraintLayout>

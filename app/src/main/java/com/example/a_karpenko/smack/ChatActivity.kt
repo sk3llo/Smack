@@ -12,6 +12,7 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -19,6 +20,8 @@ import com.example.a_karpenko.smack.models.Chat
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
+import com.firebase.ui.firestore.FirestoreArray
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -36,8 +39,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     var messageInputText : EditText? = null
     var sendMessageButton : AppCompatImageButton? = null
     var recyclerView : RecyclerView? = null
-
-    var chatList : List<Chat>? = null
 
 
     var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().collection("chats")
@@ -66,37 +67,44 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         var manager = LinearLayoutManager(this)
         manager.orientation = LinearLayout.VERTICAL
         manager.stackFromEnd = true
+        manager.reverseLayout = true
 
         recyclerView?.hasFixedSize()
         recyclerView?.layoutManager = manager
-        recyclerView?.adapter = object : MessagesAdapter(chatList) {}
+        recyclerView?.adapter = MessagesAdapter()
 
+
+        //send message btn clicked
         sendMessageButton?.setOnClickListener {
+
 
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
             val user = FirebaseAuth.getInstance().currentUser?.displayName
             val name = "$user " + uid.substring(0, 6)
 
-            messageInputText?.text?.clear()
+            val chat = Chat(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
+
             messageSent?.text = messageInputText?.text.toString()
             messageSentTime?.text = DateFormat.getTimeInstance().format(Date()).toString()
 
-            onSendClick(Chat(name, messageInputText?.text.toString()
-                    , uid
-                    , Calendar.getInstance().time))
+            onSendClick(chat)
+
+            messageInputText?.text = null
 
         }
+
+
     }
 
     override fun onStart() {
         super.onStart()
 //        if (isSignedIn()) { attachRecyclerViewAdapter(); }
-        FirebaseAuth.getInstance().addAuthStateListener(this)
+        MessagesAdapter().startListening()
     }
 
     override fun onStop() {
         super.onStop()
-        FirebaseAuth.getInstance().removeAuthStateListener(this)
+        MessagesAdapter().stopListening()
     }
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
@@ -110,3 +118,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
     }
+
+
+
+
+

@@ -12,11 +12,14 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
+import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import java.util.zip.Inflater
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,6 +62,14 @@ class MainActivity : AppCompatActivity() {
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
+
+        var startChat : Button = findViewById(R.id.startChat)
+        startChat.setOnClickListener {
+            startChat()
+        }
+
+
+
     }
 
     override fun onBackPressed() {
@@ -89,6 +100,14 @@ class MainActivity : AppCompatActivity() {
         val channelList = findViewById<ListView>(R.id.channel_list)
         channelList.addHeaderView(view)
         return channelList
+    }
+
+
+
+    fun startChat() {
+
+        startActivity(Intent(this@MainActivity, ChatActivity::class.java))
+        finish()
     }
 
 

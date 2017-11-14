@@ -24,7 +24,7 @@ var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().colle
 
 var query: Query? = collectionRef
         ?.orderBy("timeStamp")
-        ?.limit(50)
+
 
 val options: FirestoreRecyclerOptions<Chat>? = FirestoreRecyclerOptions.Builder<Chat>()
         .setQuery(query, Chat::class.java)
@@ -48,6 +48,7 @@ open class MessagesAdapter : FirestoreRecyclerAdapter<Chat, viewHolder>(options)
 
         holder?.messageSent?.text = model?.message
         holder?.messageSentTime?.text = time
+
     }
 
 }
@@ -58,6 +59,7 @@ open class viewHolder(view: View?) : RecyclerView.ViewHolder(view) {
     var messageReceived : TextView? = view?.findViewById(R.id.messageReceivedText)
     var messageSentTime : TextView? = view?.findViewById(R.id.messageSentTime)
     var messageReceivedTime : TextView? = view?.findViewById(R.id.messageReceivedTime)
+    var messageList : RecyclerView? = view?.findViewById(R.id.messageList)
 
 
 }

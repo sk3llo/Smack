@@ -45,11 +45,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().collection("chats")
 
-    var query: Query? = collectionRef
-            ?.orderBy("timeStamp")
-            ?.limit(50)
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)

@@ -1,44 +1,36 @@
 package com.example.a_karpenko.smack
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
-import butterknife.BindView
 import com.example.a_karpenko.smack.models.Chat
-import com.firebase.ui.firestore.FirestoreArray
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.common.collect.Ordering
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.*
-import java.util.zip.Inflater
 
 var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().collection("chats")
 
-var query: Query? = collectionRef
-        ?.orderBy("timeStamp")
-        ?.limit(50)
+var query: Query? = collectionRef?.
+        orderBy("timeStamp")
 
 val options: FirestoreRecyclerOptions<Chat>? = FirestoreRecyclerOptions.Builder<Chat>()
         .setQuery(query, Chat::class.java)
         .build()
 
 
-open class MessagesAdapter : FirestoreRecyclerAdapter<Chat, viewHolder>(options) {
+open class MessagesAdapter : FirestoreRecyclerAdapter<Chat, MessageSentViewHolder>(options) {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): viewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MessageSentViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.message_sent, parent, false)
-        return object : viewHolder(v) {}
+        return object : MessageSentViewHolder(v) {}
     }
 
-    override fun onBindViewHolder(holder: viewHolder?, position: Int, model: Chat?) {
+    override fun onBindViewHolder(holder: MessageSentViewHolder?, position: Int, model: Chat?) {
 
         //Time
         val c = Calendar.getInstance()
@@ -48,16 +40,19 @@ open class MessagesAdapter : FirestoreRecyclerAdapter<Chat, viewHolder>(options)
 
         holder?.messageSent?.text = model?.message
         holder?.messageSentTime?.text = time
+
     }
 
 }
 
-open class viewHolder(view: View?) : RecyclerView.ViewHolder(view) {
 
-    var messageSent : TextView? = view?.findViewById(R.id.messageSentText)
+open class MessageReceivedViewHolder(view: View?) : RecyclerView.ViewHolder(view) {
     var messageReceived : TextView? = view?.findViewById(R.id.messageReceivedText)
-    var messageSentTime : TextView? = view?.findViewById(R.id.messageSentTime)
     var messageReceivedTime : TextView? = view?.findViewById(R.id.messageReceivedTime)
+}
 
 
+open class MessageSentViewHolder(view: View?) : RecyclerView.ViewHolder(view) {
+    var messageSent : TextView? = view?.findViewById(R.id.messageSentText)
+    var messageSentTime : TextView? = view?.findViewById(R.id.messageSentTime)
 }

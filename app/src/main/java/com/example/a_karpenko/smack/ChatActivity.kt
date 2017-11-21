@@ -24,9 +24,7 @@ import com.firebase.ui.firestore.FirestoreArray
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,7 +45,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     var query: Query? = collectionRef
             ?.orderBy("timeStamp")
-            ?.limit(50)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +82,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                 //User's uid,name etc
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 val user = FirebaseAuth.getInstance().currentUser?.displayName
-                val name = "$user " + uid.substring(0, 6)
+                val name = "$user"
                 val chat = Chat(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
 
                 messageSent?.text = messageInputText?.text.toString()
@@ -99,6 +96,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
     }
+
 
     override fun onStart() {
         super.onStart()

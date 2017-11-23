@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.CheckedTextView
 import android.widget.ListView
 import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
@@ -31,11 +32,54 @@ class MainActivity : AppCompatActivity() {
     var userEmail : TextView? = null
     var snackBar : Snackbar? = null
 
+    //Gender
+    var maleGenderMy: CheckedTextView? = null
+    var femaleGenderMy: CheckedTextView? = null
+
+    var maleGenderLookingFor: CheckedTextView? = null
+    var femaleGenderLookingFor: CheckedTextView? = null
+
+    //Age
+    var under18My: CheckedTextView? = null
+    var from19to22My: CheckedTextView? = null
+    var from23to26My: CheckedTextView? = null
+    var from27to35My: CheckedTextView? = null
+    var over36My: CheckedTextView? = null
+
+    var under18LookingFor: CheckedTextView? = null
+    var from19to22LookingFor: CheckedTextView? = null
+    var from23to26LookingFor: CheckedTextView? = null
+    var from27to35LookingFor: CheckedTextView? = null
+    var over36LookingFor: CheckedTextView? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
+
         firebase = FirebaseAuth.getInstance()
         user = firebase?.currentUser
+
+        maleGenderMy = findViewById<CheckedTextView>(R.id.maleGenderMy)
+        femaleGenderMy = findViewById<CheckedTextView>(R.id.femaleGenderMy)
+
+        maleGenderLookingFor = findViewById<CheckedTextView>(R.id.maleGenderLookingFor)
+        femaleGenderLookingFor = findViewById<CheckedTextView>(R.id.femaleGenderLookingFor)
+
+        under18My = findViewById<CheckedTextView>(R.id.under18My)
+        from19to22My = findViewById<CheckedTextView>(R.id.from19to22My)
+        from23to26My = findViewById<CheckedTextView>(R.id.from23to26My)
+        from27to35My = findViewById<CheckedTextView>(R.id.from27to35My)
+        over36My = findViewById<CheckedTextView>(R.id.over36My)
+
+        under18LookingFor = findViewById<CheckedTextView>(R.id.under18LookingFor)
+        from19to22LookingFor = findViewById<CheckedTextView>(R.id.from19to22LookingFor)
+        from23to26LookingFor = findViewById<CheckedTextView>(R.id.from23to26LookingFor)
+        from27to35LookingFor = findViewById<CheckedTextView>(R.id.from27to35LookingFor)
+        over36LookingFor = findViewById<CheckedTextView>(R.id.over36LookingFor)
+
+
+
 
         if (user == null){
             startActivity(Intent(this@MainActivity, App::class.java))
@@ -67,7 +111,6 @@ class MainActivity : AppCompatActivity() {
         startChat.setOnClickListener {
             startChat()
         }
-
 
 
     }
@@ -102,12 +145,23 @@ class MainActivity : AppCompatActivity() {
         return channelList
     }
 
-
-
     fun startChat() {
 
         startActivity(Intent(this@MainActivity, ChatActivity::class.java))
         finish()
+    }
+
+    fun myMaleGender() {
+        if (femaleGenderMy?.isChecked == false) {
+            maleGenderMy?.setBackgroundColor(R.color.lightBlue)
+
+        }
+    }
+
+    fun myGenderFemale() {
+        if (maleGenderMy?.isChecked == false){
+            femaleGenderMy?.setBackgroundColor(R.color.lightBlue)
+        }
     }
 
 

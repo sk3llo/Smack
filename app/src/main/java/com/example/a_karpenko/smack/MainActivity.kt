@@ -13,10 +13,13 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.CheckedTextView
 import android.widget.ListView
 import android.widget.TextView
+import com.example.a_karpenko.smack.R.color.lightBlue
+import com.example.a_karpenko.smack.R.drawable.main_background_shape_blue
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -33,8 +36,8 @@ class MainActivity : AppCompatActivity() {
     var snackBar : Snackbar? = null
 
     //Gender
-    var maleGenderMy: CheckedTextView? = null
-    var femaleGenderMy: CheckedTextView? = null
+    var maleGenderMy: TextView? = null
+    var femaleGenderMy: TextView? = null
 
     var maleGenderLookingFor: CheckedTextView? = null
     var femaleGenderLookingFor: CheckedTextView? = null
@@ -60,8 +63,8 @@ class MainActivity : AppCompatActivity() {
         firebase = FirebaseAuth.getInstance()
         user = firebase?.currentUser
 
-        maleGenderMy = findViewById<CheckedTextView>(R.id.maleGenderMy)
-        femaleGenderMy = findViewById<CheckedTextView>(R.id.femaleGenderMy)
+        maleGenderMy = findViewById<TextView>(R.id.maleGenderMy)
+        femaleGenderMy = findViewById<TextView>(R.id.femaleGenderMy)
 
         maleGenderLookingFor = findViewById<CheckedTextView>(R.id.maleGenderLookingFor)
         femaleGenderLookingFor = findViewById<CheckedTextView>(R.id.femaleGenderLookingFor)
@@ -151,17 +154,15 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    fun myMaleGender() {
-        if (femaleGenderMy?.isChecked == false) {
-            maleGenderMy?.setBackgroundColor(R.color.lightBlue)
 
-        }
+    fun myGenderMale(view: View) {
+        maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
+        femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
     }
 
-    fun myGenderFemale() {
-        if (maleGenderMy?.isChecked == false){
-            femaleGenderMy?.setBackgroundColor(R.color.lightBlue)
-        }
+    fun myGenderFemale(view: View) {
+        femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
+        maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
     }
 
 

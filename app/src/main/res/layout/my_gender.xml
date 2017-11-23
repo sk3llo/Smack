@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/maleGenderMy"
+            android:text="Male"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/main_background_shape_white"
+            android:onClick="myGenderMale"
+            />
+
+    <TextView
+            android:id="@+id/femaleGenderMy"
+            android:text="Female"
+            android:layout_marginTop="4dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:onClick="myGenderFemale"
+            android:background="@drawable/main_background_shape_white"
+            />
+
+</LinearLayout>

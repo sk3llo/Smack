@@ -14,6 +14,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/main_background_shape_white"
+            android:clickable="true"
             android:onClick="myGenderMale"
             />
 
@@ -27,8 +28,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:onClick="myGenderFemale"
             android:background="@drawable/main_background_shape_white"
+            android:clickable="true"
+            android:onClick="myGenderFemale"
             />
 
 </LinearLayout>

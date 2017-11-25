@@ -58,7 +58,6 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:padding="8dp"
-            android:background="@color/colorAccent"
             android:layout_marginRight="7dp"
             app:layout_constraintRight_toRightOf="parent"
             android:id="@+id/linearLayout2"
@@ -69,19 +68,19 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="7dp">
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/under18My"
                 android:text="Under 18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/black"
-                android:background="?android:attr/colorBackground"
+                android:background="@drawable/main_background_shape_white"
                 android:textAlignment="center"
                 android:gravity="center"
                 />
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/from19to22My"
                 android:text="19 - 22"
                 android:layout_marginTop="4dp"
@@ -90,14 +89,14 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textAlignment="center"
-                android:background="?android:attr/colorBackground"
+                android:background="@drawable/main_background_shape_white"
                 android:textColor="@color/black"/>
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/from23to26My"
                 android:text="23 - 26"
                 android:layout_marginTop="4dp"
-                android:background="?android:attr/colorBackground"
+                android:background="@drawable/main_background_shape_white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -105,11 +104,11 @@
                 android:layout_weight="1"
                 android:textColor="@color/black"/>
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/from27to35My"
                 android:text="27 - 35"
                 android:layout_marginTop="4dp"
-                android:background="?android:attr/colorBackground"
+                android:background="@drawable/main_background_shape_white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -117,11 +116,11 @@
                 android:layout_weight="1"
                 android:textColor="@color/black"/>
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/over36My"
                 android:text="36+"
                 android:layout_marginTop="4dp"
-                android:background="?android:attr/colorBackground"
+                android:background="@drawable/main_background_shape_white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -163,7 +162,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp">
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/maleGenderLookingFor"
                 android:text="Male"
                 android:layout_width="match_parent"
@@ -175,7 +174,7 @@
                 android:gravity="center"
                 />
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/femaleGenderLookingFor"
                 android:text="Female"
                 android:layout_marginTop="4dp"
@@ -220,7 +219,7 @@
             android:layout_marginEnd="7dp"
             android:id="@+id/linearLayout4">
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/under18LookingFor"
                 android:text="Under 18"
                 android:layout_width="match_parent"
@@ -232,7 +231,7 @@
                 android:gravity="center"
                 />
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/from19to22LookingFor"
                 android:text="19 - 22"
                 android:layout_marginTop="4dp"
@@ -244,7 +243,7 @@
                 android:background="?android:attr/colorBackground"
                 android:textColor="@color/black"/>
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/from23to26LookingFor"
                 android:text="23 - 26"
                 android:layout_marginTop="4dp"
@@ -256,7 +255,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/black"/>
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/from27to35LookingFor"
                 android:text="27 - 35"
                 android:layout_marginTop="4dp"
@@ -268,7 +267,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/black"/>
 
-        <CheckedTextView
+        <TextView
                 android:id="@+id/over36LookingFor"
                 android:text="36+"
                 android:layout_marginTop="4dp"

@@ -12,18 +12,13 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.widget.Button
-import android.widget.CheckedTextView
-import android.widget.ListView
 import android.widget.TextView
-import com.example.a_karpenko.smack.R.color.lightBlue
-import com.example.a_karpenko.smack.R.drawable.main_background_shape_blue
+import android.widget.ListView
+import com.example.a_karpenko.smack.utils.CustomTouchListener
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import java.util.zip.Inflater
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,51 +34,51 @@ class MainActivity : AppCompatActivity() {
     var maleGenderMy: TextView? = null
     var femaleGenderMy: TextView? = null
 
-    var maleGenderLookingFor: CheckedTextView? = null
-    var femaleGenderLookingFor: CheckedTextView? = null
+    var maleGenderLookingFor: TextView? = null
+    var femaleGenderLookingFor: TextView? = null
 
     //Age
-    var under18My: CheckedTextView? = null
-    var from19to22My: CheckedTextView? = null
-    var from23to26My: CheckedTextView? = null
-    var from27to35My: CheckedTextView? = null
-    var over36My: CheckedTextView? = null
+    var under18My: TextView? = null
+    var from19to22My: TextView? = null
+    var from23to26My: TextView? = null
+    var from27to35My: TextView? = null
+    var over36My: TextView? = null
 
-    var under18LookingFor: CheckedTextView? = null
-    var from19to22LookingFor: CheckedTextView? = null
-    var from23to26LookingFor: CheckedTextView? = null
-    var from27to35LookingFor: CheckedTextView? = null
-    var over36LookingFor: CheckedTextView? = null
+    var under18LookingFor: TextView? = null
+    var from19to22LookingFor: TextView? = null
+    var from23to26LookingFor: TextView? = null
+    var from27to35LookingFor: TextView? = null
+    var over36LookingFor: TextView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
-
+        //FIREBASE
         firebase = FirebaseAuth.getInstance()
         user = firebase?.currentUser
-
+        //Main choose chat person
         maleGenderMy = findViewById<TextView>(R.id.maleGenderMy)
         femaleGenderMy = findViewById<TextView>(R.id.femaleGenderMy)
 
-        maleGenderLookingFor = findViewById<CheckedTextView>(R.id.maleGenderLookingFor)
-        femaleGenderLookingFor = findViewById<CheckedTextView>(R.id.femaleGenderLookingFor)
+        maleGenderLookingFor = findViewById<TextView>(R.id.maleGenderLookingFor)
+        femaleGenderLookingFor = findViewById<TextView>(R.id.femaleGenderLookingFor)
 
-        under18My = findViewById<CheckedTextView>(R.id.under18My)
-        from19to22My = findViewById<CheckedTextView>(R.id.from19to22My)
-        from23to26My = findViewById<CheckedTextView>(R.id.from23to26My)
-        from27to35My = findViewById<CheckedTextView>(R.id.from27to35My)
-        over36My = findViewById<CheckedTextView>(R.id.over36My)
+        under18My = findViewById<TextView>(R.id.under18My)
+        from19to22My = findViewById<TextView>(R.id.from19to22My)
+        from23to26My = findViewById<TextView>(R.id.from23to26My)
+        from27to35My = findViewById<TextView>(R.id.from27to35My)
+        over36My = findViewById<TextView>(R.id.over36My)
 
-        under18LookingFor = findViewById<CheckedTextView>(R.id.under18LookingFor)
-        from19to22LookingFor = findViewById<CheckedTextView>(R.id.from19to22LookingFor)
-        from23to26LookingFor = findViewById<CheckedTextView>(R.id.from23to26LookingFor)
-        from27to35LookingFor = findViewById<CheckedTextView>(R.id.from27to35LookingFor)
-        over36LookingFor = findViewById<CheckedTextView>(R.id.over36LookingFor)
-
-
+        under18LookingFor = findViewById<TextView>(R.id.under18LookingFor)
+        from19to22LookingFor = findViewById<TextView>(R.id.from19to22LookingFor)
+        from23to26LookingFor = findViewById<TextView>(R.id.from23to26LookingFor)
+        from27to35LookingFor = findViewById<TextView>(R.id.from27to35LookingFor)
+        over36LookingFor = findViewById<TextView>(R.id.over36LookingFor)
 
 
+
+        //Check if user logged in
         if (user == null){
             startActivity(Intent(this@MainActivity, App::class.java))
             finish()
@@ -109,11 +104,19 @@ class MainActivity : AppCompatActivity() {
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-
+        //Start searching for chat person
         var startChat : Button = findViewById(R.id.startChat)
         startChat.setOnClickListener {
             startChat()
         }
+
+        //Click listeners
+        under18My?.setOnTouchListener(object: CustomTouchListener(){})
+        from19to22My?.setOnTouchListener(object: CustomTouchListener(){})
+        from23to26My?.setOnTouchListener(object: CustomTouchListener(){})
+        from27to35My?.setOnTouchListener(object: CustomTouchListener(){})
+        over36My?.setOnTouchListener(object: CustomTouchListener(){})
+
 
 
     }
@@ -158,6 +161,7 @@ class MainActivity : AppCompatActivity() {
     fun myGenderMale(view: View) {
         maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
         femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
+
     }
 
     fun myGenderFemale(view: View) {

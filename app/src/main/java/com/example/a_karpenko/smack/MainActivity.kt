@@ -15,7 +15,7 @@ import android.text.TextUtils
 import android.widget.Button
 import android.widget.TextView
 import android.widget.ListView
-import com.example.a_karpenko.smack.utils.CustomTouchListener
+import com.example.a_karpenko.smack.utils.AgeOfChooser
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -23,12 +23,12 @@ import com.google.firebase.auth.FirebaseUser
 class MainActivity : AppCompatActivity() {
 
     //Firebase
-    val TAG : String? = "Main Activity"
-    var firebase : FirebaseAuth? = null
-    var user : FirebaseUser? = null
-    var userName : TextView? = null
-    var userEmail : TextView? = null
-    var snackBar : Snackbar? = null
+    val TAG: String? = "Main Activity"
+    var firebase: FirebaseAuth? = null
+    var user: FirebaseUser? = null
+    var userName: TextView? = null
+    var userEmail: TextView? = null
+    var snackBar: Snackbar? = null
 
     //Gender
     var maleGenderMy: TextView? = null
@@ -77,9 +77,8 @@ class MainActivity : AppCompatActivity() {
         over36LookingFor = findViewById<TextView>(R.id.over36LookingFor)
 
 
-
         //Check if user logged in
-        if (user == null){
+        if (user == null) {
             startActivity(Intent(this@MainActivity, App::class.java))
             finish()
         }
@@ -104,20 +103,19 @@ class MainActivity : AppCompatActivity() {
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
+        //Click listeners
+        under18LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
+        from19to22LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
+        from23to26LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
+        from27to35LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
+        over36LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
+
+
         //Start searching for chat person
-        var startChat : Button = findViewById(R.id.startChat)
+        var startChat: Button = findViewById(R.id.startChat)
         startChat.setOnClickListener {
             startChat()
         }
-
-        //Click listeners
-        under18My?.setOnTouchListener(object: CustomTouchListener(){})
-        from19to22My?.setOnTouchListener(object: CustomTouchListener(){})
-        from23to26My?.setOnTouchListener(object: CustomTouchListener(){})
-        from27to35My?.setOnTouchListener(object: CustomTouchListener(){})
-        over36My?.setOnTouchListener(object: CustomTouchListener(){})
-
-
 
     }
 
@@ -135,7 +133,7 @@ class MainActivity : AppCompatActivity() {
                 .signOut(this)
                 .addOnCompleteListener { task ->
                     // user is now signed out
-                    if (task.isSuccessful){
+                    if (task.isSuccessful) {
                         startActivity(Intent(this@MainActivity, App::class.java))
                         finish()
                     } else {
@@ -158,16 +156,70 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun myGenderMale(view: View) {
-        maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
-        femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-
+    fun genderChooser(view: View) {
+        when {
+            view.id == R.id.maleGenderMy -> {
+                maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            view.id == R.id.femaleGenderMy -> {
+                femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            view.id == R.id.maleGenderLookingFor -> {
+                maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            view.id == R.id.femaleGenderLookingFor -> {
+                femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+        }
     }
 
-    fun myGenderFemale(view: View) {
-        femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
-        maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
+
+    fun myAgeChooser(v: View?) {
+
+        when (v?.id) {
+            R.id.under18My -> {
+                (v as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
+                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            R.id.from19to22My -> {
+                v.setBackgroundResource(R.drawable.main_background_shape_blue)
+                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            R.id.from23to26My -> {
+                v.setBackgroundResource(R.drawable.main_background_shape_blue)
+                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            R.id.from27to35My -> {
+                v.setBackgroundResource(R.drawable.main_background_shape_blue)
+                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            R.id.over36My -> {
+                v.setBackgroundResource(R.drawable.main_background_shape_blue)
+                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+        }
     }
-
-
 }
+
+
+
+

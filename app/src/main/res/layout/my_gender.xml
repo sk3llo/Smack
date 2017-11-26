@@ -15,7 +15,7 @@
             android:layout_weight="1"
             android:background="@drawable/main_background_shape_white"
             android:clickable="true"
-            android:onClick="myGenderMale"
+            android:onClick="genderChooser"
             />
 
     <TextView
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:background="@drawable/main_background_shape_white"
             android:clickable="true"
-            android:onClick="myGenderFemale"
+            android:onClick="genderChooser"
             />
 
 </LinearLayout>

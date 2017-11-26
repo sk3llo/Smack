@@ -15,6 +15,7 @@ import android.text.TextUtils
 import android.widget.Button
 import android.widget.TextView
 import android.widget.ListView
+import com.example.a_karpenko.smack.models.ChooseModel
 import com.example.a_karpenko.smack.utils.AgeOfChooser
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -54,10 +55,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
+
         //FIREBASE
         firebase = FirebaseAuth.getInstance()
         user = firebase?.currentUser
-        //Main choose chat person
+
+        //Main choose chat person vars
         maleGenderMy = findViewById<TextView>(R.id.maleGenderMy)
         femaleGenderMy = findViewById<TextView>(R.id.femaleGenderMy)
 
@@ -155,29 +158,33 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-
+    //Choose gender for yourself and chat person
     fun genderChooser(view: View) {
         when {
             view.id == R.id.maleGenderMy -> {
                 maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
+                ChooseModel().myGender = 1
             }
             view.id == R.id.femaleGenderMy -> {
                 femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
+                ChooseModel().myGender = 2
             }
             view.id == R.id.maleGenderLookingFor -> {
                 maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+                ChooseModel().lookingForGender = 1
             }
             view.id == R.id.femaleGenderLookingFor -> {
                 femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+                ChooseModel().lookingForGender = 2
             }
         }
     }
 
-
+    //Choose my age
     fun myAgeChooser(v: View?) {
 
         when (v?.id) {

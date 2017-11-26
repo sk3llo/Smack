@@ -8,15 +8,24 @@ import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.ChooseModel
 
 open class AgeOfChooser : View.OnTouchListener {
+
+    //Bool for color
     private var checkState: Boolean? = false
+    private var under18: Int? = ChooseModel().under18
+    private var from19to22: Int? = ChooseModel().from19to22
+    private var from23to26: Int? = ChooseModel().from23to26
+    private var from27to35: Int? = ChooseModel().from27to35
+    private var over36: Int? = ChooseModel().over36
+
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
         checkState = if (motionEvent.action == MotionEvent.ACTION_DOWN && checkState == false) {
             //(view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
             when {
                 view.id == R.id.under18LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                    ChooseModel().under18 = 1
-                    Log.d("blue back, under18 ", "${view.id} + ${ChooseModel().under18}")
+                    under18 = 1
+                    //ChooseModel().from19to22 = 1
+                    Log.d("blue back, under18 ", "${view.id} + $under18")
                 }
                 view.id == R.id.from19to22LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
@@ -45,8 +54,9 @@ open class AgeOfChooser : View.OnTouchListener {
             when {
                 view.id == R.id.under18LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    ChooseModel().under18 = 0
-                    Log.d("white back, under18 ", "${view.id} + ${ChooseModel().under18}")
+                    under18 = 0
+                    //ChooseModel().from19to22 = 0
+                    Log.d("white back, under18 ", "${view.id} + ${under18}")
                 }
                 view.id == R.id.from19to22LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)

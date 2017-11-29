@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         //Check if user logged in
         if (user == null) {
-            startActivity(Intent(this@MainActivity, App::class.java))
+            startActivity(Intent(this@MainActivity, Login::class.java))
             finish()
         }
 
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     // user is now signed out
                     if (task.isSuccessful) {
-                        startActivity(Intent(this@MainActivity, App::class.java))
+                        startActivity(Intent(this@MainActivity, Login::class.java))
                         finish()
                     } else {
                         snackBar = Snackbar.make(CoordinatorLayout(this), "Logout failed", Snackbar.LENGTH_SHORT)

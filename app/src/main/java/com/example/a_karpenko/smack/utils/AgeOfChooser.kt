@@ -1,31 +1,33 @@
 package com.example.a_karpenko.smack.utils
 
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.ChooseModel
+import io.realm.Realm
 
 open class AgeOfChooser : View.OnTouchListener {
 
+    var chooseModel = object: ChooseModel(){}
+
     //Bool for color
     private var checkState: Boolean? = false
-    private var under18: Int? = ChooseModel().under18
-    private var from19to22: Int? = ChooseModel().from19to22
-    private var from23to26: Int? = ChooseModel().from23to26
-    private var from27to35: Int? = ChooseModel().from27to35
-    private var over36: Int? = ChooseModel().over36
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+
         checkState = if (motionEvent.action == MotionEvent.ACTION_DOWN && checkState == false) {
             //(view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
             when {
                 view.id == R.id.under18LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                    under18 = 1
+                    RealmUtil().under18(1)
                     //ChooseModel().from19to22 = 1
-                    Log.d("blue back, under18 ", "${view.id} + $under18")
+                    Log.d("blue back, under18 ", "${view.id} + ${RealmUtil().getObject()}")
                 }
                 view.id == R.id.from19to22LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
@@ -54,9 +56,8 @@ open class AgeOfChooser : View.OnTouchListener {
             when {
                 view.id == R.id.under18LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    under18 = 0
-                    //ChooseModel().from19to22 = 0
-                    Log.d("white back, under18 ", "${view.id} + ${under18}")
+                    RealmUtil().under18(0)
+                    Log.d("white back, under18 ", "${view.id} + ${RealmUtil().getObject()}")
                 }
                 view.id == R.id.from19to22LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
@@ -83,4 +84,6 @@ open class AgeOfChooser : View.OnTouchListener {
         }
         return false
     }
+
+
 }

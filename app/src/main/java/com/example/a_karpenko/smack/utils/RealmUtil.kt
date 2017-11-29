@@ -2,9 +2,7 @@ package com.example.a_karpenko.smack.utils
 
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.ChooseModel
-import com.vicpin.krealmextensions.queryFirst
-import com.vicpin.krealmextensions.queryLast
-import com.vicpin.krealmextensions.querySorted
+import com.vicpin.krealmextensions.*
 import io.realm.Realm
 import io.realm.RealmQuery
 import io.realm.RealmResults
@@ -21,10 +19,9 @@ open class RealmUtil {
         realm?.commitTransaction()
     }
 
-    fun getObject(): ChooseModel? {
-        var change = realm?.where(ChooseModel::class.java)
-                ?.between("under18", 0, 1)?.findFirst()
-        return change
+    fun getObject(): Int? {
+        var change = ChooseModel().queryLast { realmQuery -> realmQuery.between("under18", 0, 1) }
+        return change?.under18
     }
 
 }

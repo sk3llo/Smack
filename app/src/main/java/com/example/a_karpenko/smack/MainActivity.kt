@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.ListView
@@ -86,9 +87,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, Login::class.java))
             finish()
         } else {
-            //Remember chosen option and set color to it
             rememberChoice()
         }
+
 
         //Change Nav Header text to user name/email
         val navView = findViewById<NavigationView>(R.id.nav_header_main)
@@ -150,11 +151,11 @@ class MainActivity : AppCompatActivity() {
                 }
     }
 
-    fun addChannelBtnClicked(view: View): ListView {
-        val channelList = findViewById<ListView>(R.id.channel_list)
-        channelList.addHeaderView(view)
-        return channelList
-    }
+//    fun addChannelBtnClicked(view: View): ListView {
+//        val channelList = findViewById<ListView>(R.id.channel_list)
+//        channelList.addHeaderView(view)
+//        return channelList
+//    }
 
     fun startChat() {
 
@@ -233,12 +234,15 @@ class MainActivity : AppCompatActivity() {
 
     //Remember chosen option and set color to it
     fun rememberChoice() {
+
         when {
-            RealmUtil().under18LookingFor() == 1 -> {
+            RealmUtil().under18LookingFor()?.equals(1)!! -> {
                 under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, under18 ", " + ${RealmUtil().under18LookingFor()}")
             }
-            RealmUtil().from19to22LookingFor() == 1 -> {
+            RealmUtil().from19to22LookingFor()?.equals(1)!! -> {
                 from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, under18 ", " + ${RealmUtil().from19to22LookingFor()}")
             }
             RealmUtil().from23to26LookingFor() == 1 -> {
                 from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
@@ -252,11 +256,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         when {
-            RealmUtil().under18LookingFor() == 0 -> {
+            RealmUtil().under18LookingFor()?.equals(0)!! -> {
                 under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+                Log.d("main white back,under18", " + ${RealmUtil().under18LookingFor()}")
             }
-            RealmUtil().from19to22LookingFor() == 0 -> {
+            RealmUtil().from19to22LookingFor()?.equals(0)!!  -> {
                 from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+                Log.d("main white back,under18", " + ${RealmUtil().from19to22LookingFor()}")
             }
             RealmUtil().from23to26LookingFor() == 0 -> {
                 from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)

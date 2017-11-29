@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.ListView
 import com.example.a_karpenko.smack.models.ChooseModel
 import com.example.a_karpenko.smack.utils.AgeOfChooser
+import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -84,6 +85,9 @@ class MainActivity : AppCompatActivity() {
         if (user == null) {
             startActivity(Intent(this@MainActivity, Login::class.java))
             finish()
+        } else {
+            //Remember chosen option and set color to it
+            rememberChoice()
         }
 
         //Change Nav Header text to user name/email
@@ -115,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //Start searching for chat person
-        var startChat: Button = findViewById(R.id.startChat)
+        val startChat: Button = findViewById(R.id.startChat)
         startChat.setOnClickListener {
             startChat()
         }
@@ -225,6 +229,49 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    //Remember chosen option and set color to it
+    fun rememberChoice() {
+        when {
+            RealmUtil().under18LookingFor() == 1 -> {
+                under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+            }
+            RealmUtil().from19to22LookingFor() == 1 -> {
+                from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+            }
+            RealmUtil().from23to26LookingFor() == 1 -> {
+                from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+            }
+            RealmUtil().from27to35LookingFor() == 1 -> {
+                from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+            }
+            RealmUtil().over36LookingFor() == 1 -> {
+                over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+            }
+        }
+
+        when {
+            RealmUtil().under18LookingFor() == 0 -> {
+                under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            RealmUtil().from19to22LookingFor() == 0 -> {
+                from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            RealmUtil().from23to26LookingFor() == 0 -> {
+                from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            RealmUtil().from27to35LookingFor() == 0 -> {
+                from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+            RealmUtil().over36LookingFor() == 0 -> {
+                over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            }
+        }
+
+    }
+
+
 }
 
 

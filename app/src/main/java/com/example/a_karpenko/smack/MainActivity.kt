@@ -15,13 +15,14 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import android.widget.ListView
-import com.example.a_karpenko.smack.models.ChooseModel
+import com.example.a_karpenko.smack.models.MyGender
+import com.example.a_karpenko.smack.models.age_looking_for.Under18
 import com.example.a_karpenko.smack.utils.AgeOfChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import io.realm.Realm
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,6 +54,9 @@ class MainActivity : AppCompatActivity() {
     var from27to35LookingFor: TextView? = null
     var over36LookingFor: TextView? = null
 
+    //Realm
+    var realm : Realm? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +65,10 @@ class MainActivity : AppCompatActivity() {
         //FIREBASE
         firebase = FirebaseAuth.getInstance()
         user = firebase?.currentUser
+
+        //Realm
+        Realm.init(this)
+        realm = Realm.getDefaultInstance()
 
         //Main choose chat person vars
         maleGenderMy = findViewById<TextView>(R.id.maleGenderMy)
@@ -163,33 +171,33 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    //Choose gender for yourself and chat person
+    //Under18 gender for yourself and chat person
     fun genderChooser(view: View) {
         when {
             view.id == R.id.maleGenderMy -> {
                 maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-                ChooseModel().myGender = 1
+                MyGender().myGender = 1
             }
             view.id == R.id.femaleGenderMy -> {
                 femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-                ChooseModel().myGender = 2
+                MyGender().myGender = 2
             }
             view.id == R.id.maleGenderLookingFor -> {
                 maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                ChooseModel().lookingForGender = 1
+                MyGender().lookingForGender = 1
             }
             view.id == R.id.femaleGenderLookingFor -> {
                 femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                ChooseModel().lookingForGender = 2
+                MyGender().lookingForGender = 2
             }
         }
     }
 
-    //Choose my age
+    //Under18 my age
     fun myAgeChooser(v: View?) {
 
         when (v?.id) {
@@ -232,51 +240,54 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    //On Start
     //Remember chosen option and set color to it
     fun rememberChoice() {
 
-        when {
-            RealmUtil().under18LookingFor()?.equals(1)!! -> {
-                under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, under18 ", " + ${RealmUtil().under18LookingFor()}")
-            }
-            RealmUtil().from19to22LookingFor()?.equals(1)!! -> {
-                from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, under18 ", " + ${RealmUtil().from19to22LookingFor()}")
-            }
-            RealmUtil().from23to26LookingFor() == 1 -> {
-                from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-            }
-            RealmUtil().from27to35LookingFor() == 1 -> {
-                from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-            }
-            RealmUtil().over36LookingFor() == 1 -> {
-                over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-            }
-        }
+        try {
 
-        when {
-            RealmUtil().under18LookingFor()?.equals(0)!! -> {
-                under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                Log.d("main white back,under18", " + ${RealmUtil().under18LookingFor()}")
+            Log.d("main back, under18 ", " + ${RealmUtil().under18LookingFor()}")
+            Log.d("main back, from19 ", " + ${RealmUtil().from19to22LookingFor()}")
+            Log.d("main back, from23 ", " + ${RealmUtil().from23to26LookingFor()}")
+            Log.d("main back, from27 ", " + ${RealmUtil().from27to35LookingFor()}")
+            Log.d("main back, over36 ", " + ${RealmUtil().over36LookingFor()}")
+
+
+            if (RealmUtil().under18LookingFor() == 1) {
+                under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
             }
-            RealmUtil().from19to22LookingFor()?.equals(0)!!  -> {
-                from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                Log.d("main white back,under18", " + ${RealmUtil().from19to22LookingFor()}")
+
+            if (RealmUtil().from19to22LookingFor() == 1) {
+                from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, from22", " = ${RealmUtil().from19to22LookingFor()}")
             }
-            RealmUtil().from23to26LookingFor() == 0 -> {
-                from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+            if (RealmUtil().from23to26LookingFor() == 1) {
+                from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, from23-27", " = ${RealmUtil().from23to26LookingFor()}")
             }
-            RealmUtil().from27to35LookingFor() == 0 -> {
-                from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+
+            if (RealmUtil().from27to35LookingFor() == 1) {
+                from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, from27-35", " = ${RealmUtil().from27to35LookingFor()}")
             }
-            RealmUtil().over36LookingFor() == 0 -> {
-                over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
+
+            if (RealmUtil().over36LookingFor() == 1) {
+                over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, over36", " = ${RealmUtil().over36LookingFor()}")
             }
+        } finally {
+            return
         }
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (realm != null){
+            realm?.close()
+        }
+    }
 
 }
 

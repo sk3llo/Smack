@@ -13,7 +13,7 @@ open class Chat {
     @ServerTimestamp
     var timeStamp: Date? = null
 
-    constructor() {} // Needed for Firebase
+    constructor()  // Needed for Firebase
     constructor(name:String, message:String, uid:String, timeStamp: Date?) {
         this.uid = uid
         this.name = name

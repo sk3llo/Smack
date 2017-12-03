@@ -12,8 +12,8 @@ class App : Application() {
         Realm.init(this)
 
         val realmConfig = RealmConfiguration.Builder()
-                .name("Choose_main")
-                .schemaVersion(2)
+                .name("Choose.realm")
+                .schemaVersion(5)
                 .deleteRealmIfMigrationNeeded()
                 .build()
         Realm.setDefaultConfiguration(realmConfig)

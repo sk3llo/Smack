@@ -109,10 +109,6 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         adapter?.stopListening()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     override fun onAuthStateChanged(auth: FirebaseAuth) {
     }
 

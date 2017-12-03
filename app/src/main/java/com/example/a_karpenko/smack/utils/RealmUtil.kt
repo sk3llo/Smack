@@ -2,12 +2,12 @@ package com.example.a_karpenko.smack.utils
 
 import android.view.View
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.models.MyAgeModel
 import com.example.a_karpenko.smack.models.age_looking_for.From19to22
 import com.example.a_karpenko.smack.models.age_looking_for.From23to26
 import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
-import com.example.a_karpenko.smack.models.my_age.*
 import com.vicpin.krealmextensions.*
 import io.realm.*
 
@@ -87,31 +87,31 @@ open class RealmUtil {
             when {
                 view?.id == R.id.under18My -> {
                     realm?.beginTransaction()
-                    val under18 = realm?.createObject(Under18My::class.java, getNextKey(Under18My()))
+                    val under18 = realm?.createObject(MyAgeModel::class.java, getNextKey(MyAgeModel()))
                     under18?.under18 = int
                     realm?.commitTransaction()
                 }
                 view?.id == R.id.from19to22My -> {
                     realm?.beginTransaction()
-                    val from19 = realm?.createObject(From19to22My::class.java, getNextKey(From19to22My()))
+                    val from19 = realm?.createObject(MyAgeModel::class.java, getNextKey(MyAgeModel()))
                     from19?.from19to22 = int
                     realm?.commitTransaction()
                 }
                 view?.id == R.id.from23to26My -> {
                     realm?.beginTransaction()
-                    val from23 = realm?.createObject(From23to26My::class.java, getNextKey(From23to26My()))
+                    val from23 = realm?.createObject(MyAgeModel::class.java, getNextKey(MyAgeModel()))
                     from23?.from23to26 = int
                     realm?.commitTransaction()
                 }
                 view?.id == R.id.from27to35My -> {
                     realm?.beginTransaction()
-                    val from27 = realm?.createObject(From27to35My::class.java, getNextKey(From27to35My()))
+                    val from27 = realm?.createObject(MyAgeModel::class.java, getNextKey(MyAgeModel()))
                     from27?.from27to35 = int
                     realm?.commitTransaction()
                 }
                 view?.id == R.id.over36My -> {
                     realm?.beginTransaction()
-                    val over36 = realm?.createObject(Over36::class.java, getNextKey(Over36My()))
+                    val over36 = realm?.createObject(MyAgeModel::class.java, getNextKey(MyAgeModel()))
                     over36?.over36 = int
                     realm?.commitTransaction()
                 }
@@ -121,11 +121,11 @@ open class RealmUtil {
         }
     }
 
-    fun under18My(): Int? = Under18().queryLast()?.under18
-    fun from19to22My(): Int? = From19to22().queryLast()?.from19to22
-    fun from23to26My(): Int? = From23to26().queryLast()?.from23to26
-    fun from27to35My(): Int? = From27to35().queryLast()?.from27to35
-    fun over36My(): Int? = Over36().queryLast()?.over36
+    fun under18My(): Int? = MyAgeModel().queryLast()?.under18
+    fun from19to22My(): Int? = MyAgeModel().queryLast()?.from19to22
+    fun from23to26My(): Int? = MyAgeModel().queryLast()?.from23to26
+    fun from27to35My(): Int? = MyAgeModel().queryLast()?.from27to35
+    fun over36My(): Int? = MyAgeModel().queryLast()?.over36
 
 
 }

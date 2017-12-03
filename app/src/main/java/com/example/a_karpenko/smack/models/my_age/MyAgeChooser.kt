@@ -1,9 +1,9 @@
-package com.example.a_karpenko.smack.utils
+package com.example.a_karpenko.smack.models.my_age
 
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.utils.RealmUtil
 
 open class MyAgeChooser: View.OnClickListener {
 

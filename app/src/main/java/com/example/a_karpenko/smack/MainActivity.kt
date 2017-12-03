@@ -17,7 +17,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.models.LookingForGender
 import com.example.a_karpenko.smack.utils.AgeOfChooser
-import com.example.a_karpenko.smack.utils.MyAgeChooser
+import com.example.a_karpenko.smack.models.my_age.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -214,52 +214,55 @@ class MainActivity : AppCompatActivity() {
             // Age Looking For change color based on chosen option
             if (RealmUtil().under18LookingFor() == 1) {
                 under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
+//                Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
             }
 
             if (RealmUtil().from19to22LookingFor() == 1) {
                 from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from22", " = ${RealmUtil().from19to22LookingFor()}")
+//                Log.d("main back, from22", " = ${RealmUtil().from19to22LookingFor()}")
             }
             if (RealmUtil().from23to26LookingFor() == 1) {
                 from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from23-27", " = ${RealmUtil().from23to26LookingFor()}")
+//                Log.d("main back, from23-27", " = ${RealmUtil().from23to26LookingFor()}")
             }
 
             if (RealmUtil().from27to35LookingFor() == 1) {
                 from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from27-35", " + ${RealmUtil().from27to35LookingFor()}")
+//                Log.d("main back, from27-35", " + ${RealmUtil().from27to35LookingFor()}")
             }
 
             if (RealmUtil().over36LookingFor() == 1) {
                 over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, over36", " + ${RealmUtil().over36LookingFor()}")
+//                Log.d("main back, over36", " + ${RealmUtil().over36LookingFor()}")
             }
 
             // My Age change color based on chosen option
 
             if (RealmUtil().under18My() == 1) {
                 under18My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
+                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                Log.d("main back, under18My", " + ${RealmUtil().under18LookingFor()}")
             }
 
             if (RealmUtil().from19to22My() == 1) {
                 from19to22My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from22", " = ${RealmUtil().from19to22LookingFor()}")
+                Log.d("main back, from22My", " = ${RealmUtil().from19to22LookingFor()}")
             }
             if (RealmUtil().from23to26My() == 1) {
                 from23to26My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from23-27", " = ${RealmUtil().from23to26LookingFor()}")
+                Log.d("main back, from23-27My", " = ${RealmUtil().from23to26LookingFor()}")
             }
 
             if (RealmUtil().from27to35My() == 1) {
                 from27to35My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from27-35", " + ${RealmUtil().from27to35LookingFor()}")
+                Log.d("main back, from27-35My", " + ${RealmUtil().from27to35LookingFor()}")
             }
 
             if (RealmUtil().over36My() == 1) {
                 over36My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, over36", " + ${RealmUtil().over36LookingFor()}")
+                Log.d("main back, over36My", " + ${RealmUtil().over36LookingFor()}")
             }
 
         } finally {

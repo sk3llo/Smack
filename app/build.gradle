@@ -50,10 +50,6 @@ dependencies {
 repositories {
     mavenCentral()
 }
-//
-//realm {
-//    syncEnabled = true;
-//}
 
 
 apply plugin: 'com.google.gms.google-services'

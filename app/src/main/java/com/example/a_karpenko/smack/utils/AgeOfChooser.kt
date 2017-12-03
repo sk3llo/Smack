@@ -22,51 +22,51 @@ open class AgeOfChooser : View.OnTouchListener {
                 view.id == R.id.under18LookingFor -> {
                     if (RealmUtil().under18LookingFor() != 1) {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                        RealmUtil().add(1, view)
+                        RealmUtil().lookingForAge(1, view)
                     } else{
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                        RealmUtil().add(2, view)
+                        RealmUtil().lookingForAge(2, view)
                     }
-                        Log.d("blue back, under18 ", "${view.id} + ${RealmUtil().under18LookingFor()} + ${RealmUtil().from19to22LookingFor()}")
+                    Log.d("blue back, under18 ", "${view.id} + ${RealmUtil().under18LookingFor()}")
                 }
 
                 view.id == R.id.from19to22LookingFor -> {
                     if (RealmUtil().from19to22LookingFor() != 1) {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                        RealmUtil().add(1, view)
+                        RealmUtil().lookingForAge(1, view)
                     } else {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                        RealmUtil().add(2, view)
+                        RealmUtil().lookingForAge(2, view)
                     }
-                    Log.d("blue back, from19to22 ", "${view.id} + ${RealmUtil().from19to22LookingFor()} + ${RealmUtil().under18LookingFor()}")
+                    Log.d("blue back, from19to22 ", "${view.id} + ${RealmUtil().from19to22LookingFor()}")
                 }
                 view.id == R.id.from23to26LookingFor -> {
                     if (RealmUtil().from23to26LookingFor() != 1) {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                        RealmUtil().add(1, view)
+                        RealmUtil().lookingForAge(1, view)
                     } else {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                        RealmUtil().add(2, view)
+                        RealmUtil().lookingForAge(2, view)
                     }
                     Log.d("blue back, from23to26 ", "${view.id} + ${RealmUtil().from23to26LookingFor()}")
                 }
                 view.id == R.id.from27to35LookingFor -> {
                     if (RealmUtil().from27to35LookingFor() != 1){
-                    (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                    RealmUtil().add(1, view)
+                        (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
+                        RealmUtil().lookingForAge(1, view)
                     } else {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                        RealmUtil().add(2, view)
+                        RealmUtil().lookingForAge(2, view)
                     }
                     Log.d("blue back, from27to35 ", "${view.id} + ${RealmUtil().from27to35LookingFor()}")
                 }
                 view.id == R.id.over36LookingFor -> {
                     if (RealmUtil().over36LookingFor() != 1) {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                        RealmUtil().add(1, view)
+                        RealmUtil().lookingForAge(1, view)
                     } else {
                         (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                        RealmUtil().add(2, view)
+                        RealmUtil().lookingForAge(2, view)
                     }
                     Log.d("blue back, over36 ", "${view.id} + ${RealmUtil().over36LookingFor()}")
                 }
@@ -76,27 +76,27 @@ open class AgeOfChooser : View.OnTouchListener {
             when {
                 view.id == R.id.under18LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    RealmUtil().add(2, view)
+                    RealmUtil().lookingForAge(2, view)
                     Log.d("white back, under18 ", "${view.id} + ${RealmUtil().under18LookingFor()}")
                 }
                 view.id == R.id.from19to22LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    RealmUtil().add(2, view)
+                    RealmUtil().lookingForAge(2, view)
                     Log.d("white back, from19to22 ", "${view.id} + ${RealmUtil().from19to22LookingFor()}")
                 }
                 view.id != R.id.from23to26LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    RealmUtil().add(2, view)
+                    RealmUtil().lookingForAge(2, view)
                     Log.d("white back, from23to26 ", "${view.id} + ${RealmUtil().from23to26LookingFor()}")
                 }
                 view.id != R.id.from27to35LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    RealmUtil().add(2, view)
+                    RealmUtil().lookingForAge(2, view)
                     Log.d("white back, from27to35 ", "${view.id} + ${RealmUtil().from27to35LookingFor()}")
                 }
                 view.id != R.id.over36LookingFor -> {
                     (view as TextView).setBackgroundResource(R.drawable.main_background_shape_white)
-                    RealmUtil().add(2, view)
+                    RealmUtil().lookingForAge(2, view)
                     Log.d("white back, over36 ", "${view.id} + ${RealmUtil().over36LookingFor()}")
                 }
             }

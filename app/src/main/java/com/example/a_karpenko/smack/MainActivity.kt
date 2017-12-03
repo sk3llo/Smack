@@ -15,9 +15,9 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import com.example.a_karpenko.smack.models.MyGender
-import com.example.a_karpenko.smack.models.age_looking_for.Under18
+import com.example.a_karpenko.smack.models.LookingForGender
 import com.example.a_karpenko.smack.utils.AgeOfChooser
+import com.example.a_karpenko.smack.utils.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -126,6 +126,14 @@ class MainActivity : AppCompatActivity() {
         from27to35LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
         over36LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
 
+        under18My?.setOnClickListener(object : MyAgeChooser() {})
+        from19to22My?.setOnClickListener(object : MyAgeChooser() {})
+        from23to26My?.setOnClickListener(object : MyAgeChooser() {})
+        from27to35My?.setOnClickListener(object : MyAgeChooser() {})
+        over36My?.setOnClickListener(object : MyAgeChooser() {})
+
+
+
 
         //Start searching for chat person
         val startChat: Button = findViewById(R.id.startChat)
@@ -177,64 +185,22 @@ class MainActivity : AppCompatActivity() {
             view.id == R.id.maleGenderMy -> {
                 maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-                MyGender().myGender = 1
+                LookingForGender().myGender = 1
             }
             view.id == R.id.femaleGenderMy -> {
                 femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-                MyGender().myGender = 2
+                LookingForGender().myGender = 2
             }
             view.id == R.id.maleGenderLookingFor -> {
                 maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                MyGender().lookingForGender = 1
+                LookingForGender().lookingForGender = 1
             }
             view.id == R.id.femaleGenderLookingFor -> {
                 femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                MyGender().lookingForGender = 2
-            }
-        }
-    }
-
-    //Under18 my age
-    fun myAgeChooser(v: View?) {
-
-        when (v?.id) {
-            R.id.under18My -> {
-                (v as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
-                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
-            }
-            R.id.from19to22My -> {
-                v.setBackgroundResource(R.drawable.main_background_shape_blue)
-                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
-            }
-            R.id.from23to26My -> {
-                v.setBackgroundResource(R.drawable.main_background_shape_blue)
-                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
-            }
-            R.id.from27to35My -> {
-                v.setBackgroundResource(R.drawable.main_background_shape_blue)
-                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                over36My?.setBackgroundResource(R.drawable.main_background_shape_white)
-            }
-            R.id.over36My -> {
-                v.setBackgroundResource(R.drawable.main_background_shape_blue)
-                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                under18My?.setBackgroundResource(R.drawable.main_background_shape_white)
+                LookingForGender().lookingForGender = 2
             }
         }
     }
@@ -245,14 +211,7 @@ class MainActivity : AppCompatActivity() {
     fun rememberChoice() {
 
         try {
-
-            Log.d("main back, under18 ", " + ${RealmUtil().under18LookingFor()}")
-            Log.d("main back, from19 ", " + ${RealmUtil().from19to22LookingFor()}")
-            Log.d("main back, from23 ", " + ${RealmUtil().from23to26LookingFor()}")
-            Log.d("main back, from27 ", " + ${RealmUtil().from27to35LookingFor()}")
-            Log.d("main back, over36 ", " + ${RealmUtil().over36LookingFor()}")
-
-
+            // Age Looking For change color based on chosen option
             if (RealmUtil().under18LookingFor() == 1) {
                 under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
                 Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
@@ -269,13 +228,40 @@ class MainActivity : AppCompatActivity() {
 
             if (RealmUtil().from27to35LookingFor() == 1) {
                 from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from27-35", " = ${RealmUtil().from27to35LookingFor()}")
+                Log.d("main back, from27-35", " + ${RealmUtil().from27to35LookingFor()}")
             }
 
             if (RealmUtil().over36LookingFor() == 1) {
                 over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, over36", " = ${RealmUtil().over36LookingFor()}")
+                Log.d("main back, over36", " + ${RealmUtil().over36LookingFor()}")
             }
+
+            // My Age change color based on chosen option
+
+            if (RealmUtil().under18My() == 1) {
+                under18My?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
+            }
+
+            if (RealmUtil().from19to22My() == 1) {
+                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, from22", " = ${RealmUtil().from19to22LookingFor()}")
+            }
+            if (RealmUtil().from23to26My() == 1) {
+                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, from23-27", " = ${RealmUtil().from23to26LookingFor()}")
+            }
+
+            if (RealmUtil().from27to35My() == 1) {
+                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, from27-35", " + ${RealmUtil().from27to35LookingFor()}")
+            }
+
+            if (RealmUtil().over36My() == 1) {
+                over36My?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("main back, over36", " + ${RealmUtil().over36LookingFor()}")
+            }
+
         } finally {
             return
         }
@@ -290,7 +276,3 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
-
-
-

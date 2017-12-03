@@ -78,7 +78,6 @@
                 android:background="@drawable/main_background_shape_white"
                 android:textAlignment="center"
                 android:gravity="center"
-                android:onClick="myAgeChooser"
                 />
 
         <TextView
@@ -92,7 +91,6 @@
                 android:textAlignment="center"
                 android:background="@drawable/main_background_shape_white"
                 android:textColor="@color/black"
-                android:onClick="myAgeChooser"
                 />
 
         <TextView
@@ -106,7 +104,6 @@
                 android:textAlignment="center"
                 android:layout_weight="1"
                 android:textColor="@color/black"
-                android:onClick="myAgeChooser"
                 />
 
         <TextView
@@ -120,7 +117,6 @@
                 android:textAlignment="center"
                 android:layout_weight="1"
                 android:textColor="@color/black"
-                android:onClick="myAgeChooser"
                 />
 
         <TextView
@@ -134,7 +130,6 @@
                 android:textAlignment="center"
                 android:layout_weight="1"
                 android:textColor="@color/black"
-                android:onClick="myAgeChooser"
                 />
 
     </LinearLayout>

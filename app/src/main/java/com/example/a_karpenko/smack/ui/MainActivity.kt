@@ -1,4 +1,4 @@
-package com.example.a_karpenko.smack
+package com.example.a_karpenko.smack.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,9 +15,11 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import com.example.a_karpenko.smack.models.LookingForGender
+import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.utils.AgeOfChooser
-import com.example.a_karpenko.smack.models.my_age.MyAgeChooser
+import com.example.a_karpenko.smack.utils.GenderChooser
+import com.example.a_karpenko.smack.utils.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -70,24 +72,25 @@ class MainActivity : AppCompatActivity() {
         Realm.init(this)
         realm = Realm.getDefaultInstance()
 
+
         //Main choose chat person vars
-        maleGenderMy = findViewById<TextView>(R.id.maleGenderMy)
-        femaleGenderMy = findViewById<TextView>(R.id.femaleGenderMy)
+        maleGenderMy = findViewById(R.id.maleGenderMy)
+        femaleGenderMy = findViewById(R.id.femaleGenderMy)
 
-        maleGenderLookingFor = findViewById<TextView>(R.id.maleGenderLookingFor)
-        femaleGenderLookingFor = findViewById<TextView>(R.id.femaleGenderLookingFor)
+        maleGenderLookingFor = findViewById(R.id.maleGenderLookingFor)
+        femaleGenderLookingFor = findViewById(R.id.femaleGenderLookingFor)
 
-        under18My = findViewById<TextView>(R.id.under18My)
-        from19to22My = findViewById<TextView>(R.id.from19to22My)
-        from23to26My = findViewById<TextView>(R.id.from23to26My)
-        from27to35My = findViewById<TextView>(R.id.from27to35My)
-        over36My = findViewById<TextView>(R.id.over36My)
+        under18My = findViewById(R.id.under18My)
+        from19to22My = findViewById(R.id.from19to22My)
+        from23to26My = findViewById(R.id.from23to26My)
+        from27to35My = findViewById(R.id.from27to35My)
+        over36My = findViewById(R.id.over36My)
 
-        under18LookingFor = findViewById<TextView>(R.id.under18LookingFor)
-        from19to22LookingFor = findViewById<TextView>(R.id.from19to22LookingFor)
-        from23to26LookingFor = findViewById<TextView>(R.id.from23to26LookingFor)
-        from27to35LookingFor = findViewById<TextView>(R.id.from27to35LookingFor)
-        over36LookingFor = findViewById<TextView>(R.id.over36LookingFor)
+        under18LookingFor = findViewById(R.id.under18LookingFor)
+        from19to22LookingFor = findViewById(R.id.from19to22LookingFor)
+        from23to26LookingFor = findViewById(R.id.from23to26LookingFor)
+        from27to35LookingFor = findViewById(R.id.from27to35LookingFor)
+        over36LookingFor = findViewById(R.id.over36LookingFor)
 
 
         //Check if user logged in
@@ -119,19 +122,24 @@ class MainActivity : AppCompatActivity() {
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
-        //Click listeners
+            //Click listeners
+        //Age Looking for
         under18LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
         from19to22LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
         from23to26LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
         from27to35LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
         over36LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
-
+        //MyAge
         under18My?.setOnClickListener(object : MyAgeChooser() {})
         from19to22My?.setOnClickListener(object : MyAgeChooser() {})
         from23to26My?.setOnClickListener(object : MyAgeChooser() {})
         from27to35My?.setOnClickListener(object : MyAgeChooser() {})
         over36My?.setOnClickListener(object : MyAgeChooser() {})
-
+        //Choose gender
+        maleGenderMy?.setOnClickListener {object : GenderChooser() {}}
+        femaleGenderMy?.setOnClickListener {object : GenderChooser() {}}
+        maleGenderLookingFor?.setOnClickListener {object : GenderChooser() {}}
+        femaleGenderLookingFor?.setOnClickListener {object : GenderChooser() {}}
 
 
 
@@ -179,31 +187,6 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    //Under18 gender for yourself and chat person
-    fun genderChooser(view: View) {
-        when {
-            view.id == R.id.maleGenderMy -> {
-                maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-                LookingForGender().myGender = 1
-            }
-            view.id == R.id.femaleGenderMy -> {
-                femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
-                LookingForGender().myGender = 2
-            }
-            view.id == R.id.maleGenderLookingFor -> {
-                maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                LookingForGender().lookingForGender = 1
-            }
-            view.id == R.id.femaleGenderLookingFor -> {
-                femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
-                LookingForGender().lookingForGender = 2
-            }
-        }
-    }
 
 
     //On Start
@@ -214,55 +197,59 @@ class MainActivity : AppCompatActivity() {
             // Age Looking For change color based on chosen option
             if (RealmUtil().under18LookingFor() == 1) {
                 under18LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-//                Log.d("main back, under18", " + ${RealmUtil().under18LookingFor()}")
             }
 
             if (RealmUtil().from19to22LookingFor() == 1) {
                 from19to22LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-//                Log.d("main back, from22", " = ${RealmUtil().from19to22LookingFor()}")
             }
             if (RealmUtil().from23to26LookingFor() == 1) {
                 from23to26LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-//                Log.d("main back, from23-27", " = ${RealmUtil().from23to26LookingFor()}")
             }
 
             if (RealmUtil().from27to35LookingFor() == 1) {
                 from27to35LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-//                Log.d("main back, from27-35", " + ${RealmUtil().from27to35LookingFor()}")
             }
 
             if (RealmUtil().over36LookingFor() == 1) {
                 over36LookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
-//                Log.d("main back, over36", " + ${RealmUtil().over36LookingFor()}")
             }
 
             // My Age change color based on chosen option
 
             if (RealmUtil().under18My() == 1) {
                 under18My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                from19to22My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from23to26My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                from27to35My?.setBackgroundResource(R.drawable.main_background_shape_white)
-                Log.d("main back, under18My", " + ${RealmUtil().under18LookingFor()}")
             }
 
             if (RealmUtil().from19to22My() == 1) {
                 from19to22My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from22My", " = ${RealmUtil().from19to22LookingFor()}")
             }
             if (RealmUtil().from23to26My() == 1) {
                 from23to26My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from23-27My", " = ${RealmUtil().from23to26LookingFor()}")
             }
-
             if (RealmUtil().from27to35My() == 1) {
                 from27to35My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, from27-35My", " + ${RealmUtil().from27to35LookingFor()}")
             }
-
             if (RealmUtil().over36My() == 1) {
                 over36My?.setBackgroundResource(R.drawable.main_background_shape_blue)
-                Log.d("main back, over36My", " + ${RealmUtil().over36LookingFor()}")
+            }
+
+            //My gender change color based on chosen option
+
+            if (RealmUtil().maleGenderMy() == 1){
+                maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("maleGenderMy = ", "${RealmUtil().maleGenderMy()}")
+            }
+            if (RealmUtil().femaleGenderMy() == 1){
+                femaleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("femaleGenderMy = ", "${RealmUtil().femaleGenderMy()}")
+            }
+            if (RealmUtil().maleGenderLookingFor() == 1){
+                maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("maleGenderLF = ", "${RealmUtil().maleGenderLookingFor()}")
+            }
+            if (RealmUtil().femaleGenderLookingFor() == 1){
+                femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_blue)
+                Log.d("femaleGenderLF = ", "${RealmUtil().femaleGenderLookingFor()}")
             }
 
         } finally {

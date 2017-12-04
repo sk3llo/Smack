@@ -4,7 +4,7 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              android:orientation="vertical"
-                                             tools:context="com.example.a_karpenko.smack.Login"
+                                             tools:context="com.example.a_karpenko.smack.ui.Login"
                                              android:background="@drawable/color_purple_green_gradient"
                                              android:id="@+id/constr"
         >

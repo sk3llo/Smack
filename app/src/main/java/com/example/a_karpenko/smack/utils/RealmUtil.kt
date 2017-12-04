@@ -2,12 +2,14 @@ package com.example.a_karpenko.smack.utils
 
 import android.view.View
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.MyAgeModel
+import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
+import com.example.a_karpenko.smack.models.my_age.MyAgeModel
 import com.example.a_karpenko.smack.models.age_looking_for.From19to22
 import com.example.a_karpenko.smack.models.age_looking_for.From23to26
 import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
+import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.vicpin.krealmextensions.*
 import io.realm.*
 
@@ -31,7 +33,7 @@ open class RealmUtil {
     }
 
     //Age you are looking for
-    //Add 1 or 2 to realm based on option
+    //Add 1(yes) or 2(no) to realm based on option
     fun lookingForAge(int: Int?, view: View?){
 
         try {
@@ -80,7 +82,7 @@ open class RealmUtil {
     fun over36LookingFor(): Int? = Over36().queryLast()?.over36
 
     //My age
-    //Add 1 or 2 based on option
+    //Add 1(yes) or 2(no) based on option
     fun myAge(int: Int?, view: View?){
 
         try {
@@ -127,5 +129,46 @@ open class RealmUtil {
     fun from27to35My(): Int? = MyAgeModel().queryLast()?.from27to35
     fun over36My(): Int? = MyAgeModel().queryLast()?.over36
 
+    //Choose my and looking for gender
+    //Add 1(yes) or 2(no) based on option
+    fun gender(int: Int?, view: View){
+
+        try{
+            when (view.id){
+                R.id.maleGenderMy -> {
+                    realm?.beginTransaction()
+                    val maleGenderMy = realm?.createObject(MyGenderModel::class.java, getNextKey(MyGenderModel()))
+                    maleGenderMy?.maleGenderMy = int
+                    realm?.commitTransaction()
+                }
+                R.id.femaleGenderMy -> {
+                    realm?.beginTransaction()
+                    val femaleGenderMy = realm?.createObject(MyGenderModel::class.java, getNextKey(MyGenderModel()))
+                    femaleGenderMy?.femaleGenderMy = int
+                    realm?.commitTransaction()
+                }
+                R.id.maleGenderLookingFor -> {
+                    realm?.beginTransaction()
+                    val maleGenderLookingFor = realm?.createObject(LookingForGenderModel::class.java, getNextKey(LookingForGenderModel()))
+                    maleGenderLookingFor?.maleGenderLookingFor = int
+                    realm?.commitTransaction()
+                }
+                R.id.femaleGenderLookingFor -> {
+                    realm?.beginTransaction()
+                    val femaleGenderLookingFor = realm?.createObject(LookingForGenderModel::class.java, getNextKey(LookingForGenderModel()))
+                    femaleGenderLookingFor?.femaleGenderLookingFor = int
+                    realm?.commitTransaction()
+                }
+            }
+        } finally {
+            realm?.close()
+        }
+
+    }
+
+    fun maleGenderMy(): Int? = MyGenderModel().queryLast()?.maleGenderMy
+    fun femaleGenderMy(): Int? = MyGenderModel().queryLast()?.femaleGenderMy
+    fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
+    fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
 
 }

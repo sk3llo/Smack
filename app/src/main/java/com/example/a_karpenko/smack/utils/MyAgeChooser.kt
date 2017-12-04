@@ -1,4 +1,4 @@
-package com.example.a_karpenko.smack.models.my_age
+package com.example.a_karpenko.smack.utils
 
 import android.view.View
 import android.widget.TextView
@@ -12,7 +12,7 @@ open class MyAgeChooser: View.OnClickListener {
 
     override fun onClick(v: View?) {
 
-        var parent: View? = v?.parent as View?
+        val parent: View? = v?.parent as View?
 
         if (parent != null) {
             val under18 = parent.findViewById<TextView?>(R.id.under18My)

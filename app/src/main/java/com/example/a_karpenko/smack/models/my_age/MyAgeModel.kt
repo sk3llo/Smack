@@ -1,4 +1,4 @@
-package com.example.a_karpenko.smack.models
+package com.example.a_karpenko.smack.models.my_age
 
 import android.app.Activity
 import android.content.SharedPreferences

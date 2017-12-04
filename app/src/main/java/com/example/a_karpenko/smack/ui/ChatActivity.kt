@@ -1,32 +1,16 @@
-package com.example.a_karpenko.smack
+package com.example.a_karpenko.smack.ui
 
-import android.app.Activity
-import android.app.Application
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
+import com.example.a_karpenko.smack.adapters.MessagesAdapter
+import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.Chat
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.ErrorCodes
-import com.firebase.ui.auth.IdpResponse
-import com.firebase.ui.firestore.FirestoreArray
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {

@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/app_bar_main"
-        tools:context="com.example.a_karpenko.smack.MainActivity">
+        tools:context="com.example.a_karpenko.smack.ui.MainActivity">
 
     <TextView
             android:text="Your gender"
@@ -176,7 +176,6 @@
                 android:background="@drawable/main_background_shape_white"
                 android:textAlignment="center"
                 android:gravity="center"
-                android:onClick="genderChooser"
                 />
 
         <TextView
@@ -190,7 +189,6 @@
                 android:textAlignment="center"
                 android:background="@drawable/main_background_shape_white"
                 android:textColor="@color/black"
-                android:onClick="genderChooser"
                 />
 
     </LinearLayout>

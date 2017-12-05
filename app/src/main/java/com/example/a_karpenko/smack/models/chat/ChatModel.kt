@@ -14,8 +14,8 @@ open class ChatModel {
     var timeStamp: Date? = null
 
     constructor()  // Needed for Firebase
-    constructor(name:String, message:String, uid:String, timeStamp: Date?) {
-        this.uid = uid
+    constructor(name:String, message:String, timeStamp: Date?) {
+//        this.uid = uid
         this.name = name
         this.message = message
         this.timeStamp = timeStamp

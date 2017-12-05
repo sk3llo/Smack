@@ -151,15 +151,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            finish()
-        }
-    }
-
     fun logoutButtonOnClicked(view: View) {
         AuthUI.getInstance()
                 .signOut(this)
@@ -256,6 +247,15 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+    }
+
+    override fun onBackPressed() {
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            finish()
+        }
     }
 
     override fun onDestroy() {

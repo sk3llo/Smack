@@ -1,5 +1,6 @@
 package com.example.a_karpenko.smack.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
@@ -25,7 +26,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     var adapter : MessagesAdapter? = null
 
 
-    var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().collection("chats")
+    var collectionRef : CollectionReference? = null
 
     var query: Query? = collectionRef
             ?.orderBy("timeStamp")
@@ -34,6 +35,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
+
+        collectionRef = FirebaseFirestore.getInstance().collection("chats")
 
         messageSent = findViewById(R.id.messageSentText)
         messageReceived = findViewById(R.id.messageReceivedText)
@@ -47,7 +50,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
         //init recyclerview adapter
-        var manager = LinearLayoutManager(this)
+        val manager = LinearLayoutManager(this)
         manager.stackFromEnd = true
 
         recyclerView?.setHasFixedSize(true)
@@ -67,7 +70,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 val user = FirebaseAuth.getInstance().currentUser?.displayName
                 val name = "$user"
-                val chat = ChatModel(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
+                val chat = ChatModel(name, messageInputText?.text.toString(), Calendar.getInstance().time)
 
                 messageSent?.text = messageInputText?.text.toString()
 
@@ -95,6 +98,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+        finish()
     }
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {

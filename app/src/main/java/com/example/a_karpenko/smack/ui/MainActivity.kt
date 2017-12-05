@@ -16,6 +16,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.core.CheckerAndSender
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.utils.AgeOfChooser
 import com.example.a_karpenko.smack.utils.GenderChooser
@@ -173,9 +174,12 @@ class MainActivity : AppCompatActivity() {
 //    }
 
     fun startChat() {
-
-        startActivity(Intent(this@MainActivity, ChatActivity::class.java))
-        finish()
+        if (CheckerAndSender(findViewById(android.R.id.content)).start()){
+            startActivity(Intent(this@MainActivity, ChatActivity::class.java))
+            finish()
+        } else {
+            return
+        }
     }
 
 

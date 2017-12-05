@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 
+//Choose gender and remember it
 open class GenderChooser: View.OnClickListener {
 
     override fun onClick(v: View?) {
@@ -29,7 +30,7 @@ open class GenderChooser: View.OnClickListener {
                     }
                 }
                 R.id.femaleGenderMy -> {
-                    if (RealmUtil().maleGenderMy() != 1){
+                    if (RealmUtil().femaleGenderMy() != 1){
                         (v as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
                         maleGenderMy?.setBackgroundResource(R.drawable.main_background_shape_white)
                         RealmUtil().gender(1, v)
@@ -39,7 +40,7 @@ open class GenderChooser: View.OnClickListener {
                     }
                 }
                 R.id.maleGenderLookingFor -> {
-                    if (RealmUtil().maleGenderMy() != 1){
+                    if (RealmUtil().maleGenderLookingFor() != 1){
                         (v as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
                         femaleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
                         RealmUtil().gender(1, v)
@@ -49,7 +50,7 @@ open class GenderChooser: View.OnClickListener {
                     }
                 }
                 R.id.femaleGenderLookingFor -> {
-                    if (RealmUtil().maleGenderMy() != 1){
+                    if (RealmUtil().femaleGenderLookingFor() != 1){
                         (v as TextView).setBackgroundResource(R.drawable.main_background_shape_blue)
                         maleGenderLookingFor?.setBackgroundResource(R.drawable.main_background_shape_white)
                         RealmUtil().gender(1, v)

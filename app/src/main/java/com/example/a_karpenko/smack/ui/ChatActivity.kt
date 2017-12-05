@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.widget.*
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.Chat
+import com.example.a_karpenko.smack.models.chat.ChatModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import java.util.*
@@ -67,7 +67,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 val user = FirebaseAuth.getInstance().currentUser?.displayName
                 val name = "$user"
-                val chat = Chat(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
+                val chat = ChatModel(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
 
                 messageSent?.text = messageInputText?.text.toString()
 
@@ -100,8 +100,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     override fun onAuthStateChanged(auth: FirebaseAuth) {
     }
 
-    fun onSendClick(chat: Chat) {
-        collectionRef?.add(chat)
+    fun onSendClick(chatModel: ChatModel) {
+        collectionRef?.add(chatModel)
         }
 
 

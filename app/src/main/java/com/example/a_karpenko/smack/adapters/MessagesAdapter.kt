@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.Chat
+import com.example.a_karpenko.smack.models.chat.ChatModel
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.CollectionReference
@@ -19,19 +19,19 @@ var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().colle
 var query: Query? = collectionRef?.
         orderBy("timeStamp")
 
-val options: FirestoreRecyclerOptions<Chat>? = FirestoreRecyclerOptions.Builder<Chat>()
-        .setQuery(query, Chat::class.java)
+val OPTIONS: FirestoreRecyclerOptions<ChatModel>? = FirestoreRecyclerOptions.Builder<ChatModel>()
+        .setQuery(query, ChatModel::class.java)
         .build()
 
 
-open class MessagesAdapter : FirestoreRecyclerAdapter<Chat, MessageSentViewHolder>(options) {
+open class MessagesAdapter : FirestoreRecyclerAdapter<ChatModel, MessageSentViewHolder>(OPTIONS) {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MessageSentViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.message_sent, parent, false)
         return object : MessageSentViewHolder(v) {}
     }
 
-    override fun onBindViewHolder(holder: MessageSentViewHolder?, position: Int, model: Chat?) {
+    override fun onBindViewHolder(holder: MessageSentViewHolder?, position: Int, model: ChatModel?) {
 
         //Time
         val c = Calendar.getInstance()

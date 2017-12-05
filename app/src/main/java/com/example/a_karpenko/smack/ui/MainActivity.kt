@@ -124,22 +124,22 @@ class MainActivity : AppCompatActivity() {
 
             //Click listeners
         //Age Looking for
-        under18LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
-        from19to22LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
-        from23to26LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
-        from27to35LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
-        over36LookingFor?.setOnTouchListener(object : AgeOfChooser() {})
+        under18LookingFor?.setOnTouchListener(AgeOfChooser())
+        from19to22LookingFor?.setOnTouchListener(AgeOfChooser())
+        from23to26LookingFor?.setOnTouchListener(AgeOfChooser())
+        from27to35LookingFor?.setOnTouchListener(AgeOfChooser())
+        over36LookingFor?.setOnTouchListener(AgeOfChooser())
         //MyAge
-        under18My?.setOnClickListener(object : MyAgeChooser() {})
-        from19to22My?.setOnClickListener(object : MyAgeChooser() {})
-        from23to26My?.setOnClickListener(object : MyAgeChooser() {})
-        from27to35My?.setOnClickListener(object : MyAgeChooser() {})
-        over36My?.setOnClickListener(object : MyAgeChooser() {})
+        under18My?.setOnClickListener(MyAgeChooser())
+        from19to22My?.setOnClickListener(MyAgeChooser())
+        from23to26My?.setOnClickListener(MyAgeChooser())
+        from27to35My?.setOnClickListener(MyAgeChooser())
+        over36My?.setOnClickListener(MyAgeChooser())
         //Choose gender
-        maleGenderMy?.setOnClickListener {object : GenderChooser() {}}
-        femaleGenderMy?.setOnClickListener {object : GenderChooser() {}}
-        maleGenderLookingFor?.setOnClickListener {object : GenderChooser() {}}
-        femaleGenderLookingFor?.setOnClickListener {object : GenderChooser() {}}
+        maleGenderMy?.setOnClickListener (GenderChooser())
+        femaleGenderMy?.setOnClickListener (GenderChooser())
+        maleGenderLookingFor?.setOnClickListener (GenderChooser())
+        femaleGenderLookingFor?.setOnClickListener(GenderChooser())
 
 
 

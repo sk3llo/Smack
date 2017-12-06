@@ -17,10 +17,10 @@ import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.CheckerAndSender
-import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
-import com.example.a_karpenko.smack.utils.AgeOfChooser
-import com.example.a_karpenko.smack.utils.GenderChooser
-import com.example.a_karpenko.smack.utils.MyAgeChooser
+import com.example.a_karpenko.smack.utils.FirestoreUtil
+import com.example.a_karpenko.smack.utils.chooser_options.AgeOfChooser
+import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
+import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -267,6 +267,7 @@ class MainActivity : AppCompatActivity() {
         if (realm != null){
             realm?.close()
         }
+        FirestoreUtil().logOut()
     }
 
 }

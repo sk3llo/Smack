@@ -85,6 +85,10 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     }
 
 
+    fun onSendClick(chatModel: ChatModel) {
+        collectionRef?.add(chatModel)
+        }
+
     override fun onStart() {
         super.onStart()
 //        if (isSignedIn()) { attachRecyclerViewAdapter(); }
@@ -102,12 +106,9 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         finish()
     }
 
+
     override fun onAuthStateChanged(auth: FirebaseAuth) {
     }
-
-    fun onSendClick(chatModel: ChatModel) {
-        collectionRef?.add(chatModel)
-        }
 
 
     }

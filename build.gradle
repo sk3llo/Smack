@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.1.60'
+    ext.kotlin_version = '1.2.0'
     repositories {
         jcenter()
     }
@@ -9,6 +9,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:3.1.0'
+        classpath "io.realm:realm-gradle-plugin:4.2.0"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -22,6 +23,14 @@ allprojects {
             url "https://maven.google.com"
         }
     }
+}
+
+ext {
+    // The following are only a few examples of the types of properties you can define.
+    compileSdkVersion = 26
+    // You can also create properties to specify versions for dependencies.
+    // Having consistent versions between modules can avoid conflicts with behavior.
+    supportLibVersion = "27.0.1"
 }
 
 task clean(type: Delete) {

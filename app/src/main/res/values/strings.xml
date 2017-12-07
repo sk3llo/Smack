@@ -11,6 +11,7 @@
     <string name="facebook_application_id" translatable="false">1659971810708160</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb1659971810708160</string>
 
+    //Login
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password </string>
     <string name="action_sign_in">Sign in or register</string>
@@ -25,8 +26,14 @@
     <string name="unknown_error">Something bad happened</string>
     <string name="unknown_sign_in_response">Unknown sign in</string>
 
-
+    //Anti error
     <item name="visible" type="id"/>
     <item name="masked" type="id"/>
+
+    //Checker
+    <string name="choose_your_gender">Please, choose your gender</string>
+    <string name="choose_your_age">Please, choose your age</string>
+    <string name="choose_looking_for_gender">Who are you looking for?</string>
+    <string name="choose_looking_for_age">What age are you looking for?</string>
 
 </resources>

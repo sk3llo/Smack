@@ -1,34 +1,17 @@
-package com.example.a_karpenko.smack
+package com.example.a_karpenko.smack.ui
 
-import android.app.Activity
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
-import com.example.a_karpenko.smack.models.Chat
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.ErrorCodes
-import com.firebase.ui.auth.IdpResponse
-import com.firebase.ui.firestore.FirestoreArray
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.example.a_karpenko.smack.adapters.MessagesAdapter
+import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.models.chat.ChatModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import java.text.DateFormat
-import java.text.SimpleDateFormat
+import com.google.firebase.firestore.*
 import java.util.*
 
 class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
@@ -43,11 +26,17 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     var adapter : MessagesAdapter? = null
 
 
-    var collectionRef : CollectionReference? = FirebaseFirestore.getInstance().collection("chats")
+    var collectionRef : CollectionReference? = null
+
+    var query: Query? = collectionRef
+            ?.orderBy("timeStamp")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
+
+        collectionRef = FirebaseFirestore.getInstance().collection("chats")
 
         messageSent = findViewById(R.id.messageSentText)
         messageReceived = findViewById(R.id.messageReceivedText)
@@ -61,7 +50,7 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
         //init recyclerview adapter
-        var manager = LinearLayoutManager(this)
+        val manager = LinearLayoutManager(this)
         manager.stackFromEnd = true
 
         recyclerView?.setHasFixedSize(true)
@@ -80,8 +69,8 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                 //User's uid,name etc
                 val uid = FirebaseAuth.getInstance().currentUser!!.uid
                 val user = FirebaseAuth.getInstance().currentUser?.displayName
-                val name = "$user " + uid.substring(0, 6)
-                val chat = Chat(name, messageInputText?.text.toString(), uid, Calendar.getInstance().time)
+                val name = "$user"
+                val chat = ChatModel(name, messageInputText?.text.toString(), Calendar.getInstance().time)
 
                 messageSent?.text = messageInputText?.text.toString()
 
@@ -94,6 +83,11 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
     }
+
+
+    fun onSendClick(chatModel: ChatModel) {
+        collectionRef?.add(chatModel)
+        }
 
     override fun onStart() {
         super.onStart()
@@ -108,14 +102,13 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+        finish()
     }
+
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
     }
-
-    fun onSendClick(chat: Chat) {
-        collectionRef?.add(chat)
-        }
 
 
     }

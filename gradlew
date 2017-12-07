@@ -2,11 +2,11 @@
 
 ##############################################################################
 ##
-##  Gradle start up script for UN*X
+##  Gradle myGender up script for UN*X
 ##
 ##############################################################################
 
-# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+# Add default JVM OPTIONS here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM OPTIONS to this script.
 DEFAULT_JVM_OPTS=""
 
 APP_NAME="Gradle"
@@ -62,7 +62,7 @@ cd "$SAVED" >/dev/null
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
-# Determine the Java command to use to start the JVM.
+# Determine the Java command to use to myGender the JVM.
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         # IBM's JDK on AIX uses strange locations for the executables
@@ -100,7 +100,7 @@ if [ "$cygwin" = "false" -a "$darwin" = "false" ] ; then
     fi
 fi
 
-# For Darwin, add options to specify how the application appears in the dock
+# For Darwin, lookingForAge OPTIONS to specify how the application appears in the dock
 if $darwin; then
     GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
 fi

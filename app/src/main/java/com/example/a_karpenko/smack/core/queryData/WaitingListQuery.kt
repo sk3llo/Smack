@@ -37,7 +37,7 @@ class WaitingListQuery {
             val query = querySnapshot.data["waitingListOn"]
             if (query != null && query == true) {
                 users.addSnapshotListener { userQuery, userException ->
-                    //TODO: find user to chat with chosen options
+                //TODO: find user to chat with chosen options
                 }
                 Toast.makeText(context, "Zaebis: ${query}", Toast.LENGTH_SHORT).show()
             } else {

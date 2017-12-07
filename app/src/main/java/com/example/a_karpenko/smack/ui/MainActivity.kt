@@ -174,7 +174,9 @@ class MainActivity : AppCompatActivity() {
 //    }
 
     fun startChat() {
+        //check all optionsMy if empty
         if (CheckerAndSender(findViewById(android.R.id.content)).checkAndSend()) {
+            FirestoreUtil().addChosenOptions()
             startActivity(Intent(this@MainActivity, ChatActivity::class.java))
             finish()
         } else{
@@ -258,8 +260,14 @@ class MainActivity : AppCompatActivity() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
+            FirestoreUtil().logOut()
             finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FirestoreUtil().logIn()
     }
 
     override fun onDestroy() {
@@ -267,7 +275,6 @@ class MainActivity : AppCompatActivity() {
         if (realm != null){
             realm?.close()
         }
-        FirestoreUtil().logOut()
     }
 
 }

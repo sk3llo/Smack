@@ -4,14 +4,14 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              android:orientation="vertical"
-                                             tools:context="com.example.a_karpenko.smack.App"
-                                             android:background="@drawable/purple_green_gradient"
+                                             tools:context="com.example.a_karpenko.smack.ui.Login"
+                                             android:background="@drawable/color_purple_green_gradient"
                                              android:id="@+id/constr"
         >
 
     <!-- Login progress -->
     <TextView
-            android:textColor="#65daff"
+            android:textColor="@color/lightBlue"
             android:text="Chat tick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

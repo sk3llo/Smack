@@ -19,6 +19,6 @@ class App : Application() {
                 .build()
         Realm.setDefaultConfiguration(realmConfig)
 
-        FirestoreUtil().logIn()
+//        FirestoreUtil().waitingOn()
     }
 }

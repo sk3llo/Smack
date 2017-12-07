@@ -7,11 +7,11 @@ open class LoginCheckerModel {
 
     @ServerTimestamp
     var timestamp: Date? = null
-    var isLoggedIn: Boolean? = false
+    var waitingListOn: Boolean? = false
 
     constructor() //For Firebase
     constructor(isLoggedIn: Boolean?, timestamp: Date?) {
-        this.isLoggedIn = isLoggedIn
+        this.waitingListOn = isLoggedIn
         this.timestamp = timestamp
     }
 }

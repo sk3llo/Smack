@@ -20,7 +20,7 @@ class FirestoreUtil {
     //Firestore refs
     val status = FirebaseFirestore.getInstance()
             .collection("Users").document("$uidMy")
-            .collection("status")
+            .collection("waiting_list")
     val optionsMy = FirebaseFirestore.getInstance()
             .collection("Users").document("$uidMy")
             .collection("options").document("optionsMy")
@@ -31,23 +31,23 @@ class FirestoreUtil {
 
 
     //Log in
-    fun logIn(): Task<Void> {
+    fun waitingOn(): Task<Void> {
         return status.document("login").set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
             if (complete.isSuccessful) {
-                Log.d("App", "Successfully logged in")
+                Log.d("App", "Entering WL successful")
             } else {
-                Log.d("App", "Failed to log in")
+                Log.d("App", "Failed to enter WL")
             }
         }
     }
 
     //Log out
-    fun logOut(): Task<Void> {
-        return status.document("login").set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
+    fun waitingOff(): Task<Void> {
+        return status.document("enter").set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
             if (complete.isSuccessful) {
-                Log.d("App", "Successfully logged out")
+                Log.d(TAG, "Exit WL successful")
             } else {
-                Log.d("App", "Failed to log out")
+                Log.d(TAG, "Failed to exit WL")
             }
         }
     }
@@ -85,6 +85,12 @@ class FirestoreUtil {
                 Log.d(TAG, "Problem with adding optionsLF")
             }
         }
+
+    }
+
+    fun searchFor(){
+
+
 
     }
 }

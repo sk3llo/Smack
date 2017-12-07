@@ -177,7 +177,8 @@ class MainActivity : AppCompatActivity() {
         //check all optionsMy if empty
         if (CheckerAndSender(findViewById(android.R.id.content)).checkAndSend()) {
             FirestoreUtil().addChosenOptions()
-            startActivity(Intent(this@MainActivity, ChatActivity::class.java))
+            FirestoreUtil().waitingOn()
+            startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
             finish()
         } else{
             return
@@ -260,14 +261,14 @@ class MainActivity : AppCompatActivity() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            FirestoreUtil().logOut()
+            FirestoreUtil().waitingOff()
             finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        FirestoreUtil().logIn()
+//        FirestoreUtil().waitingOn()
     }
 
     override fun onDestroy() {

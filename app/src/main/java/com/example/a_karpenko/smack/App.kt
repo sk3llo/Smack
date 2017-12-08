@@ -1,7 +1,6 @@
 package com.example.a_karpenko.smack
 
 import android.app.Application
-import com.example.a_karpenko.smack.utils.FirestoreUtil
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
@@ -19,6 +18,6 @@ class App : Application() {
                 .build()
         Realm.setDefaultConfiguration(realmConfig)
 
-//        FirestoreUtil().waitingOn()
+//        AddOptionsFirestore().waitingOn()
     }
 }

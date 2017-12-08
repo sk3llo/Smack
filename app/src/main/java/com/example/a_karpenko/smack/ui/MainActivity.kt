@@ -16,9 +16,9 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.core.CheckerAndSender
-import com.example.a_karpenko.smack.utils.FirestoreUtil
-import com.example.a_karpenko.smack.utils.chooser_options.AgeOfChooser
+import com.example.a_karpenko.smack.core.OptionsChecker
+import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
+import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
 import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
 import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
@@ -125,11 +125,11 @@ class MainActivity : AppCompatActivity() {
 
             //Click listeners
         //Age Looking for
-        under18LookingFor?.setOnTouchListener(AgeOfChooser())
-        from19to22LookingFor?.setOnTouchListener(AgeOfChooser())
-        from23to26LookingFor?.setOnTouchListener(AgeOfChooser())
-        from27to35LookingFor?.setOnTouchListener(AgeOfChooser())
-        over36LookingFor?.setOnTouchListener(AgeOfChooser())
+        under18LookingFor?.setOnTouchListener(LookingForAgeChooser())
+        from19to22LookingFor?.setOnTouchListener(LookingForAgeChooser())
+        from23to26LookingFor?.setOnTouchListener(LookingForAgeChooser())
+        from27to35LookingFor?.setOnTouchListener(LookingForAgeChooser())
+        over36LookingFor?.setOnTouchListener(LookingForAgeChooser())
         //MyAge
         under18My?.setOnClickListener(MyAgeChooser())
         from19to22My?.setOnClickListener(MyAgeChooser())
@@ -175,9 +175,9 @@ class MainActivity : AppCompatActivity() {
 
     fun startChat() {
         //check all optionsMy if empty
-        if (CheckerAndSender(findViewById(android.R.id.content)).checkAndSend()) {
-            FirestoreUtil().addChosenOptions()
-            FirestoreUtil().waitingOn()
+        if (OptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
+            AddOptionsFirestore().addChosenOptions()
+            AddOptionsFirestore().waitingOn()
             startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
             finish()
         } else{
@@ -261,14 +261,14 @@ class MainActivity : AppCompatActivity() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            FirestoreUtil().waitingOff()
+            AddOptionsFirestore().waitingOff()
             finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
-//        FirestoreUtil().waitingOn()
+//        AddOptionsFirestore().waitingOn()
     }
 
     override fun onDestroy() {

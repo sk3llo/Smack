@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.utils.FirestoreUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.auth.ErrorCodes

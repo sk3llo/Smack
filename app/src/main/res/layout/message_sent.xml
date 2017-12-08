@@ -10,19 +10,7 @@
         tools:layout_editor_absoluteX="0dp"
         android:paddingTop="8dp"
         android:layout_gravity="bottom|end"
-        app:layout_anchorGravity="bottom|right"
-        android:id="@+id/messageSentLayout">
-
-    <TextView
-            android:id="@+id/messageSentTime"
-            android:text="11:40"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginRight="4dp"
-            app:layout_constraintBottom_toBottomOf="@+id/messageSentText"
-            app:layout_constraintRight_toLeftOf="@+id/messageSentText"
-            />
+        >
 
     <TextView
             android:id="@+id/messageSentText"
@@ -39,5 +27,15 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="8dp"/>
+
+    <TextView
+            android:id="@+id/messageSentTime"
+            android:text="11:40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginRight="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/messageSentText"
+            app:layout_constraintRight_toLeftOf="@+id/messageSentText"/>
 
 </android.support.constraint.ConstraintLayout>

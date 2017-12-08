@@ -19,7 +19,7 @@ open class RealmUtil {
 
     //increment id by 1
     open fun getNextKey(realmObject: RealmObject): Int?{
-        var number = realm?.where(realmObject::class.java)?.max("id")
+        val number = realm?.where(realmObject::class.java)?.max("id")
 
         return try {
             if (number != null) {
@@ -33,7 +33,7 @@ open class RealmUtil {
     }
 
     //Age you are looking for
-    //Add 1(yes) or 2(no) to realm based on option
+    //Add 1(yes) or 0(no) to realm based on option
     fun lookingForAge(int: Int?, view: View?){
 
         try {
@@ -82,7 +82,7 @@ open class RealmUtil {
     fun over36LookingFor(): Int? = Over36().queryLast()?.over36
 
     //My age
-    //Add 1(yes) or 2(no) based on option
+    //Add 1(yes) or 0(no) based on option
     fun myAge(int: Int?, view: View?){
 
         try {
@@ -130,7 +130,7 @@ open class RealmUtil {
     fun over36My(): Int? = MyAgeModel().queryLast()?.over36
 
     //Choose my and looking for gender
-    //Add 1(yes) or 2(no) based on option
+    //Add 1(yes) or 0(no) based on option
     fun gender(int: Int?, view: View){
 
         try{

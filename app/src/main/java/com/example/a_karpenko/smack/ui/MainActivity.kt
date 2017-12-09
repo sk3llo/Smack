@@ -262,14 +262,13 @@ class MainActivity : AppCompatActivity() {
             drawer.closeDrawer(GravityCompat.START)
         } else {
             AddOptionsFirestore().waitingOff()
+            if (!WaitingActivity().isDestroyed){
+                WaitingActivity().finish()
+            }
             finish()
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-//        AddOptionsFirestore().waitingOn()
-    }
 
     override fun onDestroy() {
         super.onDestroy()

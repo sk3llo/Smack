@@ -18,6 +18,5 @@ class App : Application() {
                 .build()
         Realm.setDefaultConfiguration(realmConfig)
 
-//        AddOptionsFirestore().waitingOn()
     }
 }

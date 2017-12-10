@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
 import com.example.a_karpenko.smack.core.queryData.WaitingListQuery
+import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -20,7 +21,6 @@ import java.util.*
 class WaitingActivity: AppCompatActivity() {
 
     val context: Context? = this@WaitingActivity
-
     var currentDate: Date? = null
     var uidMy: String? = null
     var status: CollectionReference? = null
@@ -48,12 +48,15 @@ class WaitingActivity: AppCompatActivity() {
                 .collection("Users").document("$uidMy")
                 .collection("options").document("optionsLF")
 
-        WaitingListQuery(this, this@WaitingActivity).checkWL()
+        //Start comparing options and searching for chat
+        if (RealmUtil().retrySearchForChat()!!){
+            WaitingListQuery(this,this).checkWL()
+        }
 
      }
 
-
     fun stopSearch(view: View?){
+        RealmUtil().retrySearch(false)
         AddOptionsFirestore().waitingOff()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
@@ -61,6 +64,7 @@ class WaitingActivity: AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        RealmUtil().retrySearch(false)
         startActivity(Intent(this, MainActivity::class.java))
         AddOptionsFirestore().waitingOff()
         finish()
@@ -68,6 +72,7 @@ class WaitingActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        RealmUtil().retrySearch(false)
         AddOptionsFirestore().waitingOff()
     }
 }

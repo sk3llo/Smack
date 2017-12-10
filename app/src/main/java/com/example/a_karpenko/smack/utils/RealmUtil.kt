@@ -2,6 +2,7 @@ package com.example.a_karpenko.smack.utils
 
 import android.view.View
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.models.chat.SearchForChatUtil
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.models.my_age.MyAgeModel
 import com.example.a_karpenko.smack.models.age_looking_for.From19to22
@@ -170,5 +171,19 @@ open class RealmUtil {
     fun femaleGenderMy(): Int? = MyGenderModel().queryLast()?.femaleGenderMy
     fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
     fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
+
+    //Retry search for chat
+    fun retrySearch(retry: Boolean?){
+        try {
+            realm?.beginTransaction()
+            val retrySearchForChat = realm?.createObject(SearchForChatUtil::class.java, getNextKey(SearchForChatUtil()))
+            retrySearchForChat?.retryChatSearch = retry
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+
+    fun retrySearchForChat(): Boolean? = SearchForChatUtil().queryLast()?.retryChatSearch
 
 }

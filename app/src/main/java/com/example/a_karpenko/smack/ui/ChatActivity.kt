@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.widget.*
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
@@ -25,18 +26,35 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     var recyclerView : RecyclerView? = null
     var adapter : MessagesAdapter? = null
 
+    var currentTime: Date? = null
 
-    var collectionRef : CollectionReference? = null
+    var uidMy: String? = ""
+    var uidLF: String? = ""
 
-    var query: Query? = collectionRef
-            ?.orderBy("timeStamp")
-
+    var foundUserRef: CollectionReference? = null
+    var myRoomRef: CollectionReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
-        collectionRef = FirebaseFirestore.getInstance().collection("chats")
+        currentTime = Calendar.getInstance().time
+
+        //Uid's
+        uidMy = FirebaseAuth.getInstance().currentUser!!.uid
+        uidLF = intent.getStringExtra("foundUser")
+
+
+        //Found user uid
+        foundUserRef = FirebaseFirestore.getInstance()
+                .collection("Users").document("$uidLF")
+                .collection("rooms").document("$uidMy")
+                .collection("messages")
+        //My chat room reference
+        myRoomRef = FirebaseFirestore.getInstance()
+                .collection("Users").document("$uidMy")
+                .collection("rooms").document("$uidLF")
+                .collection("messages")
 
         messageSent = findViewById(R.id.messageSentText)
         messageReceived = findViewById(R.id.messageReceivedText)
@@ -59,35 +77,37 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         recyclerView?.adapter = adapter
 
 
-        //send message btn clicked
-        sendMessageButton?.setOnClickListener {
-
-
-            if (messageInputText?.length() != 0) {
-                recyclerView?.smoothScrollToPosition(adapter?.itemCount!!)
-
-                //User's uid,name etc
-                val uid = FirebaseAuth.getInstance().currentUser!!.uid
-                val user = FirebaseAuth.getInstance().currentUser?.displayName
-                val name = "$user"
-                val chat = ChatModel(name, messageInputText?.text.toString(), Calendar.getInstance().time)
-
-                messageSent?.text = messageInputText?.text.toString()
-
-                onSendClick(chat)
-
-                messageInputText?.text = null
+        foundUserRef?.addSnapshotListener { snapshot, exception ->
+            //Huinya, nada '== $uidLF'
+            if (snapshot?.isEmpty == false && snapshot.documents.last()?.get("from").toString()  == "$uidMy"){
+                messageReceived?.text = snapshot.documents.last()?.get("from").toString()
             }
-
         }
 
-
+        //send message btn clicked
+        sendMessageButton?.setOnClickListener {
+            onSendClick()
+        }
     }
 
 
-    fun onSendClick(chatModel: ChatModel) {
-        collectionRef?.add(chatModel)
+    fun onSendClick() {
+        if (messageInputText?.length() != 0) {
+            recyclerView?.smoothScrollToPosition(adapter?.itemCount!!)
+
+            //User's uid,name etc
+
+            val chat = ChatModel(uidMy!!, uidLF!!, messageInputText?.text.toString(), currentTime)
+            messageSent?.text = messageInputText?.text.toString()
+
+
+            foundUserRef?.add(chat)
+            myRoomRef?.add(chat)
+
+            messageInputText?.text = null
+
         }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -106,12 +126,11 @@ class ChatActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         finish()
     }
 
-
-    override fun onAuthStateChanged(auth: FirebaseAuth) {
+    override fun onAuthStateChanged(p0: FirebaseAuth) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
-    }
+}
 
 
 

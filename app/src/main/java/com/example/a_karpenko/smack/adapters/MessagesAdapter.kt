@@ -37,7 +37,8 @@ open class MessagesAdapter : FirestoreRecyclerAdapter<ChatModel, MessageSentView
         val c = Calendar.getInstance()
         val minutes = c.get(Calendar.MINUTE)
         val hour = c.get(Calendar.HOUR).toString()
-        val time = "$hour:$minutes"
+        val AMPM = c.get(Calendar.AM_PM).toString()
+        val time = "$hour:$minutes $AMPM"
 
         holder?.messageSent?.text = model?.message
         holder?.messageSentTime?.text = time

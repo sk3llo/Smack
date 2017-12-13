@@ -93,7 +93,7 @@ open class MessagesAdapter(var messages: ArrayList<ChatModel>) : RecyclerView.Ad
         return messages.size
     }
 
-        fun add(item: ChatModel, position: Int){
+    fun add(item: ChatModel, position: Int){
         messages.add(position, item)
         notifyItemInserted(position)
     }

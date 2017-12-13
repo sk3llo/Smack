@@ -106,7 +106,8 @@ class ChatActivity : AppCompatActivity() {
             val message = snapshot.documentChanges.last()?.document?.get("message")?.toString()
             val receivedQuery = ChatModel(from!!, message!!, currentTime)
             messages?.add(receivedQuery)
-            Log.d("ChatActivity***** ", "From: $from, Message: $message")
+            adapter?.notifyDataSetChanged()
+//            Log.d("ChatActivity***** ", "From: $from, Message: $message")
         }
     }
 

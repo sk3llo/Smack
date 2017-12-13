@@ -7,16 +7,14 @@ import java.util.*
 open class ChatModel {
 
     var from: String = ""
-    var to: String? = ""
-    var message: String = ""
+    var message: String? = null
     @ServerTimestamp
     var timeStamp: Date? = null
 
     constructor()  // Needed for Firebase
-    constructor(uidMy:String, uidLF: String, message:String, timeStamp: Date?) {
+    constructor(uidMy:String, message:String, timeStamp: Date?) {
 //        this.uid = uid
         this.from = uidMy
-        this.to = uidLF
         this.message = message
         this.timeStamp = timeStamp
     }

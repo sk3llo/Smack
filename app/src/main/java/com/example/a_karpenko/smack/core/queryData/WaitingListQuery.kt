@@ -564,6 +564,7 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
     private fun checkOut(foundUser: DocumentReference) {
         //Stop searching (took from Realm)
         RealmUtil().retrySearch(false)
+        RealmUtil().addFounduserUid(foundUser?.id)
         //Start chat activity
         val intent = Intent(context, ChatActivity::class.java)
         intent.putExtra("foundUser", foundUser.id)

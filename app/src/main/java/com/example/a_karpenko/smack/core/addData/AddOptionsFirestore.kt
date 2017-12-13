@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.a_karpenko.smack.models.firestore.OptionsMyModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.models.firestore.OptionsLFModel
-import com.example.a_karpenko.smack.ui.WaitingActivity
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -20,9 +19,9 @@ class AddOptionsFirestore {
     val currentUser = FirebaseAuth.getInstance().currentUser
 
     //Firestore refs
-    val status = FirebaseFirestore.getInstance()
+    val wl = FirebaseFirestore.getInstance()
             .collection("Users").document("$uidMy")
-            .collection("waiting_list")
+
     val optionsMy = FirebaseFirestore.getInstance()
             .collection("Users").document("$uidMy")
             .collection("options").document("optionsMy")
@@ -34,7 +33,7 @@ class AddOptionsFirestore {
 
     //Log in
     fun waitingOn(): Task<Void> {
-        return status.document("enter").set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
+        return wl.set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
             if (complete.isSuccessful) {
                 //TODO: Add checker for options on Firestore
                 Log.d("App", "Entering WL successful")
@@ -46,7 +45,7 @@ class AddOptionsFirestore {
 
     //Log out
     fun waitingOff(): Task<Void> {
-        return status.document("enter").set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
+        return wl.set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
             if (complete.isSuccessful) {
                 Log.d(TAG, "Exit WL successful")
             } else {

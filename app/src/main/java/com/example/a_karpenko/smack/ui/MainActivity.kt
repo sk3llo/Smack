@@ -16,8 +16,9 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.core.OptionsChecker
+import com.example.a_karpenko.smack.core.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
+import com.example.a_karpenko.smack.core.queryData.WaitingListQuery
 import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
 import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
 import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
@@ -174,11 +175,15 @@ class MainActivity : AppCompatActivity() {
 //    }
 
     fun startChat() {
-        //check all optionsMy if empty
-        if (OptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
+        //check all optionsMy: false if empty, true if not
+        if (MyOptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
+            //Start Waiting Activity
+            startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
+            //Check and add me to WL and my options to Firestore
             AddOptionsFirestore().addChosenOptions()
             AddOptionsFirestore().waitingOn()
-            startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
+            //Start searching for chat
+            RealmUtil().retrySearch(true)
             finish()
         } else{
             return
@@ -262,13 +267,17 @@ class MainActivity : AppCompatActivity() {
             drawer.closeDrawer(GravityCompat.START)
         } else {
             AddOptionsFirestore().waitingOff()
+            if (!WaitingActivity().isDestroyed){
+                WaitingActivity().finish()
+            }
             finish()
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-//        AddOptionsFirestore().waitingOn()
+    override fun onStart() {
+        super.onStart()
+        //Stop Searching for new chat
+        RealmUtil().retrySearch(false)
     }
 
     override fun onDestroy() {

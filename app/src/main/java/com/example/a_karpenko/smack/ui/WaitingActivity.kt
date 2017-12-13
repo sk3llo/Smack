@@ -5,10 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
 import com.example.a_karpenko.smack.core.queryData.WaitingListQuery
+import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -18,21 +20,25 @@ import java.util.*
 
 class WaitingActivity: AppCompatActivity() {
 
+    val context: Context? = this@WaitingActivity
     var currentDate: Date? = null
     var uidMy: String? = null
     var status: CollectionReference? = null
     var optionsMy: DocumentReference? = null
     var optionsLF: DocumentReference? = null
 
+    var WPB: ProgressBar? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.waiting_screen)
 
+        WPB = findViewById<ProgressBar>(R.id.waitingProgressBar)
         currentDate = Calendar.getInstance().time
         uidMy = FirebaseAuth.getInstance().currentUser?.uid
         status = FirebaseFirestore.getInstance()
                 .collection("Users").document("$uidMy")
-                .collection("status")
+                .collection("wl")
 
         optionsMy = FirebaseFirestore.getInstance()
                 .collection("Users").document("$uidMy")
@@ -42,22 +48,23 @@ class WaitingActivity: AppCompatActivity() {
                 .collection("Users").document("$uidMy")
                 .collection("options").document("optionsLF")
 
-        WaitingListQuery().checkWaitingList(this)
+        //Start comparing options and searching for chat
+        if (RealmUtil().retrySearchForChat()!!){
+            WaitingListQuery(this,this).checkWL()
+        }
 
-    }
-
-
-
-
+     }
 
     fun stopSearch(view: View?){
-        startActivity(Intent(this, MainActivity::class.java))
+        RealmUtil().retrySearch(false)
         AddOptionsFirestore().waitingOff()
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
+        RealmUtil().retrySearch(false)
         startActivity(Intent(this, MainActivity::class.java))
         AddOptionsFirestore().waitingOff()
         finish()
@@ -65,6 +72,7 @@ class WaitingActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        RealmUtil().retrySearch(false)
         AddOptionsFirestore().waitingOff()
     }
 }

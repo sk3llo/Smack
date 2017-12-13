@@ -6,7 +6,7 @@ import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.utils.RealmUtil
 
 //Check users options and if empty return Snackbar
-open class OptionsChecker(var view: View) {
+open class MyOptionsChecker(var view: View) {
     //Gender
     val maleGenderMy: Int? = RealmUtil().maleGenderMy()
     val femaleGenderMy: Int? = RealmUtil().femaleGenderMy()

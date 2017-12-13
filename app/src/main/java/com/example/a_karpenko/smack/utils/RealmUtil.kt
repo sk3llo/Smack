@@ -2,6 +2,7 @@ package com.example.a_karpenko.smack.utils
 
 import android.view.View
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.models.chat.SearchForChatUtil
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.models.my_age.MyAgeModel
 import com.example.a_karpenko.smack.models.age_looking_for.From19to22
@@ -9,6 +10,7 @@ import com.example.a_karpenko.smack.models.age_looking_for.From23to26
 import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
+import com.example.a_karpenko.smack.models.chat.FoundUserUid
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.vicpin.krealmextensions.*
 import io.realm.*
@@ -170,5 +172,33 @@ open class RealmUtil {
     fun femaleGenderMy(): Int? = MyGenderModel().queryLast()?.femaleGenderMy
     fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
     fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
+
+    //Retry search for chat
+    fun retrySearch(retry: Boolean?){
+        try {
+            realm?.beginTransaction()
+            val retrySearchForChat = realm?.createObject(SearchForChatUtil::class.java, getNextKey(SearchForChatUtil()))
+            retrySearchForChat?.retryChatSearch = retry
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+
+    fun retrySearchForChat(): Boolean? = SearchForChatUtil().queryLast()?.retryChatSearch
+
+    //Add found user uid to Realm
+    fun addFounduserUid(uid: String?){
+        try {
+            realm?.beginTransaction()
+            var foundUserUid = realm?.createObject(FoundUserUid::class.java, getNextKey((FoundUserUid())))
+            foundUserUid?.foundUserUid = uid
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+
+    fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
 
 }

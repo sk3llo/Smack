@@ -1,22 +1,20 @@
 
 package com.example.a_karpenko.smack.models.chat
 
-import com.firebase.ui.firestore.FirestoreArray
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.*
 
 open class ChatModel {
 
-    var uid: String = ""
-    var name: String = ""
-    var message: String = ""
+    var from: String = ""
+    var message: String? = null
     @ServerTimestamp
     var timeStamp: Date? = null
 
     constructor()  // Needed for Firebase
-    constructor(name:String, message:String, timeStamp: Date?) {
+    constructor(uidMy:String, message:String, timeStamp: Date?) {
 //        this.uid = uid
-        this.name = name
+        this.from = uidMy
         this.message = message
         this.timeStamp = timeStamp
     }

@@ -31,28 +31,28 @@ class AddOptionsFirestore {
             .collection("options").document("optionsLF")
 
 
-    //Log in
-    fun waitingOn(): Task<Void> {
-        return wl.set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
-            if (complete.isSuccessful) {
-                //TODO: Add checker for options on Firestore
-                Log.d("App", "Entering WL successful")
-            } else {
-                Log.d("App", "Failed to enter WL")
-            }
-        }
-    }
-
-    //Log out
-    fun waitingOff(): Task<Void> {
-        return wl.set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
-            if (complete.isSuccessful) {
-                Log.d(TAG, "Exit WL successful")
-            } else {
-                Log.d(TAG, "Failed to exit WL")
-            }
-        }
-    }
+//    //Log in
+//    fun waitingOn(): Task<Void> {
+//        return wl.set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
+//            if (complete.isSuccessful) {
+//                //TODO: Add checker for options on Firestore
+//                Log.d("App", "Entering WL successful")
+//            } else {
+//                Log.d("App", "Failed to enter WL")
+//            }
+//        }
+//    }
+//
+//    //Log out
+//    fun waitingOff(): Task<Void> {
+//        return wl.set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
+//            if (complete.isSuccessful) {
+//                Log.d(TAG, "Exit WL successful")
+//            } else {
+//                Log.d(TAG, "Failed to exit WL")
+//            }
+//        }
+//    }
     //Add optionsMy to Firestore under users uid (Users/$uid/optionsMy/$timestamp/$optionsMy)
     fun addChosenOptions() {
         //Add my gender and age to Firestore

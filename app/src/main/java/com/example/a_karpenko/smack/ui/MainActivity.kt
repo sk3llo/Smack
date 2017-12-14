@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
             //Check and add me to WL and my options to Firestore
             AddOptionsFirestore().addChosenOptions()
-            AddOptionsFirestore().waitingOn()
+//            AddOptionsFirestore().waitingOn()
             //Start searching for chat
             RealmUtil().retrySearch(true)
             finish()
@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
-            AddOptionsFirestore().waitingOff()
+//            AddOptionsFirestore().waitingOff()
             if (!WaitingActivity().isDestroyed){
                 WaitingActivity().finish()
             }

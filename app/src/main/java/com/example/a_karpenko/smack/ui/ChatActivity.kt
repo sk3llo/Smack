@@ -94,14 +94,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    //Register listener
+    //Register listener for live messages
     fun listener() = myRoomRef?.addSnapshotListener { snapshot, exception ->
         if (exception != null) {
             Toast.makeText(this.applicationContext, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             return@addSnapshotListener
         }
 
-        if (snapshot != null && snapshot.documentChanges.last()?.document?.get("from")?.toString() == uidLF) {
+        if (snapshot != null && !snapshot.isEmpty && snapshot.documentChanges.last()?.document?.get("from")?.toString() == uidLF) {
             val from = snapshot.documentChanges.last()?.document?.get("from")?.toString()
             val message = snapshot.documentChanges.last()?.document?.get("message")?.toString()
             val receivedQuery = ChatModel(from!!, message!!, currentTime)

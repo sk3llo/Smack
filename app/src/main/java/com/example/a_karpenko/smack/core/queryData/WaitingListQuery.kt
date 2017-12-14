@@ -2,6 +2,8 @@ package com.example.a_karpenko.smack.core.queryData
 
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
+import android.os.Handler
 import android.support.v7.app.ActionBarDrawerToggle
 import android.util.Log
 import android.widget.Toast
@@ -57,32 +59,36 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
     //Find user to chat
     private val users = FirebaseFirestore.getInstance()
-            .collection("Users")
+            .collection("WL")
 
 
 
     //Check if all users on waiting list
     fun checkWL() {
+        AsyncTask.execute {
         users.get().addOnCompleteListener { snap ->
-            snap.result.forEach { forEach ->
-                val searchUsers = forEach.data["waitingListOn"]
+            snap.result.documents.all { all ->
+                val searchUsers = all["waitingListOn"]
+                val ref = all.reference
                 when {
-                    forEach.reference.id == uidMy -> return@forEach
+                    ref.id == uidMy -> { }
+                //If all Users are false - retry
+                    searchUsers == true -> {
+                        checkOptions(ref)
+                        Log.d("WaitingListQuery_-*-_ ", "CHECKED ONLINE USERS: ${ref.id} retry: ${RealmUtil().retrySearchForChat()!!}")
+                    }
                     searchUsers == false -> {
-                        if (RealmUtil().retrySearchForChat()!!) {
-                            checkWL()
-                            Log.d("WaitingListQuery_-*-_ ", "CHECKED OFFLINE USER: ${forEach.reference.id} retry: ${RealmUtil().retrySearchForChat()!!}")
-                        }
+                        Log.d("WaitingListQuery_-*-_ ", "CHECKED OFFLINE USERS: ${ref.id} retry: ${RealmUtil().retrySearchForChat()!!}")
                     }
                     else -> {
-                        if (RealmUtil().retrySearchForChat()!!)
-                            checkOptions(forEach.reference)
-                            Log.d("WaitingListQuery_-*-_ ", "CHECKED ONLINE USER: ${forEach.reference.id} retry: ${RealmUtil().retrySearchForChat()!!}")
-                        }
                     }
                 }
+                return@all true
             }
+        }
+    }
 }
+
 
 //    Check options for user who's true on waiting list
     fun checkOptions(foundUser: DocumentReference) {
@@ -544,20 +550,20 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
                                     }
 
                                     //Check if user was found
-                                    else {
-                                        checkRetry()
-                                    }
+//                                    else {
+//                                        checkRetry()
+//                                    }
 
                             }
                 }
 }
 
     //Check if found a user to chat or if stopped searching
-    private fun checkRetry(){
-        if (RealmUtil().retrySearchForChat()!!){
-            checkWL()
-        }
-    }
+//    private fun checkRetry(){
+//        if (RealmUtil().retrySearchForChat()!!){
+//            checkWL()
+//        }
+//    }
 
 
     //Start Chat activity

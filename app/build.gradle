@@ -53,6 +53,9 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:11.4.2'
     //Realm extensions
     compile 'com.github.vicpinm:krealmextensions:2.0.0-beta4'
+    //Alert Dialog
+    compile 'com.afollestad.material-dialogs:core:0.9.6.0'
+    compile 'com.afollestad.material-dialogs:commons:0.9.6.0'
 }
 repositories {
     mavenCentral()

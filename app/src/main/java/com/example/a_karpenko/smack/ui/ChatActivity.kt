@@ -2,12 +2,16 @@ package com.example.a_karpenko.smack.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.R.drawable.abc_ic_ab_back_material
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.widget.*
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.chat.ChatModel
@@ -27,6 +31,7 @@ class ChatActivity : AppCompatActivity() {
     var sendMessageButton: AppCompatImageButton? = null
     var recyclerView: RecyclerView? = null
     var adapter: MessagesAdapter? = null
+    var toolbar: Toolbar? = null
 
     var currentTime: Date? = null
 
@@ -46,7 +51,6 @@ class ChatActivity : AppCompatActivity() {
 
         //RecyclerView Array
         messages = ArrayList()
-
         currentTime = Calendar.getInstance().time
 
         //Uid's
@@ -73,8 +77,17 @@ class ChatActivity : AppCompatActivity() {
         messageInputText = findViewById(R.id.messageInputText)
         sendMessageButton = findViewById(R.id.sendMessagebutton)
         recyclerView = findViewById(R.id.messageList)
+        toolbar = findViewById(R.id.chatToolbar)
+
+        //Toolbar
+        setSupportActionBar(toolbar)
+        toolbar?.setNavigationIcon(abc_ic_ab_back_material)
+        toolbar?.setNavigationOnClickListener {
+            alertDialog()
+        }
 
 
+        //RecyclerView
         adapter = MessagesAdapter(messages!!)
         val manager = object : LinearLayoutManager(this) {}
         manager.orientation = LinearLayoutManager.VERTICAL
@@ -94,6 +107,23 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+
+    fun alertDialog() = MaterialDialog.Builder(this)
+                .title("You are leaving the conversation")
+                .content("Are you sure?")
+                .positiveText("Yes")
+                .negativeText("No")
+                .onPositive { dialog, which ->
+            listener()?.remove()
+            startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+            finish()
+        }
+                .onNegative { dialog, which ->
+            dialog.dismiss()
+        }.show()
+
+
+
     //Register listener for live messages
     fun listener() = myRoomRef?.addSnapshotListener { snapshot, exception ->
         if (exception != null) {
@@ -107,6 +137,7 @@ class ChatActivity : AppCompatActivity() {
             val receivedQuery = ChatModel(from!!, message!!, currentTime)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
+            recyclerView?.scrollToPosition(messages?.size!! - 1)
 //            Log.d("ChatActivity***** ", "From: $from, Message: $message")
         }
     }
@@ -137,18 +168,15 @@ class ChatActivity : AppCompatActivity() {
         listener()
     }
 
-    override fun onStop() {
-        super.onStop()
-        listener()?.remove()
-    }
-
     override fun onBackPressed() {
-        super.onBackPressed()
-        listener()?.remove()
-        startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-        finish()
+        //TODO: Add warning message about leaving
+        alertDialog()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        listener()?.remove()
+    }
 }
 
 

@@ -2,7 +2,9 @@ package com.example.a_karpenko.smack.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -47,13 +49,16 @@ class WaitingActivity: AppCompatActivity() {
 
     //db Listener
     fun checkWListener() = db?.collection("WL")?.addSnapshotListener { snapshot, exception ->
-        if (snapshot.documents.last().exists()) {
-            snapshot.documents.all { all ->
-                if (all["waitingListOn"] == true && all.reference.id != uidMy) {
-                    WaitingListQuery(this, this).checkOptions(all.reference.id)
-                    Log.d("WaitingActivity***** ", "CHEKING OPTIONS USER : ${all.reference.id}}")
+        AsyncTask.execute {
+            if (exception != null){
+                Snackbar.make(findViewById(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT)
+            }
+            if (snapshot.documents.last().exists()) {
+                val last = snapshot.documentChanges.last()
+                if (last.document["waitingListOn"] == true && last.document.reference.id != uidMy) {
+                    WaitingListQuery(this, this).checkOptions(last.document.reference.id)
+                    Log.d("WaitingActivity***** ", "COMPARING OPTIONS OF USER : ${last.document.reference.id}}")
                 }
-                return@all false
             }
         }
     }

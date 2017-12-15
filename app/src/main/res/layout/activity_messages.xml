@@ -15,12 +15,12 @@
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/appBarLayout">
 
-        <Toolbar
+        <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout_editor_absoluteY="0dp"
                 tools:layout_editor_absoluteX="8dp"
-                android:id="@+id/toolbar2"/>
+                android:id="@+id/chatToolbar"/>
 
     </android.support.design.widget.AppBarLayout>
 

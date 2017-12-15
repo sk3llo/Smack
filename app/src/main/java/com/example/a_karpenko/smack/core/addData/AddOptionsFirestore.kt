@@ -36,9 +36,9 @@ class AddOptionsFirestore {
 //        return wl.set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
 //            if (complete.isSuccessful) {
 //                //TODO: Add checker for options on Firestore
-//                Log.d("App", "Entering WL successful")
+//                Log.d("App", "Entering db successful")
 //            } else {
-//                Log.d("App", "Failed to enter WL")
+//                Log.d("App", "Failed to enter db")
 //            }
 //        }
 //    }
@@ -47,9 +47,9 @@ class AddOptionsFirestore {
 //    fun waitingOff(): Task<Void> {
 //        return wl.set(LoginCheckerModel(false, currentDate)).addOnCompleteListener { complete ->
 //            if (complete.isSuccessful) {
-//                Log.d(TAG, "Exit WL successful")
+//                Log.d(TAG, "Exit db successful")
 //            } else {
-//                Log.d(TAG, "Failed to exit WL")
+//                Log.d(TAG, "Failed to exit db")
 //            }
 //        }
 //    }

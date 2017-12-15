@@ -18,7 +18,7 @@ import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
-import com.example.a_karpenko.smack.core.queryData.WaitingListQuery
+import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
 import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
 import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
@@ -26,14 +26,17 @@ import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import io.realm.Realm
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     //Firebase
-    val TAG: String? = "Main Activity"
-    var firebase: FirebaseAuth? = null
+    var auth: FirebaseAuth? = null
     var user: FirebaseUser? = null
+    var db: FirebaseFirestore? = null
+    //Drawer Username/Email and error snackbar
     var userName: TextView? = null
     var userEmail: TextView? = null
     var snackBar: Snackbar? = null
@@ -61,14 +64,17 @@ class MainActivity : AppCompatActivity() {
     //Realm
     var realm : Realm? = null
 
+    var currentDate: Date? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
 
         //FIREBASE
-        firebase = FirebaseAuth.getInstance()
-        user = firebase?.currentUser
+        auth = FirebaseAuth.getInstance()
+        user = auth?.currentUser
+        db = FirebaseFirestore.getInstance()
 
         //Realm
         Realm.init(this)
@@ -93,6 +99,8 @@ class MainActivity : AppCompatActivity() {
         from23to26LookingFor = findViewById(R.id.from23to26LookingFor)
         from27to35LookingFor = findViewById(R.id.from27to35LookingFor)
         over36LookingFor = findViewById(R.id.over36LookingFor)
+
+        currentDate = Calendar.getInstance().time
 
 
         //Check if user logged in
@@ -177,9 +185,13 @@ class MainActivity : AppCompatActivity() {
     fun startChat() {
         //check all optionsMy: false if empty, true if not
         if (MyOptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
+            //Add doc to Firestore with "Online" Action
+            db?.collection("WL")?.document("${user?.uid}")?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
+                Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${user?.uid}")
+            }
             //Start Waiting Activity
             startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
-            //Check and add me to WL and my options to Firestore
+            //Check and add me to db and my options to Firestore
             AddOptionsFirestore().addChosenOptions()
 //            AddOptionsFirestore().waitingOn()
             //Start searching for chat

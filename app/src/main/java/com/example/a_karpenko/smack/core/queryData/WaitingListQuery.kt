@@ -58,23 +58,23 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
     private val uidMy = FirebaseAuth.getInstance().currentUser?.uid
 
     //Find user to chat
-    private val users = FirebaseFirestore.getInstance()
-            .collection("WL")
+
+    //WL
+    private val WL = FirebaseFirestore.getInstance().collection("WL")
 
 
 
     //Check if all users on waiting list
     fun checkWL() {
         AsyncTask.execute {
-        users.get().addOnCompleteListener { snap ->
+        WL.get().addOnCompleteListener { snap ->
             snap.result.documents.all { all ->
                 val searchUsers = all["waitingListOn"]
                 val ref = all.reference
                 when {
-                    ref.id == uidMy -> { }
-                //If all Users are false - retry
-                    searchUsers == true -> {
-                        checkOptions(ref)
+                    ref.id == uidMy -> { Log.d("WaitingListQuery_-*-_ ", "MY ID : ${ref.id} retry: ${RealmUtil().retrySearchForChat()!!}") }
+                    searchUsers == true && ref.id != uidMy -> {
+                        checkOptions(ref.id)
                         Log.d("WaitingListQuery_-*-_ ", "CHECKED ONLINE USERS: ${ref.id} retry: ${RealmUtil().retrySearchForChat()!!}")
                     }
                     searchUsers == false -> {
@@ -83,7 +83,7 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
                     else -> {
                     }
                 }
-                return@all true
+                return@all false
             }
         }
     }
@@ -91,11 +91,18 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
 
 //    Check options for user who's true on waiting list
-    fun checkOptions(foundUser: DocumentReference) {
-        foundUser.collection("options").document("optionsMy").get()
-                .addOnCompleteListener { optMy ->
-                        foundUser.collection("options").document("optionsLF").get()
-                                .addOnCompleteListener { optLF ->
+    fun checkOptions(foundUser: String) {
+
+    val optionsLF = FirebaseFirestore.getInstance()
+            .collection("Users").document("$foundUser")
+            .collection("options").document("optionsLF")
+
+    val optionsMY = FirebaseFirestore.getInstance()
+            .collection("Users").document("$foundUser")
+            .collection("options").document("optionsMy")
+
+        optionsMY.get().addOnCompleteListener { optMy ->
+                        optionsLF.get().addOnCompleteListener { optLF ->
 
                                     //Found user's refs
                                     val maleGenderMy = optMy.result["maleGenderMy"]
@@ -561,19 +568,19 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
     //Check if found a user to chat or if stopped searching
 //    private fun checkRetry(){
 //        if (RealmUtil().retrySearchForChat()!!){
-//            checkWL()
+//            checkWListener()
 //        }
 //    }
 
 
     //Start Chat activity
-    private fun checkOut(foundUser: DocumentReference) {
+    private fun checkOut(foundUser: String) {
         //Stop searching (took from Realm)
         RealmUtil().retrySearch(false)
-        RealmUtil().addFounduserUid(foundUser?.id)
+        RealmUtil().addFounduserUid(foundUser)
         //Start chat activity
         val intent = Intent(context, ChatActivity::class.java)
-        intent.putExtra("foundUser", foundUser.id)
+        intent.putExtra("foundUser", foundUser)
         context?.startActivity(intent)
         activity?.finish()
     }

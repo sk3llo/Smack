@@ -1,31 +1,17 @@
 package com.example.a_karpenko.smack.adapters
 
-import android.app.ActionBar
-import android.support.constraint.ConstraintLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.util.Size
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.core.MyOptionsChecker
-import com.example.a_karpenko.smack.models.chat.ChatModel
-import com.example.a_karpenko.smack.ui.ChatActivity
+import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.firebase.ui.firestore.FirestoreArray
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import java.util.*
 import kotlin.collections.ArrayList
 

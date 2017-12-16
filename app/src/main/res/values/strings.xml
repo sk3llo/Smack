@@ -35,5 +35,7 @@
     <string name="choose_your_age">Please, choose your age</string>
     <string name="choose_looking_for_gender">Who are you looking for?</string>
     <string name="choose_looking_for_age">What age are you looking for?</string>
+    <string name="userHasLeft">Someone has left the chat</string>
+    <string name="someoneIsTyping">someone is typing...</string>
 
 </resources>

@@ -1,5 +1,5 @@
 
-package com.example.a_karpenko.smack.models.chat
+package com.example.a_karpenko.smack.models.firestore
 
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.*

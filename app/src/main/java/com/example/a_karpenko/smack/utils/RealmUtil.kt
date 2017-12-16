@@ -11,6 +11,7 @@ import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
+import com.example.a_karpenko.smack.models.chat.IncrementValue
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.vicpin.krealmextensions.*
 import io.realm.*
@@ -184,7 +185,6 @@ open class RealmUtil {
             realm?.close()
         }
     }
-
     fun retrySearchForChat(): Boolean? = SearchForChatUtil().queryLast()?.retryChatSearch
 
     //Add found user uid to Realm
@@ -198,7 +198,19 @@ open class RealmUtil {
             realm?.close()
         }
     }
-
     fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
+
+    //For chat rooms
+    fun incrementValue(): Int? {
+        try {
+            realm?.beginTransaction()
+            val value = realm?.createObject(IncrementValue::class.java, getNextKey(IncrementValue()))
+            value?.plus1 = value?.plus1?.plus(1)
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+            return IncrementValue().queryLast()?.id
+        }
+    }
 
 }

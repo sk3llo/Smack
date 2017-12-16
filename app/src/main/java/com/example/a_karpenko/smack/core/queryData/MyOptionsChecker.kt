@@ -1,4 +1,4 @@
-package com.example.a_karpenko.smack.core
+package com.example.a_karpenko.smack.core.queryData
 
 import android.support.design.widget.Snackbar
 import android.view.View

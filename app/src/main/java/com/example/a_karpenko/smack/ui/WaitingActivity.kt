@@ -8,8 +8,10 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.ProgressBar
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.WaitingListQuery
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.utils.RealmUtil
@@ -44,6 +46,7 @@ class WaitingActivity: AppCompatActivity() {
             WaitingListQuery(this,this).checkWL()
             checkWListener()
         }
+
      }
 
 

@@ -9,15 +9,21 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.View
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.chat.ChatModel
+import com.example.a_karpenko.smack.core.EditTextWatcher
+import com.example.a_karpenko.smack.core.queryData.PresenceChecker
+import com.example.a_karpenko.smack.models.chat.IncrementValue
+import com.example.a_karpenko.smack.models.firestore.ChatModel
+import com.example.a_karpenko.smack.models.firestore.InputModel
+import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.vicpin.krealmextensions.queryLast
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -33,16 +39,17 @@ class ChatActivity : AppCompatActivity() {
     var adapter: MessagesAdapter? = null
     var toolbar: Toolbar? = null
 
-    var currentTime: Date? = null
+    var currentDate: Date? = null
 
     var uidMy: String? = ""
     var uidLF: String? = ""
 
     var foundUserRef: CollectionReference? = null
     var myRoomRef: CollectionReference? = null
-    var myQuery: Query? = null
-    var MYOPTIONS: FirestoreRecyclerOptions<ChatModel>? = null
     var messages: ArrayList<ChatModel>? = null
+    //Input
+    var input: DocumentReference? = null
+    var typingTextView: TextView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +58,7 @@ class ChatActivity : AppCompatActivity() {
 
         //RecyclerView Array
         messages = ArrayList()
-        currentTime = Calendar.getInstance().time
+        currentDate = Calendar.getInstance().time
 
         //Uid's
         uidMy = FirebaseAuth.getInstance().currentUser!!.uid
@@ -60,14 +67,18 @@ class ChatActivity : AppCompatActivity() {
         //Found user reference
         foundUserRef = FirebaseFirestore.getInstance()
                 .collection("Users").document("$uidLF")
-                .collection("rooms").document("$uidMy")
-                .collection("messages")
+                .collection("rooms").document("room" + RealmUtil().incrementValue())
+                .collection("$uidMy")
         //My chat room reference
         myRoomRef = FirebaseFirestore.getInstance()
                 .collection("Users").document("$uidMy")
-                .collection("rooms").document("$uidLF")
-                .collection("messages")
+                .collection("rooms").document("room" + RealmUtil().incrementValue())
+                .collection("$uidLF")
+        //Input ref
+        input = FirebaseFirestore.getInstance()
+                .collection("Users").document(uidMy!!)
 
+        typingTextView = findViewById(R.id.typingTextView)
 
         messageSent = findViewById(R.id.messageSentText)
         messageReceived = findViewById(R.id.messageReceivedText)
@@ -104,24 +115,37 @@ class ChatActivity : AppCompatActivity() {
         //send message btn clicked
         sendMessageButton?.setOnClickListener {
             onSendClick()
+            //TODO: Delete after test
+//            Toast.makeText(this, "${IncrementValue().queryLast()?.plus1}", Toast.LENGTH_SHORT).show()
         }
     }
 
 
     fun alertDialog() = MaterialDialog.Builder(this)
-                .title("You are leaving the conversation")
-                .content("Are you sure?")
-                .positiveText("Yes")
-                .negativeText("No")
-                .onPositive { dialog, which ->
-            listener()?.remove()
-            startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-            finish()
-        }
-                .onNegative { dialog, which ->
-            dialog.dismiss()
-        }.show()
+                .title("You are leaving the conversation").content("Are you sure?")
+                .positiveText("Yes").negativeText("No")
 
+                .onPositive { dialog, which ->
+                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+                    listener()?.remove()
+                    input?.set(InputModel(false, currentDate))
+                    PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
+                    PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
+                    //Remove typing indicator
+                    typingTextView?.visibility = View.GONE
+                    //Remove typing listener for user LF
+                    EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+                    messageInputText?.isEnabled = true
+                    messageInputText?.isFocusable = true
+                    finish()
+        }
+                .onNegative { dialog, which -> dialog.dismiss() }.show()
+
+//    //Adds blank last message so onStart listener will not query it
+//    fun lastMessage(last: Boolean?) {
+//        myRoomRef?.add(ChatModel("blank", "blank", currentDate))
+//        foundUserRef?.add(ChatModel("blank", "blank", currentDate))
+//    }
 
 
     //Register listener for live messages
@@ -131,10 +155,11 @@ class ChatActivity : AppCompatActivity() {
             return@addSnapshotListener
         }
 
-        if (snapshot != null && !snapshot.isEmpty && snapshot.documentChanges.last()?.document?.get("from")?.toString() == uidLF) {
-            val from = snapshot.documentChanges.last()?.document?.get("from")?.toString()
-            val message = snapshot.documentChanges.last()?.document?.get("message")?.toString()
-            val receivedQuery = ChatModel(from!!, message!!, currentTime)
+        if (snapshot != null && !snapshot.isEmpty
+                && snapshot.documents.last()["from"].toString() == uidLF) {
+            val from = snapshot.documents.last()["from"].toString()
+            val message = snapshot.documents.last()["message"].toString()
+            val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -147,7 +172,7 @@ class ChatActivity : AppCompatActivity() {
         if (messageInputText?.length() != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(uidMy!!, messageInputText?.text.toString(), currentTime)
+            val myMessage = ChatModel(uidMy!!, messageInputText?.text.toString(), currentDate)
             messages?.add(myMessage)
             if(messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -166,16 +191,30 @@ class ChatActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         listener()
+        //Check if I'm typing
+        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()
+        //Check if User's typing
+        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
+        //Presence == true
+        PresenceChecker(uidLF, typingTextView, messageInputText).getIn()
+        //Check if user LF is still in chat
+        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence()
     }
 
     override fun onBackPressed() {
-        //TODO: Add warning message about leaving
         alertDialog()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         listener()?.remove()
+        input?.set(InputModel(false, currentDate))
+        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
+        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
+        typingTextView?.visibility = View.GONE
+        messageInputText?.isEnabled = true
+        messageInputText?.isFocusable = true
     }
 }
 

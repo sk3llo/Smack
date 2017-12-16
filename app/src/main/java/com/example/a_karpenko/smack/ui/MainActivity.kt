@@ -1,6 +1,10 @@
 package com.example.a_karpenko.smack.ui
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
@@ -16,7 +20,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.core.MyOptionsChecker
+import com.example.a_karpenko.smack.core.queryData.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
@@ -40,6 +44,10 @@ class MainActivity : AppCompatActivity() {
     var userName: TextView? = null
     var userEmail: TextView? = null
     var snackBar: Snackbar? = null
+
+    //Connecting manager
+    var connectiong : ConnectivityManager? = null
+    var connectiongInfo: NetworkInfo? = null
 
     //Gender
     var maleGenderMy: TextView? = null
@@ -79,6 +87,10 @@ class MainActivity : AppCompatActivity() {
         //Realm
         Realm.init(this)
         realm = Realm.getDefaultInstance()
+
+        //Connection
+        connectiong = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectiongInfo = connectiong?.activeNetworkInfo
 
 
         //Main choose chat person vars
@@ -156,10 +168,18 @@ class MainActivity : AppCompatActivity() {
         //Start searching for chat person
         val startChat: Button = findViewById(R.id.startChat)
         startChat.setOnClickListener {
-            startChat()
+            var isWifi: Boolean? = connectiongInfo?.type == ConnectivityManager.TYPE_WIFI
+            var isMobile: Boolean? = connectiongInfo?.type == ConnectivityManager.TYPE_MOBILE
+            if (connectiongInfo != null && connectiongInfo?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
+                startChat()
+            } else {
+                Snackbar.make(findViewById<View>(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT).show()
+            }
         }
 
     }
+
+
 
     fun logoutButtonOnClicked(view: View) {
         AuthUI.getInstance()
@@ -182,6 +202,7 @@ class MainActivity : AppCompatActivity() {
 //        return channelList
 //    }
 
+
     fun startChat() {
         //check all optionsMy: false if empty, true if not
         if (MyOptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
@@ -191,11 +212,11 @@ class MainActivity : AppCompatActivity() {
             }
             //Start Waiting Activity
             startActivity(Intent(this@MainActivity, WaitingActivity::class.java))
+            finish()
             //Check and add me to db and my options to Firestore
             AddOptionsFirestore().addChosenOptions()
             //Start searching for chat
             RealmUtil().retrySearch(true)
-            finish()
         } else{
             return
         }

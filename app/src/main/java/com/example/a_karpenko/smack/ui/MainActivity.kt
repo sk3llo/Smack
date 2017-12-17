@@ -12,7 +12,6 @@ import android.view.View
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
@@ -28,7 +27,6 @@ import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
 import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
 import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -79,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_drawer)
+        setContentView(R.layout.main_activity)
 
         this.context = context
 
@@ -126,27 +124,6 @@ class MainActivity : AppCompatActivity() {
             rememberChoice()
         }
 
-
-        //Change Nav Header text to user name/email
-        val navView = findViewById<NavigationView>(R.id.nav_header_main)
-        val header = navView.getHeaderView(0)
-        userName = header.findViewById(R.id.userNameNavHeader)
-        userEmail = header.findViewById(R.id.userEmailNavHeader)
-        userName?.text = if (TextUtils.isEmpty(user?.displayName.toString())) "No email" else user?.displayName.toString()
-        userEmail?.text = if (TextUtils.isEmpty(user?.email.toString())) "No email" else user?.email.toString()
-
-
-        //Toolbar
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        //Drawer
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        val toggle = ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
-
             //Click listeners
         //Age Looking for
         under18LookingFor?.setOnTouchListener(LookingForAgeChooser())
@@ -181,30 +158,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
-
-    fun logoutButtonOnClicked(view: View) {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener { task ->
-                    // user is now signed out
-                    if (task.isSuccessful) {
-                        startActivity(Intent(this@MainActivity, Login::class.java))
-                        finish()
-                    } else {
-                        snackBar = Snackbar.make(CoordinatorLayout(this), "Logout failed", Snackbar.LENGTH_SHORT)
-                        snackBar?.show()
-                    }
-                }
-    }
-
-//    fun addChannelBtnClicked(view: View): ListView {
-//        val channelList = findViewById<ListView>(R.id.channel_list)
-//        channelList.addHeaderView(view)
-//        return channelList
-//    }
-
 
     fun startChat() {
         //check all optionsMy: false if empty, true if not
@@ -297,17 +250,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START)
-        } else {
-            if (!WaitingActivity().isDestroyed){
-                WaitingActivity().finish()
-            }
-            finish()
-//            System.exit(0)
-        }
+        if (!WaitingActivity().isDestroyed){
+            WaitingActivity().finish()
+        finish()
+//         System.exit(0)
     }
+}
 
     override fun onStart() {
         super.onStart()

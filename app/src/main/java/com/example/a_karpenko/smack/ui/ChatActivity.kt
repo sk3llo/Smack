@@ -26,7 +26,6 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.vicpin.krealmextensions.queryLast

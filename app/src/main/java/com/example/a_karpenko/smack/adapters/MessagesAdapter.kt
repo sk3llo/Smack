@@ -9,7 +9,6 @@ import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -23,11 +22,6 @@ val myRoomRef = FirebaseFirestore.getInstance()
                 .collection("rooms").document("${RealmUtil().foundUserUid()}")
                 .collection("messages")
 
-val myQuery = myRoomRef.orderBy("timestamp")
-
-val MYOPTIONS = FirestoreRecyclerOptions.Builder<ChatModel>()
-.setQuery(myQuery, ChatModel::class.java)
-.build()
 
 val send: Int? = 1
 val receive: Int? = 2

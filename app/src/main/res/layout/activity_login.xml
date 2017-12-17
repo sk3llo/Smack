@@ -4,7 +4,6 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              android:orientation="vertical"
-                                             android:background="@drawable/color_purple_green_gradient"
                                              android:id="@+id/constr"
         >
 
@@ -28,7 +27,6 @@
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/smoke_logo"
             android:id="@+id/imageView"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="63dp"

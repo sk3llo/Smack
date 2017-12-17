@@ -2,8 +2,8 @@ package com.example.a_karpenko.smack.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.net.Network
 import android.net.NetworkInfo
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
@@ -23,6 +23,7 @@ import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.queryData.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
+import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
 import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
 import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
@@ -36,6 +37,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    var context: Context? = null
+
     //Firebase
     var auth: FirebaseAuth? = null
     var user: FirebaseUser? = null
@@ -46,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     var snackBar: Snackbar? = null
 
     //Connecting manager
-    var connectiong : ConnectivityManager? = null
-    var connectiongInfo: NetworkInfo? = null
+    var cm: ConnectivityManager? = null
+    var ni: NetworkInfo? = null
 
     //Gender
     var maleGenderMy: TextView? = null
@@ -74,10 +77,11 @@ class MainActivity : AppCompatActivity() {
 
     var currentDate: Date? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawer)
+
+        this.context = context
 
         //FIREBASE
         auth = FirebaseAuth.getInstance()
@@ -89,9 +93,8 @@ class MainActivity : AppCompatActivity() {
         realm = Realm.getDefaultInstance()
 
         //Connection
-        connectiong = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectiongInfo = connectiong?.activeNetworkInfo
-
+        cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        ni = cm?.activeNetworkInfo
 
         //Main choose chat person vars
         maleGenderMy = findViewById(R.id.maleGenderMy)
@@ -164,13 +167,13 @@ class MainActivity : AppCompatActivity() {
         femaleGenderLookingFor?.setOnClickListener(GenderChooser())
 
 
-
         //Start searching for chat person
         val startChat: Button = findViewById(R.id.startChat)
         startChat.setOnClickListener {
-            var isWifi: Boolean? = connectiongInfo?.type == ConnectivityManager.TYPE_WIFI
-            var isMobile: Boolean? = connectiongInfo?.type == ConnectivityManager.TYPE_MOBILE
-            if (connectiongInfo != null && connectiongInfo?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
+            //Check Internet connection
+            val isWifi: Boolean? = ni?.type == ConnectivityManager.TYPE_WIFI
+            val isMobile: Boolean? = ni?.type == ConnectivityManager.TYPE_MOBILE
+            if (ni != null && ni?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
                 startChat()
             } else {
                 Snackbar.make(findViewById<View>(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT).show()
@@ -310,6 +313,8 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         //Stop Searching for new chat
         RealmUtil().retrySearch(false)
+        //Register Broadcast receiver
+        this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
     }
 
     override fun onDestroy() {

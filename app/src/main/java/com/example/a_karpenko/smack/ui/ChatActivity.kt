@@ -1,6 +1,11 @@
 package com.example.a_karpenko.smack.ui
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.support.design.R.drawable.abc_ic_ab_back_material
 import android.support.v7.app.AppCompatActivity
@@ -19,6 +24,7 @@ import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.chat.IncrementValue
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
+import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -38,23 +44,30 @@ class ChatActivity : AppCompatActivity() {
     var recyclerView: RecyclerView? = null
     var adapter: MessagesAdapter? = null
     var toolbar: Toolbar? = null
-
+    //Timestamp
     var currentDate: Date? = null
-
+    //Uid's
     var uidMy: String? = ""
     var uidLF: String? = ""
-
+    //Refs
     var foundUserRef: CollectionReference? = null
     var myRoomRef: CollectionReference? = null
     var messages: ArrayList<ChatModel>? = null
     //Input
     var input: DocumentReference? = null
     var typingTextView: TextView? = null
+    //Network
+    var cm : ConnectivityManager? = null
+    var ni: NetworkInfo? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
+
+        //Network info
+        cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        ni = cm?.activeNetworkInfo
 
         //RecyclerView Array
         messages = ArrayList()
@@ -114,9 +127,14 @@ class ChatActivity : AppCompatActivity() {
 
         //send message btn clicked
         sendMessageButton?.setOnClickListener {
-            onSendClick()
-            //TODO: Delete after test
-//            Toast.makeText(this, "${IncrementValue().queryLast()?.plus1}", Toast.LENGTH_SHORT).show()
+            //Check Network connection
+            val isWifi: Boolean? = ni?.type == ConnectivityManager.TYPE_WIFI
+            val isMobile: Boolean? = ni?.type == ConnectivityManager.TYPE_MOBILE
+            if (ni != null && ni?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
+                onSendClick()
+            } else {
+                Toast.makeText(this, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -190,6 +208,9 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        //Broadcast network state
+        this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+        //Start listening for messages
         listener()
         //Check if I'm typing
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()

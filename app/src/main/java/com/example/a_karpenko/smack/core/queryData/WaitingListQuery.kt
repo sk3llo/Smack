@@ -110,7 +110,7 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
         optionsMY.get().addOnCompleteListener { optMy ->
                         optionsLF.get().addOnCompleteListener { optLF ->
-                            if (ni != null && ni?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
+                            if (ni != null && ni.isConnected && isWifi!! || isMobile!!) {
                                 if (optMy.result.exists() && optLF.result.exists()) {
 
                                     //Found user's refs

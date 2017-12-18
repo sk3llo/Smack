@@ -18,6 +18,7 @@ import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import org.jetbrains.anko.doAsync
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -67,9 +68,9 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
     //Check if all users on waiting list
     fun checkWL() {
-        AsyncTask.execute {
+        doAsync{
         WL.get().addOnCompleteListener { snap ->
-            snap.result.documents.all { all ->
+            snap.result.documents.forEach { all ->
                 val searchUsers = all["waitingListOn"]
                 val ref = all.reference
                 when {
@@ -84,7 +85,6 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
                     else -> {
                     }
                 }
-                return@all false
             }
         }
     }
@@ -112,457 +112,559 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
                         optionsLF.get().addOnCompleteListener { optLF ->
                             if (ni != null && ni.isConnected && isWifi!! || isMobile!!) {
                                 if (optMy.result.exists() && optLF.result.exists()) {
+                                    doAsync {
 
-                                    //Found user's refs
-                                    val maleGenderMy = optMy.result["maleGenderMy"]
-                                    val femaleGenderMy = optMy.result["femaleGenderMy"]
-                                    val under18My = optMy.result["under18My"]
-                                    val from19to22My = optMy.result["from19to22My"]
-                                    val from23to26My = optMy.result["from23to26My"]
-                                    val from27to35My = optMy.result["from27to35My"]
-                                    val over36My = optMy.result["over36My"]
+                                        //Found user's refs
+                                        val maleGenderMy = optMy.result["maleGenderMy"]
+                                        val femaleGenderMy = optMy.result["femaleGenderMy"]
+                                        val under18My = optMy.result["under18My"]
+                                        val from19to22My = optMy.result["from19to22My"]
+                                        val from23to26My = optMy.result["from23to26My"]
+                                        val from27to35My = optMy.result["from27to35My"]
+                                        val over36My = optMy.result["over36My"]
 
-                                    //LF refs
-                                    val maleGenderLF = optLF.result["maleGenderLookingFor"]
-                                    val femaleGenderLF = optLF.result["femaleGenderLookingFor"]
-                                    val under18LF = optLF.result["under18LookingFor"]
-                                    val from19to22LF = optLF.result["from19to22LookingFor"]
-                                    val from23to26LF = optLF.result["from23to26LookingFor"]
-                                    val from27to35LF = optLF.result["from27to35LookingFor"]
-                                    val over36LF = optLF.result["over36LookingFor"]
+                                        //LF refs
+                                        val maleGenderLF = optLF.result["maleGenderLookingFor"]
+                                        val femaleGenderLF = optLF.result["femaleGenderLookingFor"]
+                                        val under18LF = optLF.result["under18LookingFor"]
+                                        val from19to22LF = optLF.result["from19to22LookingFor"]
+                                        val from23to26LF = optLF.result["from23to26LookingFor"]
+                                        val from27to35LF = optLF.result["from27to35LookingFor"]
+                                        val over36LF = optLF.result["over36LookingFor"]
 
-                                    //                                            ***Start checking options here***
+                                        //                                            ***Start checking options here***
 
-                                    //                      If I'm male LF MALE
-                                    //Weird, but LF male <18
-                                    if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26LF == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 19 to 22 male LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 23 to 26 male LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 27 to 35 male LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //Over 36 male LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    }
+                                        //                      If I'm male LF MALE
+                                        //Weird, but LF male <18
+                                        if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26LF == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 19 to 22 male LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 23 to 26 male LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 27 to 35 male LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //Over 36 male LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        }
 
-                                    //ME MALE LF FEM check
-                                    //LF Fem <18
-                                    else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26LF == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 19 to 22 female LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 23 to 26 female LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 27 to 35 female LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //Over 36 female LF
-                                    } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    }
+                                        //ME MALE LF FEM check
+                                        //LF Fem <18
+                                        else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26LF == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 19 to 22 female LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 23 to 26 female LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 27 to 35 female LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //Over 36 female LF
+                                        } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        }
 
-                                    //                  ***ME FEMALE LF MALE
-                                    //LF male <18
-                                    else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26LF == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
-                                            && maleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 19 to 22 male LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 23 to 26 male LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 27 to 35 male LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //Over 36 male LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
-                                            && maleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    }
+                                        //                  ***ME FEMALE LF MALE
+                                        //LF male <18
+                                        else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26LF == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
+                                                && maleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 19 to 22 male LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 23 to 26 male LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 27 to 35 male LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //Over 36 male LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
+                                                && maleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        }
 
-                                    //                   *** ME FEMALE LF MALE check ***
-                                    //LF Fem <18
-                                    else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26LF == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
-                                            && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 19 to 22 female LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
-                                            && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 23 to 26 female LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
-                                            && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //From 27 to 35 female LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
-                                            && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                        //Over 36 female LF
-                                    } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        checkOut(foundUser)
-                                    } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
-                                            && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
-                                            && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        checkOut(foundUser)
+                                        //                   *** ME FEMALE LF MALE check ***
+                                        //LF Fem <18
+                                        else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26LF == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
+                                                && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 19 to 22 female LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
+                                                && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 23 to 26 female LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
+                                                && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //From 27 to 35 female LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
+                                                && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                            //Over 36 female LF
+                                        } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
+                                                && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
+                                                && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
+                                            checkOut(foundUser)
+                                            return@doAsync
+                                        }
                                     }
                                 }
 
@@ -590,13 +692,13 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
     //Start Chat activity
     private fun checkOut(foundUser: String) {
-        //Stop searching (took from Realm)
-        RealmUtil().retrySearch(false)
-        RealmUtil().addFounduserUid(foundUser)
         //Start chat activity
         val intent = Intent(context, ChatActivity::class.java)
         intent.putExtra("foundUser", foundUser)
         context?.startActivity(intent)
         activity?.finish()
+        //Stop searching (took from Realm)
+        RealmUtil().retrySearch(false)
+        RealmUtil().addFounduserUid(foundUser)
     }
 }

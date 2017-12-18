@@ -59,6 +59,8 @@ class ChatActivity : AppCompatActivity() {
     var cm : ConnectivityManager? = null
     var ni: NetworkInfo? = null
 
+    var rooms: CollectionReference? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,13 +81,17 @@ class ChatActivity : AppCompatActivity() {
         //Found user reference
         foundUserRef = FirebaseFirestore.getInstance()
                 .collection("Users").document("$uidLF")
-                .collection("rooms").document("room" + RealmUtil().incrementValue())
-                .collection("$uidMy")
+                .collection("rooms").document("$uidMy")
+                .collection("messages")
         //My chat room reference
         myRoomRef = FirebaseFirestore.getInstance()
                 .collection("Users").document("$uidMy")
-                .collection("rooms").document("room" + RealmUtil().incrementValue())
-                .collection("$uidLF")
+                .collection("rooms").document("$uidLF")
+                .collection("messages")
+
+        rooms = FirebaseFirestore.getInstance()
+                .collection("Rooms")
+
         //Input ref
         input = FirebaseFirestore.getInstance()
                 .collection("Users").document(uidMy!!)
@@ -166,16 +172,18 @@ class ChatActivity : AppCompatActivity() {
 
 
     //Register listener for live messages
-    fun listener() = myRoomRef?.addSnapshotListener { snapshot, exception ->
+    fun listener() = foundUserRef?.addSnapshotListener { snapshot, exception ->
         if (exception != null) {
             Toast.makeText(this.applicationContext, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             return@addSnapshotListener
         }
 
         if (snapshot != null && !snapshot.isEmpty
-                && snapshot.documents.last()["from"].toString() == uidLF) {
-            val from = snapshot.documents.last()["from"].toString()
-            val message = snapshot.documents.last()["message"].toString()
+                && snapshot.documentChanges.last().document.exists()
+                && snapshot.documents.size < snapshot.documentChanges.size
+                && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
+            val from = snapshot.documentChanges.last().document["from"].toString()
+            val message = snapshot.documentChanges.last().document["message"].toString()
             val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
@@ -185,25 +193,31 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
+
     fun onSendClick() {
+
         if (messageInputText?.length() != 0) {
             //User's uid,name etc
             //Add data to model
             val myMessage = ChatModel(uidMy!!, messageInputText?.text.toString(), currentDate)
             messages?.add(myMessage)
-            if(messages?.size != 0) {
+            if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
             messageSent?.text = messageInputText?.text.toString()
 
             //Add data to Firestore
-            foundUserRef?.add(myMessage)
-            myRoomRef?.add(myMessage)
+//            foundUserRef?.get()?.addOnCompleteListener { fu ->
+                myRoomRef?.get()?.addOnCompleteListener { me ->
+//                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
+                    myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
+                }
+//            }
             //Clear input
             messageInputText?.text = null
             Log.d("Chat Activity***** ", "Message sent ")
-        }
     }
+}
 
     override fun onStart() {
         super.onStart()
@@ -223,6 +237,18 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         alertDialog()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        listener()?.remove()
+        input?.set(InputModel(false, currentDate))
+        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
+        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
+        typingTextView?.visibility = View.GONE
+        messageInputText?.isEnabled = true
+        messageInputText?.isFocusable = true
     }
 
     override fun onDestroy() {

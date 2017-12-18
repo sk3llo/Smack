@@ -18,8 +18,8 @@ import kotlin.collections.ArrayList
 var uidMy = FirebaseAuth.getInstance().currentUser?.uid
 
 val myRoomRef = FirebaseFirestore.getInstance()
-                .collection("Users").document("$uidMy")
-                .collection("rooms").document("${RealmUtil().foundUserUid()}")
+                .collection("Users").document("${RealmUtil().foundUserUid()}")
+                .collection("rooms").document("$uidMy")
                 .collection("messages")
 
 

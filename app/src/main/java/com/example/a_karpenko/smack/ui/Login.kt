@@ -26,10 +26,12 @@ class Login : AppCompatActivity() {
             if (user == null) {
                 FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener {
                     startActivity(Intent(this@Login, MainActivity::class.java))
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     finish()
                 }
             } else {
                 startActivity(Intent(this@Login, MainActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 finish()
             }
         }, SPLASH_TIME_OUT?.toLong()!!)

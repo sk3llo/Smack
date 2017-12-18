@@ -33,7 +33,7 @@ class EditTextWatcher(private var editText: EditText?, foundUser: String?, priva
         if (snapshot.exists() && snapshot["input"] == true){
             typeView?.text = "Someone is typing..."
             typeView?.visibility = View.VISIBLE
-        } else if(snapshot["input"] == false){
+        } else if(snapshot.exists() && snapshot["input"] == false){
             typeView?.visibility = View.GONE
         }
     }

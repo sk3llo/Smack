@@ -21,7 +21,6 @@ import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
-import com.example.a_karpenko.smack.models.chat.IncrementValue
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
@@ -29,6 +28,7 @@ import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.vicpin.krealmextensions.queryLast
+import org.jetbrains.anko.doAsync
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -149,6 +149,8 @@ class ChatActivity : AppCompatActivity() {
                 .positiveText("Yes").negativeText("No")
 
                 .onPositive { dialog, which ->
+                    RealmUtil().started(0)
+
                     startActivity(Intent(this@ChatActivity, MainActivity::class.java))
                     listener()?.remove()
                     input?.set(InputModel(false, currentDate))
@@ -221,19 +223,24 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        //Broadcast network state
+        RealmUtil().started(0)
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
-        //Start listening for messages
-        listener()
-        //Check if I'm typing
-        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()
-        //Check if User's typing
-        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
-        //Presence == true
-        PresenceChecker(uidLF, typingTextView, messageInputText).getIn()
-        //Check if user LF is still in chat
-        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence()
+        doAsync {
+            //Broadcast network state
+            //Start listening for messages
+            listener()
+            //Check if I'm typing
+            EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()
+            //Check if User's typing
+            EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
+            //Presence == true
+            PresenceChecker(uidLF, typingTextView, messageInputText).getIn()
+            //Check if user LF is still in chat
+            PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence()
+        }
     }
+
+
 
     override fun onBackPressed() {
         alertDialog()
@@ -241,6 +248,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        RealmUtil().started(0)
         listener()?.remove()
         input?.set(InputModel(false, currentDate))
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
@@ -253,6 +261,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        RealmUtil().started(0)
         listener()?.remove()
         input?.set(InputModel(false, currentDate))
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()

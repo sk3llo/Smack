@@ -149,7 +149,6 @@ class ChatActivity : AppCompatActivity() {
                 .positiveText("Yes").negativeText("No")
 
                 .onPositive { dialog, which ->
-                    RealmUtil().started(0)
 
                     startActivity(Intent(this@ChatActivity, MainActivity::class.java))
                     listener()?.remove()
@@ -223,7 +222,6 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        RealmUtil().started(0)
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
             //Broadcast network state
@@ -248,7 +246,6 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        RealmUtil().started(0)
         listener()?.remove()
         input?.set(InputModel(false, currentDate))
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
@@ -261,7 +258,6 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        RealmUtil().started(0)
         listener()?.remove()
         input?.set(InputModel(false, currentDate))
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()

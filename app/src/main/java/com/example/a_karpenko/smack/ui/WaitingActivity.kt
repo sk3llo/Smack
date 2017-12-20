@@ -39,10 +39,8 @@ class WaitingActivity: AppCompatActivity() {
 
 
         //Start comparing options and searching for chat
-        if (RealmUtil().retrySearchForChat()!!){
-            WaitingListQuery(this,this).checkWL()
+        WaitingListQuery(this,this).checkWL()
 //            checkWListener()
-        }
 
      }
 
@@ -67,7 +65,6 @@ class WaitingActivity: AppCompatActivity() {
     fun stopSearch(view: View?){
 //        checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
-        RealmUtil().retrySearch(false)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
@@ -76,7 +73,6 @@ class WaitingActivity: AppCompatActivity() {
         super.onBackPressed()
 //        checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
-        RealmUtil().retrySearch(false)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
@@ -85,6 +81,5 @@ class WaitingActivity: AppCompatActivity() {
         super.onDestroy()
 //        checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
-        RealmUtil().retrySearch(false)
     }
 }

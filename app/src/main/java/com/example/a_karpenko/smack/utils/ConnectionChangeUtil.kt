@@ -5,11 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.view.View
-import android.widget.Button
 import android.widget.Toast
-import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.ui.MainActivity
 
 //Start the Broadcast to check if user is connected to the Internet
 class ConnectionChangeUtil: BroadcastReceiver() {

@@ -2,7 +2,6 @@ package com.example.a_karpenko.smack.utils
 
 import android.view.View
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.chat.SearchForChatUtil
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.models.my_age.MyAgeModel
 import com.example.a_karpenko.smack.models.age_looking_for.From19to22
@@ -11,9 +10,7 @@ import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
-import com.example.a_karpenko.smack.models.chat.StartedActivityPoJo
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
-import com.google.firebase.firestore.DocumentReference
 import com.vicpin.krealmextensions.*
 import io.realm.*
 
@@ -175,19 +172,6 @@ open class RealmUtil {
     fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
     fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
 
-    //Retry search for chat
-    fun retrySearch(retry: Boolean?){
-        try {
-            realm?.beginTransaction()
-            val retrySearchForChat = realm?.createObject(SearchForChatUtil::class.java, getNextKey(SearchForChatUtil()))
-            retrySearchForChat?.retryChatSearch = retry
-            realm?.commitTransaction()
-        } finally {
-            realm?.close()
-        }
-    }
-    fun retrySearchForChat(): Boolean? = SearchForChatUtil().queryLast()?.retryChatSearch
-
     //Add found user uid to Realm
     fun addFounduserUid(uid: String?){
         try {
@@ -200,19 +184,5 @@ open class RealmUtil {
         }
     }
     fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
-
-    //For chat rooms
-    fun started(start: Int?) {
-        try {
-            realm?.beginTransaction()
-            val value = realm?.createObject(StartedActivityPoJo::class.java, getNextKey(StartedActivityPoJo()))
-            value?.started = start
-            realm?.commitTransaction()
-        } finally {
-            realm?.close()
-        }
-    }
-
-    fun getFoundUserOpenChat(): String? = FilteredUsersOpenChat()?.queryLast()?.foundUserUid
 
 }

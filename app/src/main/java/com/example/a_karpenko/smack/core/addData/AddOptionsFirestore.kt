@@ -2,10 +2,8 @@ package com.example.a_karpenko.smack.core.addData
 
 import android.util.Log
 import com.example.a_karpenko.smack.models.firestore.OptionsMyModel
-import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.models.firestore.OptionsLFModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*

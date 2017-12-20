@@ -77,28 +77,16 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
     fun checkWL() =
             WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
                 Log.d("WAITINGLISTQUERY****** ", "MYUID********::::  $uidMy")
-                var list = doc.result.documents.toMutableList()
+                val list = doc.result.documents.toMutableList()
                 list.filter {
                     it.reference.id != uidMy
                 }.forEach {
                     if (myArray?.size!! <= 0) {
                         checkOptions(it.reference)
                         Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
-                    } else {
-                        return@forEach
                     }
                 }
             }
-
-    fun afterChecker(foundUser: DocumentReference){
-        RealmUtil().getFoundUserOpenChat()
-//        checkOut()
-        Log.d("WaitingListQuery***** ", "list = ${RealmUtil()?.getFoundUserOpenChat()}")
-//        if (list.count() >= 2){
-//            checkWL().remove()
-//            checkOut(list.elementAt(0))
-//        }
-    }
 
     //    Check options for user who's true on waiting list
     fun checkOptions(foundUser: DocumentReference) {
@@ -148,9 +136,11 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
                                     if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        myArray?.add(foundUser)
-                                        checkOut(myArray!![1])
-                                        Log.d("WAITINGLISTQUERY****** ", "MY ARRAY SIZE********::::  ${myArray?.size}")
+                                        if (myArray?.size!! <= 0) {
+                                            myArray.add(foundUser)
+                                            checkOut(myArray.elementAt(0))
+                                            Log.d("WAITINGLISTQUERY****** ", "MY ARRAY SIZE********::::  ${myArray.size}")
+                                        }
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
@@ -596,15 +586,13 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
     //Start Chat activity
     private fun checkOut(foundUser: DocumentReference) {
-        Log.d("WaitingListQuery**** ", "CONNECTED USERS: ${foundUser.id}")
+        Log.d("WaitingListQuery**** ", "CONNECTED USER: ${foundUser.id}")
         //Start Chat Activity
         val intent = Intent(context, ChatActivity::class.java)
         intent.putExtra("foundUser", foundUser.id)
         context?.startActivity(intent)
         activity?.finish()
         //Stop searching (took from Realm)
-        RealmUtil().retrySearch(false)
         RealmUtil().addFounduserUid(foundUser.id)
-
     }
 }

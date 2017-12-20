@@ -172,7 +172,6 @@ class MainActivity : AppCompatActivity() {
             //Check and add me to db and my options to Firestore
             AddOptionsFirestore().addChosenOptions()
             //Start searching for chat
-            RealmUtil().retrySearch(true)
         } else{
             return
         }
@@ -259,9 +258,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        RealmUtil().started(0)
         //Stop Searching for new chat
-        RealmUtil().retrySearch(false)
         //Register Broadcast receiver
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
     }

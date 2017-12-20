@@ -259,6 +259,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        RealmUtil().started(0)
         //Stop Searching for new chat
         RealmUtil().retrySearch(false)
         //Register Broadcast receiver

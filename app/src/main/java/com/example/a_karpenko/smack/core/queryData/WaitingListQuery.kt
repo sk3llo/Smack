@@ -66,19 +66,19 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
 
 
     //Check if all users on waiting list
-//    fun checkWL() =
-//            WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
-//                Log.d("WAITINGLISTQUERY****** ", "MYUID********::::  $uidMy")
-//                val list = doc.result.documents.toMutableList()
-//                list.filter {
-//                    it.reference.id != uidMy
-//                }.forEach {
-//                    if (myArray?.size!! <= 0) {
-//                        checkOptions(it.reference)
-//                        Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
-//                    }
-//                }
-//            }
+    fun checkWL() =
+            WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
+                Log.d("WAITINGLISTQUERY****** ", "MYUID********::::  $uidMy")
+                val list = doc.result.documents.toMutableList()
+                list.filter {
+                    it.reference.id != uidMy
+                }.forEach {
+                    if (myArray?.size!! <= 0) {
+                        checkOptions(it.reference)
+                        Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
+                    }
+                }
+            }
 
     //    Check options for user who's true on waiting list
     fun checkOptions(foundUser: DocumentReference) {

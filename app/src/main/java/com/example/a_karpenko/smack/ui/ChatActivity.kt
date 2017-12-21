@@ -184,7 +184,8 @@ class ChatActivity : AppCompatActivity() {
 
         if (snapshot != null && !snapshot.isEmpty
                 && snapshot.documentChanges.last().document.exists()
-                && snapshot.documents.size < snapshot.documentChanges.size
+                //TODO: Fix first message
+//                && snapshot.documents.size < snapshot.documentChanges.size
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()

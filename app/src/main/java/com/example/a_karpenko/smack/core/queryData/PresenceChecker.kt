@@ -38,6 +38,10 @@ class PresenceChecker(foundUser: String?, private var typeView: TextView?, priva
             typeView?.visibility = View.VISIBLE
             editText?.isEnabled = false
             editText?.isFocusable = false
+        } else if (snapshot.exists() && snapshot["presence"] == true){
+            typeView?.visibility = View.GONE
+            editText?.isEnabled = true
+            editText?.isFocusable = true
         }
     }
 }

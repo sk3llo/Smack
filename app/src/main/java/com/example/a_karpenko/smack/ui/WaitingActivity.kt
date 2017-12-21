@@ -45,7 +45,7 @@ class WaitingActivity: AppCompatActivity() {
         snapshotList = ArrayList()
 
         //Start comparing options and searching for chat
-//        WaitingListQuery(this,this).checkWL()
+        WaitingListQuery(this,this).checkWL()
         checkWListener()
 
      }
@@ -66,21 +66,20 @@ class WaitingActivity: AppCompatActivity() {
 //                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(snapshotList[0])
 //                        }
 //                    } else
-                        if(last.last().type == DocumentChange.Type.MODIFIED)
-                            if (last.last().document.id != uidMy && last.last().document["waitingListOn"] == true && snapshotList?.size!! <= 0){
-                                WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(last.last().document.reference)
-                            }
-
-//                    if (last.document.exists() && last.document.id != uidMy && last.document["waitingListOn"] == true && snapshotList?.size!! <= 0) {
-//                        if (snapshotList?.size <= 1) {
-//                            snapshotList.add(last.document.reference)
-//                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(snapshotList.elementAt(0))
-//                            Log.d("WaitingActivity***** ", "COMPARING OPTIONS OF USER : ${last.document.reference.id}}")
-//                        }
-//                    }
+                last.forEach {
+                    if (it.type == DocumentChange.Type.MODIFIED) {
+                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0) {
+                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
+                        }
+                    }
+                    if (it.type == DocumentChange.Type.ADDED) {
+                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0) {
+                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
+                        }
+                    }
+                }
             }
-//        }
-    }
+      }
 
 
     fun stopSearch(view: View?){

@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
             //Check Internet connection
             val isWifi: Boolean? = ni?.type == ConnectivityManager.TYPE_WIFI
             val isMobile: Boolean? = ni?.type == ConnectivityManager.TYPE_MOBILE
-            if (ni != null && ni?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
+            if (ni != null && ni?.isConnectedOrConnecting!! || isWifi!! || isMobile!!) {
                 startChat()
             } else {
                 Snackbar.make(findViewById<View>(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT).show()

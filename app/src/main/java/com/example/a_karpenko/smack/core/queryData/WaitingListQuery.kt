@@ -26,18 +26,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.properties.Delegates
 
+var activity: WaitingActivity? = null
 //                  Main class for querying Firestore and find suitable person for chat
 
-open class WaitingListQuery(context: Context, activity: WaitingActivity) {
-
-    //Need to finish WaitingActivity
-    var activity: WaitingActivity? = null
-    var context: Context? = null
-
-    init {
-        this.context = context
-        this.activity = activity
-    }
+open class WaitingListQuery(var context: Context, var activity: WaitingActivity) {
 
     //Current user gender and age
     //Taken from Realm
@@ -74,19 +66,19 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
 
     //Check if all users on waiting list
-    fun checkWL() =
-            WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
-                Log.d("WAITINGLISTQUERY****** ", "MYUID********::::  $uidMy")
-                val list = doc.result.documents.toMutableList()
-                list.filter {
-                    it.reference.id != uidMy
-                }.forEach {
-                    if (myArray?.size!! <= 0) {
-                        checkOptions(it.reference)
-                        Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
-                    }
-                }
-            }
+//    fun checkWL() =
+//            WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
+//                Log.d("WAITINGLISTQUERY****** ", "MYUID********::::  $uidMy")
+//                val list = doc.result.documents.toMutableList()
+//                list.filter {
+//                    it.reference.id != uidMy
+//                }.forEach {
+//                    if (myArray?.size!! <= 0) {
+//                        checkOptions(it.reference)
+//                        Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
+//                    }
+//                }
+//            }
 
     //    Check options for user who's true on waiting list
     fun checkOptions(foundUser: DocumentReference) {
@@ -107,7 +99,7 @@ open class WaitingListQuery(context: Context, activity: WaitingActivity) {
 
             optionsMY.get().addOnCompleteListener { optMy ->
                 optionsLF.get().addOnCompleteListener { optLF ->
-                    if (ni != null && ni.isConnected && isWifi!! || isMobile!!) {
+                    if (ni != null && ni.isConnected || isWifi!! || isMobile!!) {
                         if (optMy.result.exists() && optLF.result.exists()) {
                             doAsync {
 

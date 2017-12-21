@@ -16,6 +16,7 @@ import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import org.jetbrains.anko.doAsync
 import java.util.*
 
 class WaitingActivity: AppCompatActivity() {
@@ -39,31 +40,31 @@ class WaitingActivity: AppCompatActivity() {
 
 
         //Start comparing options and searching for chat
-        WaitingListQuery(this,this).checkWL()
-//            checkWListener()
+//        WaitingListQuery(this,this).checkWL()
+        checkWListener()
 
      }
 
 
     //db Listener
-//    fun checkWListener() = db?.collection("WL")?.addSnapshotListener { snapshot, exception ->
-//        AsyncTask.execute {
-//            if (exception != null){
-//                Snackbar.make(findViewById(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT)
-//            }
-//            if (snapshot.documents.last().exists()) {
-//                val last = snapshot.documentChanges.last()
-//                if (last.document["waitingListOn"] == true && last.document.reference.id != uidMy) {
-//                    WaitingListQuery(this, this).checkOptions(last.document.reference)
-//                    Log.d("WaitingActivity***** ", "COMPARING OPTIONS OF USER : ${last.document.reference.id}}")
-//                }
-//            }
-//        }
-//    }
+    fun checkWListener() = db?.collection("WL")?.addSnapshotListener { snapshot, exception ->
+        doAsync {
+            if (exception != null){
+                Snackbar.make(findViewById(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT)
+            }
+            else {
+                var last = snapshot.documentChanges.last()
+                    if (last.document["waitingListOn"] == true && last.document.reference.id != uidMy) {
+                        WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(last.document.reference)
+                        Log.d("WaitingActivity***** ", "COMPARING OPTIONS OF USER : ${last.document.reference.id}}")
+                    }
+            }
+        }
+    }
 
 
     fun stopSearch(view: View?){
-//        checkWListener()?.remove()
+        checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
@@ -71,15 +72,21 @@ class WaitingActivity: AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-//        checkWListener()?.remove()
+        checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
+    override fun onStop() {
+        super.onStop()
+        checkWListener()?.remove()
+        db?.collection("WL")?.document("$uidMy")?.delete()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-//        checkWListener()?.remove()
+        checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
     }
 }

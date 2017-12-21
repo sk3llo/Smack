@@ -66,6 +66,9 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 
+        //Set image for chat background
+        window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
+
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         ni = cm?.activeNetworkInfo
@@ -135,7 +138,7 @@ class ChatActivity : AppCompatActivity() {
             //Check Network connection
             val isWifi: Boolean? = ni?.type == ConnectivityManager.TYPE_WIFI
             val isMobile: Boolean? = ni?.type == ConnectivityManager.TYPE_MOBILE
-            if (ni != null && ni?.isConnectedOrConnecting!! && isWifi!! || isMobile!!) {
+            if (ni != null && ni?.isConnectedOrConnecting!! || isWifi!! || isMobile!!) {
                 onSendClick()
             } else {
                 Toast.makeText(this, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
@@ -222,9 +225,9 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        //Broadcast network state
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
-            //Broadcast network state
             //Start listening for messages
             listener()
             //Check if I'm typing

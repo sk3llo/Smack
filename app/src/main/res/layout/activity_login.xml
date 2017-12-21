@@ -28,11 +28,11 @@
 
     <TextView
             android:id="@+id/splashScreenText"
-            android:text="Chat tick"
+            android:text="Random Life"
             android:textColor="#4286f4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="90sp"
+            android:layout_height="85dp"
+            android:textSize="70sp"
             android:textStyle="bold"
             android:lineSpacingExtra="12sp"
             app:layout_constraintRight_toRightOf="parent"
@@ -40,7 +40,7 @@
             tools:layout_constraintRight_creator="1"
             tools:layout_constraintLeft_creator="1"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="96dp"
+            android:layout_marginTop="140dp"
             android:fontFamily="cursive"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="8dp"

@@ -11,11 +11,11 @@ import android.widget.Toast
 class ConnectionChangeUtil: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val cm: ConnectivityManager? = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val ni: NetworkInfo? = cm?.activeNetworkInfo
+        val ni = cm?.activeNetworkInfo
         val wifi = ni?.type == ConnectivityManager.TYPE_WIFI
         val mobile= ni?.type == ConnectivityManager.TYPE_MOBILE
 
-        if (ni == null && !wifi || !mobile) {
+        if (ni == null && !ni?.isConnectedOrConnecting!!) {
             Toast.makeText(context, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
         }
     }

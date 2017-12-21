@@ -46,7 +46,7 @@
         </activity>
 
         <activity android:name=".ui.ChatActivity"
-                android:windowSoftInputMode="adjustResize">
+                android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>

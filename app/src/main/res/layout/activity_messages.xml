@@ -5,7 +5,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        >
 
     <android.support.design.widget.AppBarLayout
             android:layout_width="0dp"
@@ -32,6 +33,40 @@
     </android.support.design.widget.AppBarLayout>
 
 
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/edittext_rounded_corners"
+            android:orientation="horizontal"
+            app:layout_constraintRight_toLeftOf="@+id/sendMessagebutton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.506"
+            android:layout_marginBottom="16dp"
+            android:id="@+id/linearLayout">
+
+        <EditText
+                android:id="@+id/messageInputText"
+                android:background="@android:color/transparent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPersonName|textMultiLine"
+                android:ems="10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:hint="Message:"
+                app:layout_constraintRight_toLeftOf="@+id/sendMessagebutton"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:maxLines="5"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/black"/>
+
+    </LinearLayout>
+
+
     <android.support.v7.widget.RecyclerView
             android:id="@+id/messageList"
             android:layout_width="0dp"
@@ -40,28 +75,8 @@
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toTopOf="@+id/typingTextView">
     </android.support.v7.widget.RecyclerView>
-
-    <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/messageInputText"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:hint="Message:"
-            app:layout_constraintRight_toLeftOf="@+id/sendMessagebutton"
-            android:layout_marginRight="8dp"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="16dp"
-            android:maxLines="5"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/black"/>
 
     <ImageButton
             android:layout_width="wrap_content"
@@ -77,16 +92,17 @@
 
     <TextView
             android:text="User is typing..."
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/typingTextView"
-            android:layout_marginBottom="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/messageInputText"
-            android:layout_marginLeft="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:textSize="14sp"
-            android:textColor="@color/lightGrey"
-            android:layout_marginStart="8dp"
-            android:visibility="gone"/>
+            android:textSize="16sp"
+            android:textColor="#6e7572"
+            android:visibility="gone"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="12dp"/>
 
 </android.support.constraint.ConstraintLayout>

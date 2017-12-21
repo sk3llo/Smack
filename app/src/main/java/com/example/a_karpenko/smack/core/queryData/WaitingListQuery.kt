@@ -57,7 +57,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
     private val uidMy = FirebaseAuth.getInstance().currentUser?.uid
 
 
-    private val myArray: MutableList<DocumentReference>? = ArrayList()
+    val myArray: MutableList<DocumentReference>? = ArrayList()
 
     //Find user to chat
 
@@ -128,7 +128,8 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0) {
+                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                            activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
                                             Log.d("WAITINGLISTQUERY****** ", "MY ARRAY SIZE********::::  ${myArray.size}")

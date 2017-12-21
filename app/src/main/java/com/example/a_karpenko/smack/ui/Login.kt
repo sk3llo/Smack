@@ -6,17 +6,14 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.view.Window
 import android.view.WindowManager
-import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.google.firebase.auth.FirebaseAuth
-import org.jetbrains.anko.find
 
 
 class Login : AppCompatActivity() {
 
     var SPLASH_TIME_OUT: Int? = 2000
     val user = FirebaseAuth.getInstance().currentUser
-    var splashText: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

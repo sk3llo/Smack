@@ -37,11 +37,13 @@ class PresenceChecker(foundUser: String?, private var typeView: TextView?, priva
             typeView?.text = "User has left the chat."
             typeView?.visibility = View.VISIBLE
             editText?.isEnabled = false
+            editText?.setBackgroundColor(R.color.material_grey_300)
             editText?.isFocusable = false
-        } else if (snapshot.exists() && snapshot["presence"] == true){
-            typeView?.visibility = View.GONE
-            editText?.isEnabled = true
-            editText?.isFocusable = true
         }
+//        else if (snapshot.exists() && snapshot["presence"] == true){
+//            typeView?.visibility = View.GONE
+//            editText?.isEnabled = true
+//            editText?.isFocusable = true
+//        }
     }
 }

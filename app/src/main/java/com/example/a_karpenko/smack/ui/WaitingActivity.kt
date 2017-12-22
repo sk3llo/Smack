@@ -38,7 +38,7 @@ class WaitingActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.waiting_screen)
 
-        WPB = findViewById<ProgressBar>(R.id.waitingProgressBar)
+//        WPB = findViewById<ProgressBar>(R.id.waitingProgressBar)
         uidMy = FirebaseAuth.getInstance().currentUser?.uid
         db = FirebaseFirestore.getInstance()
 

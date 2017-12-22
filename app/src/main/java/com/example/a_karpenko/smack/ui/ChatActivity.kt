@@ -182,10 +182,10 @@ class ChatActivity : AppCompatActivity() {
             return@addSnapshotListener
         }
 
-        if (snapshot != null && !snapshot.isEmpty
-                && snapshot.documentChanges.last().document.exists()
-                //TODO: Fix first message
-//                && snapshot.documents.size < snapshot.documentChanges.size
+        if (snapshot != null && !snapshot.isEmpty && snapshot.documentChanges.last().document.exists()
+                //Do not show preveious messages
+                && snapshot.documents.size != snapshot.documentChanges.size
+                //Do not show messages from me as received
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
@@ -193,7 +193,6 @@ class ChatActivity : AppCompatActivity() {
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
-//            Log.d("ChatActivity***** ", "From: $from, Message: $message")
         }
     }
 
@@ -220,7 +219,6 @@ class ChatActivity : AppCompatActivity() {
 //            }
             //Clear input
             messageInputText?.text = null
-            Log.d("Chat Activity***** ", "Message sent ")
     }
 }
 

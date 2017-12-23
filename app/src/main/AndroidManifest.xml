@@ -17,9 +17,7 @@
             android:theme="@style/MyTheme"
             android:fullBackupContent="true">
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_application_id"/>
-
-        <activity android:name=".ui.Login">
+        <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

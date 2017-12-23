@@ -1,6 +1,5 @@
 package com.example.a_karpenko.smack.ui
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -13,7 +12,6 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
@@ -24,21 +22,25 @@ import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
-import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import com.vicpin.krealmextensions.queryLast
+import com.vanniktech.emoji.EmojiEditText
+import com.vanniktech.emoji.EmojiPopup
 import org.jetbrains.anko.doAsync
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
+    //Emojis
+    lateinit var emojiPopup: EmojiPopup
+    var emojiButton: Button? = null
+
     var messageSent: TextView? = null
     var messageReceived: TextView? = null
     var messageSentTime: TextView? = null
     var messageReceivedTime: TextView? = null
-    var messageInputText: EditText? = null
+    lateinit var messageInputText: EmojiEditText
     var sendMessageButton: AppCompatImageButton? = null
     var recyclerView: RecyclerView? = null
     var adapter: MessagesAdapter? = null
@@ -64,9 +66,10 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_messages)
+        setContentView(R.layout.chat_activity)
 
         //Set image for chat background
+        //And it has constant size even when keybord is opened
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
 
         //Network info
@@ -118,6 +121,13 @@ class ChatActivity : AppCompatActivity() {
             alertDialog()
         }
 
+        //Emojis
+        emojiButton = findViewById(R.id.emojiButton)
+        var rootView: View? = findViewById(R.id.chatRootView)
+        emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(messageInputText)
+        emojiButton?.setOnClickListener {
+            displayEmojis()
+        }
 
         //RecyclerView
         adapter = MessagesAdapter(messages!!)
@@ -162,17 +172,11 @@ class ChatActivity : AppCompatActivity() {
                     typingTextView?.visibility = View.GONE
                     //Remove typing listener for user LF
                     EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-                    messageInputText?.isEnabled = true
-                    messageInputText?.isFocusable = true
+                    messageInputText.isEnabled = true
+                    messageInputText.isFocusable = true
                     finish()
         }
                 .onNegative { dialog, which -> dialog.dismiss() }.show()
-
-//    //Adds blank last message so onStart listener will not query it
-//    fun lastMessage(last: Boolean?) {
-//        myRoomRef?.add(ChatModel("blank", "blank", currentDate))
-//        foundUserRef?.add(ChatModel("blank", "blank", currentDate))
-//    }
 
 
     //Register listener for live messages
@@ -196,7 +200,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    fun displayEmojis() {
 
+        if (emojiPopup.isShowing) {
+            emojiPopup.dismiss()
+        } else {
+            emojiPopup.toggle()
+        }
+    }
 
     fun onSendClick() {
 
@@ -254,8 +265,8 @@ class ChatActivity : AppCompatActivity() {
         PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
         PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
         typingTextView?.visibility = View.GONE
-        messageInputText?.isEnabled = true
-        messageInputText?.isFocusable = true
+        messageInputText.isEnabled = true
+        messageInputText.isFocusable = true
     }
 
     override fun onDestroy() {
@@ -266,8 +277,8 @@ class ChatActivity : AppCompatActivity() {
         PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
         PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
         typingTextView?.visibility = View.GONE
-        messageInputText?.isEnabled = true
-        messageInputText?.isFocusable = true
+        messageInputText.isEnabled = true
+        messageInputText.isFocusable = true
     }
 }
 

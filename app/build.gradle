@@ -38,6 +38,7 @@ dependencies {
     })
     //Support
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    compile "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:support-v13:${rootProject.ext.supportLibVersion}"
@@ -45,7 +46,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     // FirebaseUI
-    compile 'com.facebook.android:facebook-login:[4,5)'
     compile 'com.google.firebase:firebase-auth:11.4.2'
     compile 'com.google.firebase:firebase-core:11.4.2'
     compile 'com.google.firebase:firebase-crash:11.4.2'
@@ -56,9 +56,13 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.9.6.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.6.0'
     //Anko
-    compile "org.jetbrains.anko:anko:0.10.3"
+    compile 'org.jetbrains.anko:anko:0.10.3'
     //Progress bar
     compile 'com.github.zjywill:OverwatchProgress:1.5'
+    //Autofit textView
+    compile 'me.grantland:autofittextview:0.2.1'
+    //Emojis
+    compile 'com.vanniktech:emoji-ios:0.5.1'
 }
 repositories {
     mavenCentral()

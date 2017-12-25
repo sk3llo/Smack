@@ -3,6 +3,7 @@ package com.example.a_karpenko.smack.ui
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.inputmethodservice.Keyboard
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
@@ -13,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
@@ -27,6 +30,8 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.sdk25.coroutines.onFocusChange
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -114,9 +119,16 @@ class ChatActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.messageList)
         toolbar = findViewById(R.id.chatToolbar)
 
+        //Open keyboard on message input click
+        val imm: InputMethodManager = this.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        messageInputText.onClick {
+//            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+        }
+
         //Toolbar
         setSupportActionBar(toolbar)
-        toolbar?.setNavigationIcon(abc_ic_ab_back_material)
+        toolbar?.setNavigationIcon(R.drawable.chat_back_arrow)
         toolbar?.setNavigationOnClickListener {
             alertDialog()
         }
@@ -259,14 +271,14 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        listener()?.remove()
-        input?.set(InputModel(false, currentDate))
-        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
-        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-        typingTextView?.visibility = View.GONE
-        messageInputText.isEnabled = true
-        messageInputText.isFocusable = true
+//        listener()?.remove()
+//        input?.set(InputModel(false, currentDate))
+//        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+//        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
+//        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
+//        typingTextView?.visibility = View.GONE
+//        messageInputText.isEnabled = true
+//        messageInputText.isFocusable = true
     }
 
     override fun onDestroy() {

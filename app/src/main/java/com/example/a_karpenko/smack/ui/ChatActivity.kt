@@ -223,25 +223,25 @@ class ChatActivity : AppCompatActivity() {
 
     fun onSendClick() {
 
-        if (messageInputText?.length() != 0) {
+        if (messageInputText.length() != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(uidMy!!, messageInputText?.text.toString(), currentDate)
+            val myMessage = ChatModel(uidMy!!, messageInputText.text.toString(), currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
-            messageSent?.text = messageInputText?.text.toString()
+            messageSent?.text = messageInputText.text.toString()
 
             //Add data to Firestore
-//            foundUserRef?.get()?.addOnCompleteListener { fu ->
+            foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
-//                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
+                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
                     myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
                 }
-//            }
+            }
             //Clear input
-            messageInputText?.text = null
+            messageInputText.text = null
     }
 }
 
@@ -250,6 +250,11 @@ class ChatActivity : AppCompatActivity() {
         //Broadcast network state
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
+            typingTextView?.visibility = View.GONE
+            messageInputText.setBackgroundColor(R.color.white)
+            messageInputText.isEnabled = true
+            messageInputText.isFocusable = true
+
             //Start listening for messages
             listener()
             //Check if I'm typing
@@ -263,22 +268,20 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-
-
     override fun onBackPressed() {
         alertDialog()
     }
 
     override fun onStop() {
         super.onStop()
-//        listener()?.remove()
-//        input?.set(InputModel(false, currentDate))
-//        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-//        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
-//        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-//        typingTextView?.visibility = View.GONE
-//        messageInputText.isEnabled = true
-//        messageInputText.isFocusable = true
+        listener()?.remove()
+        input?.set(InputModel(false, currentDate))
+        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
+        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
+        typingTextView?.visibility = View.GONE
+        messageInputText.isEnabled = true
+        messageInputText.isFocusable = true
     }
 
     override fun onDestroy() {
@@ -289,8 +292,6 @@ class ChatActivity : AppCompatActivity() {
         PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
         PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
         typingTextView?.visibility = View.GONE
-        messageInputText.isEnabled = true
-        messageInputText.isFocusable = true
     }
 }
 

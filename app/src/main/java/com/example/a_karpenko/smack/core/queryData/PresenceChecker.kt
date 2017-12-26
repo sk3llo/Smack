@@ -40,6 +40,7 @@ class PresenceChecker(foundUser: String?, private var typeView: TextView?, priva
             editText?.setBackgroundColor(R.color.material_grey_300)
             editText?.isFocusable = false
         }
+        //Check bottom one
 //        else if (snapshot.exists() && snapshot["presence"] == true){
 //            typeView?.visibility = View.GONE
 //            editText?.isEnabled = true

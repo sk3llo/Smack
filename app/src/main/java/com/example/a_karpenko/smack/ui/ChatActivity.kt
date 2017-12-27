@@ -67,6 +67,7 @@ class ChatActivity : AppCompatActivity() {
     var ni: NetworkInfo? = null
 
     var rooms: CollectionReference? = null
+    var editTextLayout: LinearLayout? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,13 +119,7 @@ class ChatActivity : AppCompatActivity() {
         sendMessageButton = findViewById(R.id.sendMessagebutton)
         recyclerView = findViewById(R.id.messageList)
         toolbar = findViewById(R.id.chatToolbar)
-
-        //Open keyboard on message input click
-        val imm: InputMethodManager = this.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        messageInputText.onClick {
-//            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-        }
+        editTextLayout = findViewById(R.id.editTextLayout)
 
         //Toolbar
         setSupportActionBar(toolbar)
@@ -135,7 +130,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Emojis
         emojiButton = findViewById(R.id.emojiButton)
-        var rootView: View? = findViewById(R.id.chatRootView)
+        val rootView: View? = findViewById(R.id.chatRootView)
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(messageInputText)
         emojiButton?.setOnClickListener {
             displayEmojis()
@@ -174,19 +169,22 @@ class ChatActivity : AppCompatActivity() {
                 .positiveText("Yes").negativeText("No")
 
                 .onPositive { dialog, which ->
-
-                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-                    listener()?.remove()
-                    input?.set(InputModel(false, currentDate))
-                    PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
-                    PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-                    //Remove typing indicator
-                    typingTextView?.visibility = View.GONE
-                    //Remove typing listener for user LF
-                    EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-                    messageInputText.isEnabled = true
-                    messageInputText.isFocusable = true
-                    finish()
+                    doAsync {
+                        startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+                        listener()?.remove()
+                        input?.set(InputModel(false, currentDate))
+                        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
+                        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
+                        //Remove typing listener for user LF
+                        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+                        runOnUiThread {
+                            //Remove typing indicator
+                            typingTextView?.visibility = View.GONE
+                            messageInputText.isEnabled = true
+                            messageInputText.isFocusable = true
+                        }
+                        finish()
+                    }
         }
                 .onNegative { dialog, which -> dialog.dismiss() }.show()
 
@@ -223,25 +221,25 @@ class ChatActivity : AppCompatActivity() {
 
     fun onSendClick() {
 
-        if (messageInputText?.length() != 0) {
+        if (messageInputText.length() != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(uidMy!!, messageInputText?.text.toString(), currentDate)
+            val myMessage = ChatModel(uidMy!!, messageInputText.text.toString(), currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
-            messageSent?.text = messageInputText?.text.toString()
-
+            messageSent?.text = messageInputText.text.toString()
+//
             //Add data to Firestore
-//            foundUserRef?.get()?.addOnCompleteListener { fu ->
+            foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
 //                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
                     myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
                 }
-//            }
+            }
             //Clear input
-            messageInputText?.text = null
+            messageInputText.text = null
     }
 }
 
@@ -250,6 +248,12 @@ class ChatActivity : AppCompatActivity() {
         //Broadcast network state
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
+            runOnUiThread {
+                typingTextView?.visibility = View.GONE
+                messageInputText.isEnabled = true
+                messageInputText.isFocusable = true
+                messageInputText.hint = "Message:"
+            }
             //Start listening for messages
             listener()
             //Check if I'm typing
@@ -257,9 +261,11 @@ class ChatActivity : AppCompatActivity() {
             //Check if User's typing
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
             //Presence == true
-            PresenceChecker(uidLF, typingTextView, messageInputText).getIn()
-            //Check if user LF is still in chat
-            PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence()
+            PresenceChecker(uidLF, typingTextView, messageInputText).getIn().addOnCompleteListener {
+
+                //Check if user LF is still in chat
+                PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence()
+            }
         }
     }
 
@@ -288,9 +294,6 @@ class ChatActivity : AppCompatActivity() {
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
         PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
         PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-        typingTextView?.visibility = View.GONE
-        messageInputText.isEnabled = true
-        messageInputText.isFocusable = true
     }
 }
 

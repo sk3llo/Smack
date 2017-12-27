@@ -112,12 +112,12 @@
             android:layout_marginBottom="4dp"/>
 
     <Button
-            android:text="Button"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:id="@+id/emojiButton"
             app:layout_constraintBottom_toBottomOf="@+id/editTextLayout"
+            android:background="@drawable/emoji_ic_smile"
             android:layout_marginBottom="0dp"
             app:layout_constraintTop_toTopOf="@+id/editTextLayout"
             android:layout_marginTop="0dp"

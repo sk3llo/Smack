@@ -2,15 +2,21 @@ package com.example.a_karpenko.smack.core.queryData
 
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.firestore.PresenceModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.vanniktech.emoji.EmojiEditText
 import java.util.*
 
-class PresenceChecker(foundUser: String?, private var typeView: TextView?, private var editText: EditText?) {
+class PresenceChecker(foundUser: String?,
+                      private var typeView: TextView?,
+                      private var editText: EmojiEditText?,
+                      private var emojiButton: Button?) {
 
     private val presenceMy = FirebaseFirestore.getInstance()
             .collection("Users")
@@ -37,8 +43,9 @@ class PresenceChecker(foundUser: String?, private var typeView: TextView?, priva
             typeView?.text = "User has left the chat."
             typeView?.visibility = View.VISIBLE
             editText?.isEnabled = false
-            editText?.setBackgroundColor(R.color.material_grey_300)
             editText?.isFocusable = false
+            editText?.hint = "User has left the chat."
+            emojiButton?.isEnabled = false
         }
         //Check bottom one
 //        else if (snapshot.exists() && snapshot["presence"] == true){

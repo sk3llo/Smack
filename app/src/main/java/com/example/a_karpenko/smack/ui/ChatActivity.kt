@@ -7,6 +7,7 @@ import android.inputmethodservice.Keyboard
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.R.drawable.abc_ic_ab_back_material
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
@@ -29,11 +30,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
+import kotlinx.coroutines.experimental.delay
+import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.sdk25.coroutines.onFocusChange
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 
 class ChatActivity : AppCompatActivity() {
 
@@ -76,6 +80,7 @@ class ChatActivity : AppCompatActivity() {
         //Set image for chat background
         //And it has constant size even when keybord is opened
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
+        window?.statusBarColor = R.color.colorAccent
 
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -168,25 +173,27 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-
     fun alertDialog() = MaterialDialog.Builder(this)
                 .title("You are leaving the conversation").content("Are you sure?")
                 .positiveText("Yes").negativeText("No")
 
                 .onPositive { dialog, which ->
-
-                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-                    listener()?.remove()
-                    input?.set(InputModel(false, currentDate))
-                    PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
-                    PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-                    //Remove typing indicator
-                    typingTextView?.visibility = View.GONE
-                    //Remove typing listener for user LF
-                    EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-                    messageInputText.isEnabled = true
-                    messageInputText.isFocusable = true
-                    finish()
+                    doAsync {
+                        startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+                        listener()?.remove()
+                        input?.set(InputModel(false, currentDate))
+                        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+                        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
+                        //Remove typing listener for user LF
+                        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+                        runOnUiThread {
+                            //Remove typing indicator
+                            typingTextView?.visibility = View.GONE
+                            messageInputText.isEnabled = true
+                            messageInputText.isFocusable = true
+                        }
+                        finish()
+                    }
         }
                 .onNegative { dialog, which -> dialog.dismiss() }.show()
 
@@ -216,27 +223,30 @@ class ChatActivity : AppCompatActivity() {
 
         if (emojiPopup.isShowing) {
             emojiPopup.dismiss()
+            emojiButton?.setBackgroundResource(R.drawable.emoji_ic_smile)
         } else {
             emojiPopup.toggle()
+            emojiButton?.setBackgroundResource(R.drawable.emoji_ic_keyboard)
         }
     }
 
     fun onSendClick() {
+        val text = messageInputText.text?.toString()?.trim()
 
-        if (messageInputText.length() != 0) {
+        if (text?.length != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(uidMy!!, messageInputText.text.toString(), currentDate)
+            val myMessage = ChatModel(uidMy!!, text!!, currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
-            messageSent?.text = messageInputText.text.toString()
-
+            messageSent?.text = text
+//
             //Add data to Firestore
             foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
-                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
+//                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
                     myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
                 }
             }
@@ -245,27 +255,31 @@ class ChatActivity : AppCompatActivity() {
     }
 }
 
+
     override fun onStart() {
         super.onStart()
         //Broadcast network state
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
-            typingTextView?.visibility = View.GONE
-            messageInputText.setBackgroundColor(R.color.white)
-            messageInputText.isEnabled = true
-            messageInputText.isFocusable = true
-
+            runOnUiThread {
+                typingTextView?.visibility = View.GONE
+                messageInputText.isEnabled = true
+                messageInputText.isFocusable = true
+                messageInputText.hint = "Message:"
+            }
             //Start listening for messages
             listener()
             //Check if I'm typing
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()
             //Check if User's typing
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
-            //Presence == true
-            PresenceChecker(uidLF, typingTextView, messageInputText).getIn()
-            //Check if user LF is still in chat
-            PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence()
+            //Get in (presence == true)
+            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getIn()
         }
+        //Check LF presence after 1.5 sec
+        Handler().postDelayed({
+            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence()
+        }, 1500)
     }
 
     override fun onBackPressed() {
@@ -274,14 +288,14 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        listener()?.remove()
-        input?.set(InputModel(false, currentDate))
-        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
-        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-        typingTextView?.visibility = View.GONE
-        messageInputText.isEnabled = true
-        messageInputText.isFocusable = true
+//        listener()?.remove()
+//        input?.set(InputModel(false, currentDate))
+//        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
+//        typingTextView?.visibility = View.GONE
+//        messageInputText.isEnabled = true
+//        messageInputText.isFocusable = true
     }
 
     override fun onDestroy() {
@@ -289,9 +303,8 @@ class ChatActivity : AppCompatActivity() {
         listener()?.remove()
         input?.set(InputModel(false, currentDate))
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-        PresenceChecker(uidLF, typingTextView, messageInputText).getOut()
-        PresenceChecker(uidLF, typingTextView, messageInputText).checkLfPresence().remove()
-        typingTextView?.visibility = View.GONE
+        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
     }
 }
 

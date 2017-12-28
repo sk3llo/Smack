@@ -8,7 +8,7 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.example.a_karpenko.smack"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -63,6 +63,8 @@ dependencies {
     compile 'me.grantland:autofittextview:0.2.1'
     //Emojis
     compile 'com.vanniktech:emoji-ios:0.5.1'
+    //Multidex
+    compile 'com.android.support:multidex:1.0.1'
 }
 repositories {
     mavenCentral()

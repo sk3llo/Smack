@@ -12,4 +12,5 @@
     <color name="primary_text_material_light">#deffffff</color>
     <color name="messageSent">#92d3f5</color>
     <color name="messageReceived">#a5e8ca</color>
+    <color name="wList">#4d78bc</color>
 </resources>

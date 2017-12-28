@@ -25,7 +25,6 @@ class WaitingActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.waiting_activity)
-        window?.statusBarColor = R.color.wList
 
         uidMy = FirebaseAuth.getInstance().currentUser?.uid
         db = FirebaseFirestore.getInstance()

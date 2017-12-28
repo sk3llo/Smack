@@ -74,7 +74,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
 
         this.context = context
-        window?.statusBarColor = R.color.messageSent
 
         //FIREBASE
         auth = FirebaseAuth.getInstance()

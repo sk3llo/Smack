@@ -24,9 +24,6 @@ class SplashActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.splash_activity)
 
-        val textView: TextView? = findViewById(R.id.splashScreenText)
-        AutofitHelper.create(textView)
-
         Handler().postDelayed({
             if (user == null) {
                 FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener {

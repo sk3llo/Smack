@@ -80,7 +80,6 @@ class ChatActivity : AppCompatActivity() {
         //Set image for chat background
         //And it has constant size even when keybord is opened
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
-        window?.statusBarColor = R.color.colorAccent
 
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

@@ -9,6 +9,14 @@
         android:layout_height="match_parent"
         tools:context="com.example.a_karpenko.smack.ui.MainActivity">
 
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/main_background"
+            android:id="@+id/imageView2"
+            android:scaleType="fitXY"
+            android:alpha=".5"/>
+
     <android.support.constraint.ConstraintLayout
             android:id="@+id/mainConstraint"
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -380,7 +388,8 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 android:textColor="@android:color/holo_blue_dark"
                 android:background="@drawable/header_background"
-                android:fontFamily="serif"/>
+                android:fontFamily="serif"
+                android:visibility="invisible"/>
 
     </android.support.constraint.ConstraintLayout>
 

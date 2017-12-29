@@ -7,6 +7,7 @@ import android.inputmethodservice.Keyboard
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.R.drawable.abc_ic_ab_back_material
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
@@ -29,12 +30,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
+import kotlinx.coroutines.experimental.delay
 import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.sdk25.coroutines.onFocusChange
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.concurrent.schedule
 
 class ChatActivity : AppCompatActivity() {
 
@@ -68,7 +71,6 @@ class ChatActivity : AppCompatActivity() {
     var ni: NetworkInfo? = null
 
     var rooms: CollectionReference? = null
-    var editTextLayout: LinearLayout? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +80,7 @@ class ChatActivity : AppCompatActivity() {
         //Set image for chat background
         //And it has constant size even when keybord is opened
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
+        window?.statusBarColor = R.color.colorAccent
 
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -120,7 +123,13 @@ class ChatActivity : AppCompatActivity() {
         sendMessageButton = findViewById(R.id.sendMessagebutton)
         recyclerView = findViewById(R.id.messageList)
         toolbar = findViewById(R.id.chatToolbar)
-        editTextLayout = findViewById(R.id.editTextLayout)
+
+        //Open keyboard on message input click
+        val imm: InputMethodManager = this.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        messageInputText.onClick {
+//            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
+        }
 
         //Toolbar
         setSupportActionBar(toolbar)
@@ -131,7 +140,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Emojis
         emojiButton = findViewById(R.id.emojiButton)
-        val rootView: View? = findViewById(R.id.chatRootView)
+        var rootView: View? = findViewById(R.id.chatRootView)
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(messageInputText)
         emojiButton?.setOnClickListener {
             displayEmojis()
@@ -163,7 +172,6 @@ class ChatActivity : AppCompatActivity() {
             }
         }
     }
-
 
     fun alertDialog() = MaterialDialog.Builder(this)
                 .title("You are leaving the conversation").content("Are you sure?")
@@ -247,6 +255,7 @@ class ChatActivity : AppCompatActivity() {
     }
 }
 
+
     override fun onStart() {
         super.onStart()
         //Broadcast network state
@@ -264,16 +273,14 @@ class ChatActivity : AppCompatActivity() {
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()
             //Check if User's typing
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
-            //Presence == true
-            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getIn().addOnCompleteListener {
-
-                //Check if user LF is still in chat
-                PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence()
-            }
+            //Get in (presence == true)
+            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getIn()
         }
+        //Check LF presence after 1.5 sec
+        Handler().postDelayed({
+            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence()
+        }, 1500)
     }
-
-
 
     override fun onBackPressed() {
         alertDialog()

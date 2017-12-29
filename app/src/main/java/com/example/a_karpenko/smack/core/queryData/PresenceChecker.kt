@@ -47,6 +47,7 @@ class PresenceChecker(foundUser: String?,
             editText?.hint = "User has left the chat."
             emojiButton?.isEnabled = false
         }
+        //Check bottom one
 //        else if (snapshot.exists() && snapshot["presence"] == true){
 //            typeView?.visibility = View.GONE
 //            editText?.isEnabled = true

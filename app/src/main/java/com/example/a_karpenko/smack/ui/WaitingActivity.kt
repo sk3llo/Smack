@@ -25,6 +25,7 @@ class WaitingActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.waiting_activity)
+        window?.statusBarColor = R.color.wList
 
         uidMy = FirebaseAuth.getInstance().currentUser?.uid
         db = FirebaseFirestore.getInstance()
@@ -35,12 +36,11 @@ class WaitingActivity: AppCompatActivity() {
         WaitingListQuery(this,this).checkWL()
         checkWListener()
 
-     }
+    }
 
 
     //db Listener
     fun checkWListener() = db?.collection("WL")?.addSnapshotListener { snapshot, exception ->
-//        doAsync {
             if (exception != null){
                 Snackbar.make(findViewById(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT)
             }

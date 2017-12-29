@@ -956,7 +956,6 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
             }
         }
 
-
     //Start Chat activity
     private fun checkOut(foundUser: DocumentReference) {
         Log.d("WaitingListQuery**** ", "CONNECTED USER: ${foundUser.id}")

@@ -2,6 +2,7 @@ package com.example.a_karpenko.smack.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -25,7 +26,6 @@ class WaitingActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.waiting_activity)
-        window?.statusBarColor = R.color.wList
 
         uidMy = FirebaseAuth.getInstance().currentUser?.uid
         db = FirebaseFirestore.getInstance()

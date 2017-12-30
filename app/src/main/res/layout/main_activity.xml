@@ -4,10 +4,18 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:background="@drawable/color_pink_blue_gradient"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.example.a_karpenko.smack.ui.MainActivity">
+
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/main_background"
+            android:id="@+id/imageView2"
+            android:scaleType="fitXY"
+            android:alpha=".7"
+            />
 
     <android.support.constraint.ConstraintLayout
             android:id="@+id/mainConstraint"
@@ -378,9 +386,8 @@
                 android:textSize="36sp"
                 android:lineSpacingExtra="8sp"
                 app:layout_constraintHorizontal_bias="0.0"
-                android:textColor="@android:color/holo_blue_dark"
-                android:background="@drawable/header_background"
-                android:fontFamily="serif"/>
+                android:fontFamily="serif"
+                android:visibility="invisible"/>
 
     </android.support.constraint.ConstraintLayout>
 

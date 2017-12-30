@@ -12,7 +12,7 @@
         android:layout_gravity="bottom|end"
         >
 
-    <TextView
+    <com.vanniktech.emoji.EmojiTextView
             android:id="@+id/messageSentText"
             android:text="Hello, hello!"
             android:textSize="16sp"
@@ -23,7 +23,7 @@
             android:padding="8dp"
             android:textColor="@color/black"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="12dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             />

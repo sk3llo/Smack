@@ -6,7 +6,7 @@
                                              android:layout_height="wrap_content"
         android:paddingTop="8dp">
 
-    <TextView
+    <com.vanniktech.emoji.EmojiTextView
             android:id="@+id/messageReceivedText"
             android:text="Received"
             android:maxWidth="240dp"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:background="@drawable/message_received"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="12dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             />

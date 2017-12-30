@@ -16,7 +16,6 @@
             app:hive_animDuration="5000"
             app:hive_color="@color/colorAccent"
             app:hive_maxAlpha="255"
-            app:hive_rainbow="true"
             app:hive_cornerRadius="20"
             app:hive_shrink="true"
             android:id="@+id/waitingProgressBar"

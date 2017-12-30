@@ -258,6 +258,7 @@ class MainActivity : AppCompatActivity() {
         db?.collection("Users")?.document(uidMy.toString())
                 ?.collection("presence")?.document("my")
                 ?.set(PresenceModel(false))
+        db?.collection("WL")?.document(uidMy.toString())?.delete()
         //Register Broadcast receiver
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }

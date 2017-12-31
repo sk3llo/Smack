@@ -2,6 +2,7 @@ package com.example.a_karpenko.smack.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -42,18 +43,19 @@ class WaitingActivity: AppCompatActivity() {
     fun checkWListener() = db?.collection("WL")?.addSnapshotListener { snapshot, exception ->
             if (exception != null){
                 Snackbar.make(findViewById(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT)
+                db?.collection("WL")?.document("$uidMy")?.delete()
             }
             else {
                 val last = snapshot.documentChanges
 
                 last.forEach {
                     if (it.type == DocumentChange.Type.MODIFIED) {
-                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0) {
+                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0 && snapshotList!!.isEmpty()) {
                             WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
                         }
                     }
                     if (it.type == DocumentChange.Type.ADDED) {
-                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0) {
+                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0 && snapshotList!!.isEmpty()) {
                             WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
                         }
                     }

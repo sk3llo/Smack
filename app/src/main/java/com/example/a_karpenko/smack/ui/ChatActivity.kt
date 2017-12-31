@@ -3,22 +3,21 @@ package com.example.a_karpenko.smack.ui
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.inputmethodservice.Keyboard
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.R.drawable.abc_ic_ab_back_material
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.*
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.EditTextWatcher
@@ -30,14 +29,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
-import kotlinx.coroutines.experimental.delay
-import org.jetbrains.anko.backgroundDrawable
+import com.vanniktech.emoji.EmojiTextView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.sdk25.coroutines.onClick
-import org.jetbrains.anko.sdk25.coroutines.onFocusChange
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.schedule
 
 class ChatActivity : AppCompatActivity() {
 
@@ -45,8 +41,8 @@ class ChatActivity : AppCompatActivity() {
     lateinit var emojiPopup: EmojiPopup
     var emojiButton: Button? = null
 
-    var messageSent: TextView? = null
-    var messageReceived: TextView? = null
+    var messageSent: EmojiTextView? = null
+    var messageReceived: EmojiTextView? = null
     var messageSentTime: TextView? = null
     var messageReceivedTime: TextView? = null
     lateinit var messageInputText: EmojiEditText
@@ -80,6 +76,9 @@ class ChatActivity : AppCompatActivity() {
         //Set image for chat background
         //And it has constant size even when keybord is opened
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window?.statusBarColor = R.color.chatStatusBar
+        }
 
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -132,7 +131,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Toolbar
         setSupportActionBar(toolbar)
-        toolbar?.setNavigationIcon(R.drawable.chat_back_arrow)
+        toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
         toolbar?.setNavigationOnClickListener {
             alertDialog()
         }
@@ -175,6 +174,15 @@ class ChatActivity : AppCompatActivity() {
     fun alertDialog() = MaterialDialog.Builder(this)
                 .title("You are leaving the conversation").content("Are you sure?")
                 .positiveText("Yes").negativeText("No")
+            .theme(Theme.LIGHT)
+            .btnSelector(R.drawable.alert_positive_btn_selector, DialogAction.POSITIVE)
+            .btnSelector(R.drawable.alert_negative_btn_selector, DialogAction.NEGATIVE)
+            .positiveColorRes(R.color.white)
+            .negativeColorRes(R.color.white)
+            .backgroundColorRes(R.color.material_grey_300)
+            .contentGravity(GravityEnum.CENTER)
+            .titleGravity(GravityEnum.CENTER)
+            .buttonsGravity(GravityEnum.CENTER)
 
                 .onPositive { dialog, which ->
                     doAsync {
@@ -204,9 +212,14 @@ class ChatActivity : AppCompatActivity() {
             return@addSnapshotListener
         }
 
-        if (snapshot != null && !snapshot.isEmpty && snapshot.documentChanges.last().document.exists()
+        if (snapshot != null
+                && !snapshot.isEmpty && snapshot.documentChanges.last().document.exists()
                 //Do not show preveious messages
                 && snapshot.documents.size != snapshot.documentChanges.size
+                //Don't show last message
+                || snapshot != null
+                && !snapshot.isEmpty && snapshot.documentChanges.last().document.exists()
+                && snapshot.documents.size > snapshot.documentChanges.size
                 //Do not show messages from me as received
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
@@ -285,18 +298,12 @@ class ChatActivity : AppCompatActivity() {
         alertDialog()
     }
 
-    override fun onStop() {
-        super.onStop()
-//        listener()?.remove()
-//        input?.set(InputModel(false, currentDate))
-//        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
-//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
-//        typingTextView?.visibility = View.GONE
-//        messageInputText.isEnabled = true
-//        messageInputText.isFocusable = true
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_chat, menu)
+        return true
     }
 
+    //TODO: check if onPause calls before onDestroy method
     override fun onDestroy() {
         super.onDestroy()
         listener()?.remove()

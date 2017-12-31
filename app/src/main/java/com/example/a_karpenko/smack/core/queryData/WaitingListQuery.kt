@@ -58,7 +58,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                 list.filter {
                     it.reference.id != uidMy
                 }.forEach {
-                    if (myArray?.size!! <= 0) {
+                    if (myArray?.size!! <= 0 && myArray?.isEmpty()) {
                         checkOptions(it.reference)
                         Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
                     }
@@ -85,7 +85,8 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
             optionsMY.get().addOnCompleteListener { optMy ->
                 optionsLF.get().addOnCompleteListener { optLF ->
                     if (ni != null && ni.isConnected || isWifi!! || isMobile!!) {
-                        if (optMy.result.exists() && optLF.result.exists()) {
+                        if (optMy.exception == null && optLF.exception == null
+                                && optMy.result.exists() && optLF.result.exists()) {
                             doAsync {
 
                                     //Found user's refs

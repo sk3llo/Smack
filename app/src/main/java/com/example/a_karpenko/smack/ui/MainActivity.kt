@@ -13,9 +13,11 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.adapters.uidMy
 import com.example.a_karpenko.smack.core.queryData.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
+import com.example.a_karpenko.smack.models.firestore.PresenceModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
 import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
@@ -253,8 +255,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         //Stop Searching for new chat
+        db?.collection("Users")?.document(uidMy.toString())
+                ?.collection("presence")?.document("my")
+                ?.set(PresenceModel(false))
+        db?.collection("WL")?.document(uidMy.toString())?.delete()
         //Register Broadcast receiver
-        this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
     override fun onDestroy() {

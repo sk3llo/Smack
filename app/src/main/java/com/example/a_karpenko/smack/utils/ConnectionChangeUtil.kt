@@ -15,7 +15,7 @@ class ConnectionChangeUtil: BroadcastReceiver() {
         val wifi = ni?.type == ConnectivityManager.TYPE_WIFI
         val mobile= ni?.type == ConnectivityManager.TYPE_MOBILE
 
-        if (ni == null && !ni?.isConnectedOrConnecting!!) {
+        if (ni == null) {
             Toast.makeText(context, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
         }
     }

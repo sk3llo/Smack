@@ -9,4 +9,7 @@
             android:icon="@mipmap/ic_launcher"
             app:showAsAction="never"/>
 
+    <item android:id="@+id/savedChats"
+          android:title="Saved Chats"/>
+
 </menu>

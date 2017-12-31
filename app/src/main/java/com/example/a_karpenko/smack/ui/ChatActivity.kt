@@ -68,7 +68,6 @@ class ChatActivity : AppCompatActivity() {
 
     var rooms: CollectionReference? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
@@ -130,11 +129,11 @@ class ChatActivity : AppCompatActivity() {
         }
 
         //Toolbar
-        setSupportActionBar(toolbar)
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
         toolbar?.setNavigationOnClickListener {
             alertDialog()
         }
+        setSupportActionBar(toolbar)
 
         //Emojis
         emojiButton = findViewById(R.id.emojiButton)
@@ -296,11 +295,6 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         alertDialog()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_chat, menu)
-        return true
     }
 
     //TODO: check if onPause calls before onDestroy method

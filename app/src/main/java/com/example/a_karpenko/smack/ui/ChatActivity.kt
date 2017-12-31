@@ -1,6 +1,5 @@
 package com.example.a_karpenko.smack.ui
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -14,6 +13,7 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -298,26 +298,9 @@ class ChatActivity : AppCompatActivity() {
         alertDialog()
     }
 
-    override fun onStop() {
-        super.onStop()
-//        listener()?.remove()
-//        input?.set(InputModel(false, currentDate))
-//        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
-//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
-//        typingTextView?.visibility = View.GONE
-//        messageInputText.isEnabled = true
-//        messageInputText.isFocusable = true
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-//            listener()?.remove()
-//            input?.set(InputModel(false, currentDate))
-//            EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-//            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
-//            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_chat, menu)
+        return true
     }
 
     //TODO: check if onPause calls before onDestroy method

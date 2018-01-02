@@ -121,13 +121,6 @@ class ChatActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.messageList)
         toolbar = findViewById(R.id.chatToolbar)
 
-        //Open keyboard on message input click
-        val imm: InputMethodManager = this.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        messageInputText.onClick {
-//            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
-        }
-
         //Toolbar
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
         toolbar?.setNavigationOnClickListener {
@@ -141,6 +134,17 @@ class ChatActivity : AppCompatActivity() {
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(messageInputText)
         emojiButton?.setOnClickListener {
             displayEmojis()
+        }
+
+        //Open keyboard on message input click and change icon to emoji icon
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        messageInputText.onClick {
+            it?.requestFocus()
+            if (emojiPopup.isShowing) {
+                emojiPopup.dismiss()
+                imm.showSoftInput(messageInputText, InputMethodManager.SHOW_FORCED)
+                emojiButton?.setBackgroundResource(R.drawable.emoji_ic_smile)
+            }
         }
 
         //RecyclerView
@@ -206,6 +210,7 @@ class ChatActivity : AppCompatActivity() {
 
     //Register listener for live messages
     fun listener() = foundUserRef?.addSnapshotListener { snapshot, exception ->
+
         if (exception != null) {
             Toast.makeText(this.applicationContext, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             return@addSnapshotListener

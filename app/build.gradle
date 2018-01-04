@@ -4,6 +4,10 @@ apply plugin: 'realm-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    signingConfigs {
+        config {
+        }
+    }
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion "26.0.2"
     defaultConfig {
@@ -28,7 +32,6 @@ android {
     lintOptions {
         abortOnError false
     }
-
 }
 
 dependencies {

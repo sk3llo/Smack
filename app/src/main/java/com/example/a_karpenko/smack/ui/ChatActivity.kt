@@ -20,7 +20,6 @@ import android.widget.*
 import com.afollestad.materialdialogs.*
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.R.id.editTextLayout
 import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.firestore.ChatModel
@@ -50,7 +49,7 @@ class ChatActivity : AppCompatActivity() {
     var goMain: Button? = null
     var hideLayout: ConstraintLayout? = null
     var textLayout: LinearLayout? = null
-    var youLeftLayout: ConstraintLayout? = null
+    var leftChatLayout: ConstraintLayout? = null
     lateinit var messageInputText: EmojiEditText
     var sendMessageButton: AppCompatImageButton? = null
     var recyclerView: RecyclerView? = null
@@ -122,7 +121,7 @@ class ChatActivity : AppCompatActivity() {
         messageSentTime = findViewById(R.id.messageSentTime)
         messageReceivedTime = findViewById(R.id.messageReceivedTime)
 
-        youLeftLayout = findViewById(R.id.youLeftLayout)
+        leftChatLayout = findViewById(R.id.leftChatLayout)
         spinner = findViewById(R.id.spinner)
         hideLayout = findViewById(R.id.hideLayout)
         startOver = findViewById(R.id.startOver)
@@ -150,16 +149,17 @@ class ChatActivity : AppCompatActivity() {
 
         //Go Main button clicked
         goMain?.onClick {
-                doAsync {
-                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-                    runOnUiThread {
-                        //Remove typing indicator
-                        typingTextView?.visibility = View.GONE
-                        messageInputText.isEnabled = true
-                        messageInputText.isFocusable = true
-                    }
-                    finish()
-                }
+            closeActivity()
+//                doAsync {
+//                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+//                    runOnUiThread {
+//                        //Remove typing indicator
+//                        typingTextView?.visibility = View.GONE
+//                        messageInputText.isEnabled = true
+//                        messageInputText.isFocusable = true
+//                    }
+//                    finish()
+//                }
         }
 
         //Emojis
@@ -208,6 +208,19 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun closeActivity() {
+        doAsync {
+            startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+            runOnUiThread {
+                //Remove typing indicator
+                typingTextView?.visibility = View.GONE
+                messageInputText.isEnabled = true
+                messageInputText.isFocusable = true
+            }
+            finish()
+        }
+    }
+
     private fun firstDialog() = MaterialDialog.Builder(this)
             .title("You are leaving the conversation").content("Are you sure?")
             .positiveText("Yes").negativeText("No")
@@ -225,7 +238,7 @@ class ChatActivity : AppCompatActivity() {
                 emojiButton?.visibility = View.GONE
                 textLayout?.visibility = View.GONE
                 sendMessageButton?.visibility = View.GONE
-                youLeftLayout?.visibility = View.VISIBLE
+                leftChatLayout?.visibility = View.VISIBLE
 //                doAsync {
 //                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
                     listener()?.remove()
@@ -337,7 +350,10 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        firstDialog()
+        when (leftChatLayout?.visibility){
+            View.VISIBLE -> closeActivity()
+            View.GONE -> firstDialog()
+        }
     }
 
     //TODO: check if onPause calls before onDestroy method

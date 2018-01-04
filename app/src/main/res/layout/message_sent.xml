@@ -8,8 +8,8 @@
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="25dp"
         tools:layout_editor_absoluteX="0dp"
-        android:paddingTop="8dp"
         android:layout_gravity="bottom|end"
+        android:paddingTop="2dp"
         >
 
     <com.vanniktech.emoji.EmojiTextView
@@ -24,7 +24,6 @@
             app:emojiSize="25dp"
             android:textColor="@color/black"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="12dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             />

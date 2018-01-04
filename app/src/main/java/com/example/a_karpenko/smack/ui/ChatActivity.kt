@@ -8,18 +8,19 @@ import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.afollestad.materialdialogs.*
 import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.R.id.editTextLayout
 import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.firestore.ChatModel
@@ -31,20 +32,25 @@ import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
-    //Emojis
     lateinit var emojiPopup: EmojiPopup
     var emojiButton: Button? = null
-
     var messageSent: EmojiTextView? = null
     var messageReceived: EmojiTextView? = null
     var messageSentTime: TextView? = null
     var messageReceivedTime: TextView? = null
+    var spinner: Button? = null
+    var startOver: Button? = null
+    var goMain: Button? = null
+    var hideLayout: ConstraintLayout? = null
+    var textLayout: LinearLayout? = null
+    var youLeftLayout: ConstraintLayout? = null
     lateinit var messageInputText: EmojiEditText
     var sendMessageButton: AppCompatImageButton? = null
     var recyclerView: RecyclerView? = null
@@ -110,11 +116,17 @@ class ChatActivity : AppCompatActivity() {
                 .collection("Users").document(uidMy!!)
 
         typingTextView = findViewById(R.id.typingTextView)
-
+        textLayout = find(R.id.editTextLayout)
         messageSent = findViewById(R.id.messageSentText)
         messageReceived = findViewById(R.id.messageReceivedText)
         messageSentTime = findViewById(R.id.messageSentTime)
         messageReceivedTime = findViewById(R.id.messageReceivedTime)
+
+        youLeftLayout = findViewById(R.id.youLeftLayout)
+        spinner = findViewById(R.id.spinner)
+        hideLayout = findViewById(R.id.hideLayout)
+        startOver = findViewById(R.id.startOver)
+        goMain = findViewById(R.id.goMain)
 
         messageInputText = findViewById(R.id.messageInputText)
         sendMessageButton = findViewById(R.id.sendMessagebutton)
@@ -124,9 +136,31 @@ class ChatActivity : AppCompatActivity() {
         //Toolbar
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
         toolbar?.setNavigationOnClickListener {
-            alertDialog()
+            firstDialog()
         }
         setSupportActionBar(toolbar)
+
+        //Hide and open widget when spinner clicker
+        spinner?.onClick {
+            when (hideLayout?.visibility){
+                View.VISIBLE -> hideLayout?.visibility = View.GONE
+                View.GONE -> hideLayout?.visibility = View.VISIBLE
+            }
+        }
+
+        //Go Main button clicked
+        goMain?.onClick {
+                doAsync {
+                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+                    runOnUiThread {
+                        //Remove typing indicator
+                        typingTextView?.visibility = View.GONE
+                        messageInputText.isEnabled = true
+                        messageInputText.isFocusable = true
+                    }
+                    finish()
+                }
+        }
 
         //Emojis
         emojiButton = findViewById(R.id.emojiButton)
@@ -174,9 +208,9 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun alertDialog() = MaterialDialog.Builder(this)
-                .title("You are leaving the conversation").content("Are you sure?")
-                .positiveText("Yes").negativeText("No")
+    private fun firstDialog() = MaterialDialog.Builder(this)
+            .title("You are leaving the conversation").content("Are you sure?")
+            .positiveText("Yes").negativeText("No")
             .theme(Theme.LIGHT)
             .btnSelector(R.drawable.alert_positive_btn_selector, DialogAction.POSITIVE)
             .btnSelector(R.drawable.alert_negative_btn_selector, DialogAction.NEGATIVE)
@@ -187,25 +221,30 @@ class ChatActivity : AppCompatActivity() {
             .titleGravity(GravityEnum.CENTER)
             .buttonsGravity(GravityEnum.CENTER)
 
-                .onPositive { dialog, which ->
-                    doAsync {
-                        startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-                        listener()?.remove()
-                        input?.set(InputModel(false, currentDate))
-                        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
-                        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
-                        //Remove typing listener for user LF
-                        EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-                        runOnUiThread {
-                            //Remove typing indicator
-                            typingTextView?.visibility = View.GONE
-                            messageInputText.isEnabled = true
-                            messageInputText.isFocusable = true
-                        }
-                        finish()
-                    }
-        }
-                .onNegative { dialog, which -> dialog.dismiss() }.show()
+            .onPositive { dialog, which ->
+                emojiButton?.visibility = View.GONE
+                textLayout?.visibility = View.GONE
+                sendMessageButton?.visibility = View.GONE
+                youLeftLayout?.visibility = View.VISIBLE
+//                doAsync {
+//                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+                    listener()?.remove()
+                    input?.set(InputModel(false, currentDate))
+                    PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+                    PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
+                    //Remove typing listener for user LF
+                    EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
+//                    runOnUiThread {
+//                        //Remove typing indicator
+//                        typingTextView?.visibility = View.GONE
+//                        messageInputText.isEnabled = true
+//                        messageInputText.isFocusable = true
+//                    }
+//                    finish()
+//                }
+            }
+            .onNegative { dialog, which -> dialog.dismiss() }.show()!!
+
 
 
     //Register listener for live messages
@@ -215,17 +254,17 @@ class ChatActivity : AppCompatActivity() {
             Toast.makeText(this.applicationContext, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             return@addSnapshotListener
         }
+        //Add empty message if the snapshot is empty (to show first message)
+        if (snapshot == null || snapshot.isEmpty){
+            foundUserRef?.add(ChatModel(uidMy.toString(), "empyMessage", currentDate))
+        }
 
         if (snapshot != null
                 && !snapshot.isEmpty && snapshot.documentChanges.last().document.exists()
                 //Do not show preveious messages
-                && snapshot.documents.size != snapshot.documentChanges.size
-                //Don't show last message
-                || snapshot != null
-                && !snapshot.isEmpty && snapshot.documentChanges.last().document.exists()
-                && snapshot.documents.size > snapshot.documentChanges.size
-                //Do not show messages from me as received
+                && snapshot.size() != snapshot.documentChanges.size
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
+//            snapshot.documents.dropLastWhile { snapshot.size() == snapshot.documentChanges.size }
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
             val receivedQuery = ChatModel(from, message, currentDate)
@@ -235,7 +274,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun displayEmojis() {
+    private fun displayEmojis() {
 
         if (emojiPopup.isShowing) {
             emojiPopup.dismiss()
@@ -246,7 +285,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun onSendClick() {
+    private fun onSendClick() {
         val text = messageInputText.text?.toString()?.trim()
 
         if (text?.length != 0) {
@@ -258,7 +297,6 @@ class ChatActivity : AppCompatActivity() {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
             messageSent?.text = text
-//
             //Add data to Firestore
             foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
@@ -299,7 +337,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        alertDialog()
+        firstDialog()
     }
 
     //TODO: check if onPause calls before onDestroy method

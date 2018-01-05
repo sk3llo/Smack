@@ -142,8 +142,14 @@ class ChatActivity : AppCompatActivity() {
         //Hide and open widget when spinner clicker
         spinner?.onClick {
             when (hideLayout?.visibility){
-                View.VISIBLE -> hideLayout?.visibility = View.GONE
-                View.GONE -> hideLayout?.visibility = View.VISIBLE
+                View.VISIBLE -> {
+                    hideLayout?.visibility = View.GONE
+                    spinner?.setBackgroundResource(R.drawable.up_arrow)
+                }
+                View.GONE -> {
+                    hideLayout?.visibility = View.VISIBLE
+                    spinner?.setBackgroundResource(R.drawable.down_arrow)
+                }
             }
         }
 
@@ -239,22 +245,12 @@ class ChatActivity : AppCompatActivity() {
                 textLayout?.visibility = View.GONE
                 sendMessageButton?.visibility = View.GONE
                 leftChatLayout?.visibility = View.VISIBLE
-//                doAsync {
-//                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-                    listener()?.remove()
-                    input?.set(InputModel(false, currentDate))
-                    PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
-                    PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
-                    //Remove typing listener for user LF
-                    EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-//                    runOnUiThread {
-//                        //Remove typing indicator
-//                        typingTextView?.visibility = View.GONE
-//                        messageInputText.isEnabled = true
-//                        messageInputText.isFocusable = true
-//                    }
-//                    finish()
-//                }
+                listener()?.remove()
+                input?.set(InputModel(false, currentDate))
+                PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+                PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
+                //Remove typing listener for user LF
+                EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
             }
             .onNegative { dialog, which -> dialog.dismiss() }.show()!!
 

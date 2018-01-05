@@ -389,6 +389,18 @@
                 android:fontFamily="serif"
                 android:visibility="invisible"/>
 
+        <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/mainStar"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="24dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:background="@android:drawable/star_big_off"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/textView4"/>
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.design.widget.CoordinatorLayout>

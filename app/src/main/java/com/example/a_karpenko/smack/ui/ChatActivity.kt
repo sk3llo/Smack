@@ -14,6 +14,7 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -24,6 +25,7 @@ import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
+import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -33,6 +35,7 @@ import com.vanniktech.emoji.EmojiTextView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.toast
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -134,10 +137,13 @@ class ChatActivity : AppCompatActivity() {
 
         //Toolbar
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
-        toolbar?.setNavigationOnClickListener {
-            firstDialog()
-        }
         setSupportActionBar(toolbar)
+        toolbar?.setNavigationOnClickListener {
+            when (leftChatLayout?.visibility){
+                View.VISIBLE -> closeActivity()
+                View.GONE -> firstDialog()
+            }
+        }
 
         //Hide and open widget when spinner clicker
         spinner?.onClick {
@@ -153,19 +159,25 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
+        startOver?.onClick{
+            if (ni != null && ni?.isConnectedOrConnecting!!) {
+                //Add doc to Firestore with "Online" Action
+                val db: FirebaseFirestore? = FirebaseFirestore.getInstance()
+                val user = FirebaseAuth.getInstance().currentUser
+                db?.collection("WL")?.document("${user?.uid}")?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
+                    Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${user?.uid}")
+                }
+                //Start Waiting Activity
+                startActivity(Intent(this@ChatActivity, WaitingActivity::class.java))
+                finish()
+            } else {
+                toast("Please, check your Internet connection")
+            }
+        }
+
         //Go Main button clicked
         goMain?.onClick {
             closeActivity()
-//                doAsync {
-//                    startActivity(Intent(this@ChatActivity, MainActivity::class.java))
-//                    runOnUiThread {
-//                        //Remove typing indicator
-//                        typingTextView?.visibility = View.GONE
-//                        messageInputText.isEnabled = true
-//                        messageInputText.isFocusable = true
-//                    }
-//                    finish()
-//                }
         }
 
         //Emojis

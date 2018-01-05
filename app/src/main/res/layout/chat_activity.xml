@@ -148,7 +148,8 @@
                                                      android:background="@color/grey"
                                                      app:layout_constraintTop_toTopOf="parent"
                                                      app:layout_constraintLeft_toLeftOf="parent"
-                                                     app:layout_constraintRight_toRightOf="parent">
+                                                     app:layout_constraintRight_toRightOf="parent"
+                                                     android:visibility="visible">
 
             <android.support.constraint.ConstraintLayout
                     android:layout_width="0dp"
@@ -158,7 +159,9 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/hideLayout"
                     android:layout_marginBottom="15dp"
-                    android:visibility="visible">
+                    android:layout_marginTop="15dp"
+                    android:padding="10dp"
+                    >
 
                 <android.support.constraint.Guideline
                         android:layout_width="wrap_content"
@@ -184,7 +187,10 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/chat_left_btn_selector"
+                        android:padding="8dp"
+                        />
 
                 <Button
                         android:text="Go main"
@@ -200,7 +206,10 @@
                         app:layout_constraintRight_toLeftOf="@+id/guideline2"
                         android:layout_marginRight="8dp"
                         app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/chat_left_btn_selector"
+                        android:padding="8dp"
+                        />
 
                 <TextView
                         android:text="or"
@@ -228,22 +237,24 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:id="@+id/youLeftLayout"
                     app:layout_constraintHorizontal_bias="0.0"
-                    android:background="@color/lightBlue"
-                    app:layout_constraintBottom_toTopOf="@+id/hideLayout">
+                    android:background="@color/darkPurple"
+                    app:layout_constraintBottom_toTopOf="@+id/hideLayout"
+                    android:alpha=".8"
+                    >
 
                 <Button
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:id="@+id/spinner"
-                        android:layout_marginRight="16dp"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="24dp"
                         android:background="@drawable/down_arrow"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"/>
+                        android:layout_marginTop="8dp"
+                        />
 
                 <TextView
                         android:text="You left the chat"
@@ -260,10 +271,11 @@
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintVertical_bias="0.666"
                         android:layout_marginStart="8dp"
-                        app:layout_constraintRight_toLeftOf="@+id/spinner"
+                        android:layout_marginEnd="8dp"
+                        android:textColor="@color/grey"
                         android:layout_marginRight="8dp"
-                        app:layout_constraintHorizontal_bias="0.76"
-                        android:layout_marginEnd="8dp"/>
+                        app:layout_constraintRight_toRightOf="parent"/>
+
             </android.support.constraint.ConstraintLayout>
 
         </android.support.constraint.ConstraintLayout>

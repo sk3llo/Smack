@@ -15,4 +15,7 @@
     <color name="messageReceived">#a5e8ca</color>
     <color name="toolbar">#949fd4</color>
     <color name="chatStatusBar">#838bb7</color>
+    <color name="darkPurple">#4c8593</color>
+    <color name="dimBlueLight">#78bcd3</color>
+    <color name="dimBlueDark">#87b1bf</color>
 </resources>

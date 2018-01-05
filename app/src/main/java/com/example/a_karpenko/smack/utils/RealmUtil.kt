@@ -9,6 +9,7 @@ import com.example.a_karpenko.smack.models.age_looking_for.From23to26
 import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
+import com.example.a_karpenko.smack.models.chat.FoundUserUid
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.vicpin.krealmextensions.*
 import io.realm.*
@@ -19,7 +20,7 @@ open class RealmUtil {
 
     //increment id by 1
     open fun getNextKey(realmObject: RealmObject): Int?{
-        var number = realm?.where(realmObject::class.java)?.max("id")
+        val number = realm?.where(realmObject::class.java)?.max("id")
 
         return try {
             if (number != null) {
@@ -33,7 +34,7 @@ open class RealmUtil {
     }
 
     //Age you are looking for
-    //Add 1(yes) or 2(no) to realm based on option
+    //Add 1(yes) or 0(no) to realm based on option
     fun lookingForAge(int: Int?, view: View?){
 
         try {
@@ -82,7 +83,7 @@ open class RealmUtil {
     fun over36LookingFor(): Int? = Over36().queryLast()?.over36
 
     //My age
-    //Add 1(yes) or 2(no) based on option
+    //Add 1(yes) or 0(no) based on option
     fun myAge(int: Int?, view: View?){
 
         try {
@@ -130,7 +131,7 @@ open class RealmUtil {
     fun over36My(): Int? = MyAgeModel().queryLast()?.over36
 
     //Choose my and looking for gender
-    //Add 1(yes) or 2(no) based on option
+    //Add 1(yes) or 0(no) based on option
     fun gender(int: Int?, view: View){
 
         try{
@@ -170,5 +171,18 @@ open class RealmUtil {
     fun femaleGenderMy(): Int? = MyGenderModel().queryLast()?.femaleGenderMy
     fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
     fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
+
+    //Add found user uid to Realm
+    fun addFounduserUid(uid: String?){
+        try {
+            realm?.beginTransaction()
+            var foundUserUid = realm?.createObject(FoundUserUid::class.java, getNextKey((FoundUserUid())))
+            foundUserUid?.foundUserUid = uid
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+    fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
 
 }

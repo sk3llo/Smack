@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/chatRootView"
+        tools:context=".ui.ChatActivity"
+        >
+
+    <android.support.design.widget.AppBarLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/appBarLayout"
+            android:background="@color/toolbar"
+            >
+
+        <android.support.v7.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/chatToolbar"
+                android:layout_marginRight="0dp"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginLeft="0dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="0dp"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:layout_marginBottom="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/typingTextView"
+                />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/edittext_rounded_corners"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/sendMessagebutton"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/editTextLayout"
+            app:layout_constraintTop_toTopOf="@+id/sendMessagebutton"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toRightOf="@+id/emojiButton"
+            android:layout_marginStart="8dp"
+            app:layout_constraintRight_toLeftOf="@+id/sendMessagebutton"
+            android:layout_marginEnd="8dp"
+            android:visibility="visible">
+
+        <com.vanniktech.emoji.EmojiEditText
+                android:id="@+id/messageInputText"
+                android:background="@android:color/transparent"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textPersonName"
+                android:ems="10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:hint="Message:"
+                app:layout_constraintRight_toLeftOf="@+id/sendMessagebutton"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:maxLines="5"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:layout_marginBottom="447dp"
+                android:visibility="visible"/>
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/messageList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="18dp"
+            app:layout_constraintBottom_toTopOf="@+id/leftChatLayout">
+    </android.support.v7.widget.RecyclerView>
+
+    <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/send_message_btn_selector"
+            android:id="@+id/sendMessagebutton"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            android:tint="@color/colorPrimaryDark"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:alpha=".8"
+            android:visibility="visible"/>
+
+    <TextView
+            android:text="User is typing..."
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/typingTextView"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="14sp"
+            android:textColor="#6e7572"
+            android:visibility="gone"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/editTextLayout"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="14dp"
+            />
+
+    <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:id="@+id/emojiButton"
+            app:layout_constraintBottom_toBottomOf="@+id/editTextLayout"
+            android:background="@drawable/emoji_ic_smile"
+            app:layout_constraintTop_toTopOf="@+id/editTextLayout"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:visibility="visible"/>
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"
+            android:id="@+id/leftChatLayout"
+            app:layout_constraintHorizontal_bias="0.53"
+            app:layout_constraintBottom_toBottomOf="@+id/typingTextView"
+            >
+
+        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                     xmlns:tools="http://schemas.android.com/tools"
+                                                     android:layout_width="0dp"
+                                                     android:layout_height="wrap_content"
+                                                     android:layout_gravity="bottom"
+                                                     android:background="@color/grey"
+                                                     app:layout_constraintTop_toTopOf="parent"
+                                                     app:layout_constraintLeft_toLeftOf="parent"
+                                                     app:layout_constraintRight_toRightOf="parent"
+                                                     android:visibility="visible">
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:id="@+id/hideLayout"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
+                    android:padding="10dp"
+                    >
+
+                <android.support.constraint.Guideline
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/guideline2"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5"
+                        tools:layout_editor_absoluteY="25dp"
+                        tools:layout_editor_absoluteX="0dp"/>
+
+                <Button
+                        android:text="Start over"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/startOver"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintLeft_toLeftOf="@+id/guideline2"
+                        android:layout_marginRight="8dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintHorizontal_bias="0.521"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/chat_left_btn_selector"
+                        android:padding="8dp"
+                        />
+
+                <Button
+                        android:text="Go main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/goMain"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintRight_toLeftOf="@+id/guideline2"
+                        android:layout_marginRight="8dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/chat_left_btn_selector"
+                        android:padding="8dp"
+                        />
+
+                <TextView
+                        android:text="or"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView8"
+                        app:layout_constraintRight_toLeftOf="@+id/startOver"
+                        android:layout_marginRight="8dp"
+                        app:layout_constraintLeft_toRightOf="@+id/goMain"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/goMain"
+                        android:layout_marginBottom="8dp"
+                        app:layout_constraintTop_toTopOf="@+id/goMain"
+                        android:layout_marginTop="8dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:id="@+id/youLeftLayout"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:background="@color/darkPurple"
+                    app:layout_constraintBottom_toTopOf="@+id/hideLayout"
+                    android:alpha=".8"
+                    >
+
+                <Button
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:id="@+id/spinner"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        android:layout_marginEnd="24dp"
+                        android:background="@drawable/down_arrow"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        />
+
+                <TextView
+                        android:text="You left the chat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView6"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="8dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintVertical_bias="0.666"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:textColor="@color/grey"
+                        android:layout_marginRight="8dp"
+                        app:layout_constraintRight_toRightOf="parent"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>

@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import org.jetbrains.anko.doAsync
 import kotlin.collections.ArrayList
 
 class WaitingActivity: AppCompatActivity() {
@@ -67,15 +68,16 @@ class WaitingActivity: AppCompatActivity() {
     fun stopSearch(view: View?){
         checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this@WaitingActivity, MainActivity::class.java))
+        overridePendingTransition(R.anim.slide_left_to_right, R.anim.slide_right_to_left)
         finish()
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         checkWListener()?.remove()
         db?.collection("WL")?.document("$uidMy")?.delete()
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this@WaitingActivity, MainActivity::class.java))
+        overridePendingTransition(R.anim.slide_left_to_right, R.anim.slide_right_to_left)
         finish()
     }
 

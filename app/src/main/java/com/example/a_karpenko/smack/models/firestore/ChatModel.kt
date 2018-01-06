@@ -18,5 +18,4 @@ open class ChatModel {
         this.message = message
         this.timeStamp = timeStamp
     }
-
 }

@@ -27,6 +27,7 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
+import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
@@ -75,6 +76,8 @@ class ChatActivity : AppCompatActivity() {
     var ni: NetworkInfo? = null
 
     var rooms: CollectionReference? = null
+    var spinnerLayout: ConstraintLayout? = null
+    var saveStar: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,10 +128,12 @@ class ChatActivity : AppCompatActivity() {
         messageReceivedTime = findViewById(R.id.messageReceivedTime)
 
         leftChatLayout = findViewById(R.id.leftChatLayout)
+        spinnerLayout = findViewById(R.id.spinnerLayout)
         spinner = findViewById(R.id.spinner)
         hideLayout = findViewById(R.id.hideLayout)
         startOver = findViewById(R.id.startOver)
         goMain = findViewById(R.id.goMain)
+        saveStar = findViewById(R.id.saveStar)
 
         messageInputText = findViewById(R.id.messageInputText)
         sendMessageButton = findViewById(R.id.sendMessagebutton)
@@ -145,8 +150,14 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        //Hide and open widget when spinner clicker
-        spinner?.onClick {
+        //Save star on click
+        saveStar?.onClick {
+            RealmUtil().savedChatTime(currentDate?.toString())
+            toast("Chat successfully saved")
+        }
+
+        //Hide and open widget when spinner layout clicked
+        spinnerLayout?.onClick {
             when (hideLayout?.visibility){
                 View.VISIBLE -> {
                     hideLayout?.visibility = View.GONE
@@ -159,6 +170,20 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
+        //Hide and open widget when spinner layout clicked
+        spinner?.onClick {
+            when (hideLayout?.visibility){
+                View.VISIBLE -> {
+                    hideLayout?.visibility = View.GONE
+                    spinner?.setBackgroundResource(R.drawable.up_arrow)
+                }
+                View.GONE -> {
+                    hideLayout?.visibility = View.VISIBLE
+                    spinner?.setBackgroundResource(R.drawable.down_arrow)
+                }
+            }
+        }
+        //Restart WL Activity
         startOver?.onClick{
             if (ni != null && ni?.isConnectedOrConnecting!!) {
                 //Add doc to Firestore with "Online" Action
@@ -169,6 +194,7 @@ class ChatActivity : AppCompatActivity() {
                 }
                 //Start Waiting Activity
                 startActivity(Intent(this@ChatActivity, WaitingActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 finish()
             } else {
                 toast("Please, check your Internet connection")
@@ -188,7 +214,7 @@ class ChatActivity : AppCompatActivity() {
             displayEmojis()
         }
 
-        //Open keyboard on message input click and change icon to emoji icon
+        //Open keyboard on messageMy input click and change icon to emoji icon
         val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         messageInputText.onClick {
             it?.requestFocus()
@@ -213,7 +239,7 @@ class ChatActivity : AppCompatActivity() {
             recyclerView?.scrollToPosition(messages?.size!! - 1)
         }
 
-        //send message btn clicked
+        //send messageMy btn clicked
         sendMessageButton?.setOnClickListener {
             //Check Network connection
             val isWifi: Boolean? = ni?.type == ConnectivityManager.TYPE_WIFI
@@ -229,6 +255,7 @@ class ChatActivity : AppCompatActivity() {
     private fun closeActivity() {
         doAsync {
             startActivity(Intent(this@ChatActivity, MainActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             runOnUiThread {
                 //Remove typing indicator
                 typingTextView?.visibility = View.GONE
@@ -275,7 +302,7 @@ class ChatActivity : AppCompatActivity() {
             Toast.makeText(this.applicationContext, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             return@addSnapshotListener
         }
-        //Add empty message if the snapshot is empty (to show first message)
+        //Add empty messageMy if the snapshot is empty (to show first messageMy)
         if (snapshot == null || snapshot.isEmpty){
             foundUserRef?.add(ChatModel(uidMy.toString(), "empyMessage", currentDate))
         }
@@ -287,7 +314,7 @@ class ChatActivity : AppCompatActivity() {
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
 //            snapshot.documents.dropLastWhile { snapshot.size() == snapshot.documentChanges.size }
             val from = snapshot.documentChanges.last().document["from"].toString()
-            val message = snapshot.documentChanges.last().document["message"].toString()
+            val message = snapshot.documentChanges.last().document["messageMy"].toString()
             val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
@@ -321,8 +348,8 @@ class ChatActivity : AppCompatActivity() {
             //Add data to Firestore
             foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
-//                    foundUserRef?.document("message" + (fu.result?.size()!! + 1))?.set(myMessage)
-                    myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
+//                    foundUserRef?.document("messageMy" + (fu.result?.size()!! + 1))?.set(myMessage)
+                    myRoomRef?.document("messageMy" + (me.result?.size()!! + 1))?.set(myMessage)
                 }
             }
             //Clear input

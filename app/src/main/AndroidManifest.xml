@@ -43,7 +43,9 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".SavedChats">
+        <activity android:name=".ui.SavedChats">
+        </activity>
+        <activity android:name=".ui.SavedMessages">
         </activity>
     </application>
 

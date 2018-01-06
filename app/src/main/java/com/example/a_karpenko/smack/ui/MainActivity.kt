@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import io.realm.Realm
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -37,10 +38,6 @@ class MainActivity : AppCompatActivity() {
     var auth: FirebaseAuth? = null
     var user: FirebaseUser? = null
     var db: FirebaseFirestore? = null
-    //Drawer Username/Email and error snackbar
-    var userName: TextView? = null
-    var userEmail: TextView? = null
-    var snackBar: Snackbar? = null
 
     //Connecting manager
     var cm: ConnectivityManager? = null
@@ -70,6 +67,8 @@ class MainActivity : AppCompatActivity() {
     var realm : Realm? = null
 
     var currentDate: Date? = null
+    //Start
+    var star: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +109,13 @@ class MainActivity : AppCompatActivity() {
         over36LookingFor = findViewById(R.id.over36LookingFor)
 
         currentDate = Calendar.getInstance().time
+        star = findViewById(R.id.mainStar)
 
+        //Go to saved chats
+        star?.onClick {
+            startActivity(Intent(this@MainActivity, SavedChats::class.java))
+            finish()
+        }
 
         //Check if user logged in
         if (user == null) {

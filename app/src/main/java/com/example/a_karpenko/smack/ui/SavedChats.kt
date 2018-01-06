@@ -1,4 +1,4 @@
-package com.example.a_karpenko.smack
+package com.example.a_karpenko.smack.ui
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedChatsAdapter
-import com.example.a_karpenko.smack.models.saved_chats.SavedChatsModel
-import com.example.a_karpenko.smack.ui.MainActivity
-import com.vicpin.krealmextensions.queryAll
+import com.example.a_karpenko.smack.utils.RealmUtil
 import io.realm.Realm
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class SavedChats : AppCompatActivity() {
+open class SavedChats : AppCompatActivity() {
 
     var toolbar: Toolbar? = null
     var recycler: RecyclerView? = null
@@ -30,18 +30,26 @@ class SavedChats : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar?.setNavigationOnClickListener {
             startActivity(Intent(this@SavedChats, MainActivity::class.java))
+            overridePendingTransition(R.anim.slide_left_to_right, R.anim.slide_right_to_left)
             finish()
         }
 
-        val savedChats = realm?.where(SavedChatsModel::class.java)?.findAll()
         recycler = findViewById(R.id.savedChatList)
-        recycler?.setHasFixedSize(true)
         val manager = object : LinearLayoutManager(this) {}
         manager.orientation = LinearLayoutManager.VERTICAL
-        adapter = SavedChatsAdapter(this, savedChats!!,true, true)
+        adapter = SavedChatsAdapter(recycler!!, this, RealmUtil().getSavedChatTime()!!, true)
 
+        recycler?.adapter = adapter
         recycler?.layoutManager = manager
 
+        recycler?.onClick {
+        }
 
+    }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this@SavedChats, MainActivity::class.java))
+        overridePendingTransition(R.anim.slide_left_to_right, R.anim.slide_right_to_left)
+        finish()
     }
 }

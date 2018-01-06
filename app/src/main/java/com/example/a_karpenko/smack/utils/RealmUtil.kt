@@ -11,8 +11,11 @@ import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
+import com.example.a_karpenko.smack.models.saved_chats.SavedChatsModel
+import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
 import com.vicpin.krealmextensions.*
 import io.realm.*
+import java.util.*
 
 open class RealmUtil {
 
@@ -184,5 +187,31 @@ open class RealmUtil {
         }
     }
     fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
+
+    //Save and retrieve chat Realm
+    fun savedChatTime(time: String?){
+        try {
+            realm?.beginTransaction()
+            realm?.createObject(SavedChatsModel::class.java, getNextKey(SavedChatsModel()))?.time = time
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+    fun getSavedChatTime(): RealmResults<SavedChatsModel>? = realm?.where(SavedChatsModel::class.java)?.findAll()
+
+    //Save and retrieve messages Realm
+    fun saveMessageMy(from: String?, message: String?, time: Date?){
+        try {
+            realm?.beginTransaction()
+            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.from = from
+            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.messageMy = message
+            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.time = time
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+    fun getSavedMessage() = SavedMessagesModel().queryAll()
 
 }

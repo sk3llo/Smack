@@ -112,9 +112,7 @@
             android:visibility="gone"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/editTextLayout"
-            android:layout_marginBottom="4dp"
-            android:layout_marginStart="14dp"
-            />
+    />
 
     <Button
             android:layout_width="50dp"
@@ -137,7 +135,7 @@
             android:id="@+id/leftChatLayout"
             app:layout_constraintHorizontal_bias="0.53"
             app:layout_constraintBottom_toBottomOf="@+id/typingTextView"
-            >
+    >
 
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                      xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -159,9 +157,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/hideLayout"
                     android:layout_marginBottom="15dp"
-                    android:layout_marginTop="15dp"
                     android:padding="10dp"
-                    >
+            >
 
                 <android.support.constraint.Guideline
                         android:layout_width="wrap_content"
@@ -170,7 +167,7 @@
                         android:orientation="vertical"
                         app:layout_constraintGuide_percent="0.5"
                         tools:layout_editor_absoluteY="25dp"
-                        tools:layout_editor_absoluteX="0dp"/>
+                        tools:layout_editor_absoluteX="182dp"/>
 
                 <Button
                         android:text="Start over"
@@ -179,18 +176,18 @@
                         android:id="@+id/startOver"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginLeft="42dp"
                         app:layout_constraintLeft_toLeftOf="@+id/guideline2"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginRight="40dp"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintHorizontal_bias="0.521"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="42dp"
+                        android:layout_marginEnd="40dp"
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/chat_left_btn_selector"
                         android:padding="8dp"
-                        />
+                        tools:layout_constraintRight_creator="1" tools:layout_constraintLeft_creator="1"/>
 
                 <Button
                         android:text="Go main"
@@ -199,17 +196,17 @@
                         android:id="@+id/goMain"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginLeft="47dp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="47dp"
+                        android:layout_marginEnd="47dp"
                         app:layout_constraintRight_toLeftOf="@+id/guideline2"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginRight="47dp"
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/chat_left_btn_selector"
                         android:padding="8dp"
-                        />
+                        tools:layout_constraintRight_creator="1" tools:layout_constraintLeft_creator="1"/>
 
                 <TextView
                         android:text="or"
@@ -217,15 +214,16 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/textView8"
                         app:layout_constraintRight_toLeftOf="@+id/startOver"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginRight="37dp"
                         app:layout_constraintLeft_toRightOf="@+id/goMain"
-                        android:layout_marginLeft="8dp"
+                        android:layout_marginLeft="38dp"
                         app:layout_constraintBottom_toBottomOf="@+id/goMain"
                         android:layout_marginBottom="8dp"
                         app:layout_constraintTop_toTopOf="@+id/goMain"
                         android:layout_marginTop="8dp"
                         android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" android:layout_marginStart="38dp" android:layout_marginEnd="37dp"
+                        tools:layout_constraintRight_creator="1" tools:layout_constraintLeft_creator="1"/>
 
             </android.support.constraint.ConstraintLayout>
 
@@ -240,21 +238,49 @@
                     android:background="@color/darkPurple"
                     app:layout_constraintBottom_toTopOf="@+id/hideLayout"
                     android:alpha=".8"
-                    >
+            >
 
                 <Button
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:id="@+id/spinner"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp" android:id="@+id/saveStar"
+                        app:layout_constraintRight_toLeftOf="@+id/textView6"
+                        android:layout_marginRight="0dp" android:layout_marginLeft="0dp"
+                        app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginBottom="0dp" app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="0dp"
+                        android:background="@android:drawable/star_big_off"/>
+
+                <android.support.constraint.ConstraintLayout
+                        android:orientation="horizontal"
+                        android:layout_width="75dp"
+                        android:layout_height="29dp"
+                        android:layout_marginRight="8dp"
                         app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/textView6"
+                        android:layout_marginLeft="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0"
-                        android:layout_marginEnd="24dp"
-                        android:background="@drawable/down_arrow"
                         android:layout_marginBottom="8dp"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginTop="8dp"
-                        />
+                        android:gravity="right|center"
+                        tools:layout_constraintRight_creator="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        tools:layout_constraintLeft_creator="1"
+                        android:id="@+id/spinnerLayout">
+                    <Button
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:id="@+id/spinner"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:background="@drawable/down_arrow"
+                            app:layout_constraintHorizontal_bias="0.53"
+                            android:elevation="0dp"
+                            android:layout_marginLeft="0dp" app:layout_constraintLeft_toLeftOf="parent"
+                    />
+                </android.support.constraint.ConstraintLayout>
 
                 <TextView
                         android:text="You left the chat"
@@ -267,14 +293,11 @@
                         android:layout_marginTop="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="8dp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintVertical_bias="0.666"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"
                         android:textColor="@color/grey"
-                        android:layout_marginRight="8dp"
-                        app:layout_constraintRight_toRightOf="parent"/>
+                        app:layout_constraintRight_toRightOf="parent" tools:layout_constraintRight_creator="1"
+                        tools:layout_constraintLeft_creator="1"/>
 
             </android.support.constraint.ConstraintLayout>
 

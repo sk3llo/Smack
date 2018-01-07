@@ -10,18 +10,22 @@ import android.widget.LinearLayout
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
 import com.example.a_karpenko.smack.models.firestore.ChatModel
+import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
 import io.realm.RealmList
+import org.jetbrains.anko.toast
 
 class SavedMessages : AppCompatActivity() {
 
     var toolbar: Toolbar? = null
     var recycler: RecyclerView? = null
-    var messages: RealmList<ChatModel>? = null
+    var messages: RealmList<SavedMessagesModel>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_messages)
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
+
+        messages?.add(SavedMessagesModel())
 
         toolbar = findViewById(R.id.savedMessagesToolbar)
         setSupportActionBar(toolbar)
@@ -40,6 +44,8 @@ class SavedMessages : AppCompatActivity() {
         manager.orientation = LinearLayoutManager.VERTICAL
         recycler?.layoutManager = manager
         recycler?.adapter = adapter
+
+        toast("${intent?.getIntExtra("id", -1)}")
 
     }
 }

@@ -11,6 +11,7 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import io.realm.RealmList
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -58,7 +59,6 @@ open class MessagesAdapter(var messages: ArrayList<ChatModel>) : RecyclerView.Ad
         }
 
     }
-
 
     override fun getItemViewType(position: Int): Int {
         val getMessage = messages[position]

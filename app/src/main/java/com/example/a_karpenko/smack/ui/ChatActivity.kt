@@ -26,6 +26,7 @@ import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
+import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
+import io.realm.RealmList
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -67,7 +69,6 @@ class ChatActivity : AppCompatActivity() {
     //Refs
     var foundUserRef: CollectionReference? = null
     var myRoomRef: CollectionReference? = null
-    var messages: ArrayList<ChatModel>? = null
     //Input
     var input: DocumentReference? = null
     var typingTextView: TextView? = null
@@ -78,6 +79,9 @@ class ChatActivity : AppCompatActivity() {
     var rooms: CollectionReference? = null
     var spinnerLayout: ConstraintLayout? = null
     var saveStar: Button? = null
+    //List messages and saved messages
+    var messages: ArrayList<ChatModel>? = null
+    var savedMessages: RealmList<SavedMessagesModel>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,12 +94,14 @@ class ChatActivity : AppCompatActivity() {
             window?.statusBarColor = R.color.chatStatusBar
         }
 
+        messages = ArrayList()
+        savedMessages = RealmList()
+
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         ni = cm?.activeNetworkInfo
 
         //RecyclerView Array
-        messages = ArrayList()
         currentDate = Calendar.getInstance().time
 
         //Uid's
@@ -208,7 +214,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Emojis
         emojiButton = findViewById(R.id.emojiButton)
-        var rootView: View? = findViewById(R.id.chatRootView)
+        val rootView: View? = findViewById(R.id.chatRootView)
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(messageInputText)
         emojiButton?.setOnClickListener {
             displayEmojis()
@@ -312,11 +318,15 @@ class ChatActivity : AppCompatActivity() {
                 //Do not show preveious messages
                 && snapshot.size() != snapshot.documentChanges.size
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
-//            snapshot.documents.dropLastWhile { snapshot.size() == snapshot.documentChanges.size }
             val from = snapshot.documentChanges.last().document["from"].toString()
-            val message = snapshot.documentChanges.last().document["messageMy"].toString()
+            val message = snapshot.documentChanges.last().document["message"].toString()
+            val time = snapshot.documentChanges.last().document["timeStamp"].toString()
             val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
+//          Saved Messages
+            SavedMessagesModel().from = from
+            SavedMessagesModel().messageLF = message
+            RealmUtil().saveMessageMy(from, null, message, currentDate)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
         }
@@ -341,6 +351,11 @@ class ChatActivity : AppCompatActivity() {
             //Add data to model
             val myMessage = ChatModel(uidMy!!, text!!, currentDate)
             messages?.add(myMessage)
+//            Save Messages
+            SavedMessagesModel().from = uidMy
+            SavedMessagesModel().messageMy = text
+            RealmUtil().saveMessageMy(uidMy, text, null, currentDate)
+
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
@@ -349,7 +364,7 @@ class ChatActivity : AppCompatActivity() {
             foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
 //                    foundUserRef?.document("messageMy" + (fu.result?.size()!! + 1))?.set(myMessage)
-                    myRoomRef?.document("messageMy" + (me.result?.size()!! + 1))?.set(myMessage)
+                    myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
                 }
             }
             //Clear input

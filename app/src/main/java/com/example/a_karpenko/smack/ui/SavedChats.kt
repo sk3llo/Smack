@@ -16,7 +16,7 @@ open class SavedChats : AppCompatActivity() {
 
     var toolbar: Toolbar? = null
     var recycler: RecyclerView? = null
-//    var list: ArrayList<SavedChatsModel>? = null
+//    var list: ArrayList<SavedChatsTime>? = null
     var realm: Realm? = null
     var adapter: SavedChatsAdapter? = null
 
@@ -37,7 +37,7 @@ open class SavedChats : AppCompatActivity() {
         recycler = findViewById(R.id.savedChatList)
         val manager = object : LinearLayoutManager(this) {}
         manager.orientation = LinearLayoutManager.VERTICAL
-        adapter = SavedChatsAdapter(recycler!!, this, RealmUtil().getSavedChatTime()!!, true)
+        adapter = SavedChatsAdapter(recycler!!, this, this, RealmUtil().getSavedChatTime()!!, true)
 
         recycler?.adapter = adapter
         recycler?.layoutManager = manager

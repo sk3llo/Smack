@@ -11,8 +11,8 @@ import kotlin.collections.ArrayList
 
 open class SavedMessagesModel: RealmObject() {
 
-    @Required @PrimaryKey
-    var id: Int? = 0
+//    @Required @PrimaryKey
+//    var id: Int? = 0
 
     var from: String? = ""
     var messageMy: String? = ""

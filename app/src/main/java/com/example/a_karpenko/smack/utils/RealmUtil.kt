@@ -207,10 +207,10 @@ open class RealmUtil {
 
         try {
             realm?.beginTransaction()
-            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.from = from
-            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.messageMy = messageMy
-            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.messageLF = messageLF
-            realm?.createObject(SavedMessagesModel::class.java, getNextKey(SavedMessagesModel()))?.time = time
+            realm?.createObject(SavedMessagesModel::class.java)?.from = from
+            realm?.createObject(SavedMessagesModel::class.java)?.messageMy = messageMy
+            realm?.createObject(SavedMessagesModel::class.java)?.messageLF = messageLF
+            realm?.createObject(SavedMessagesModel::class.java)?.time = time
             realm?.commitTransaction()
         } finally {
             realm?.close()
@@ -218,5 +218,13 @@ open class RealmUtil {
     }
 
     fun getSavedMessage() = SavedMessagesModel().queryAll()
-
+    fun getMess(savedMessages: MutableList<SavedMessagesModel>){
+        try {
+            realm?.beginTransaction()
+            realm?.createObject(SavedMessagesModel::class.java)
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
 }

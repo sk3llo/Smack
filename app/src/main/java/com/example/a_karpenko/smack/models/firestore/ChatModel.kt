@@ -2,6 +2,7 @@
 package com.example.a_karpenko.smack.models.firestore
 
 import com.google.firebase.firestore.ServerTimestamp
+import io.realm.RealmObject
 import io.realm.annotations.RealmModule
 import java.util.*
 

@@ -34,7 +34,9 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
+import io.realm.Realm
 import io.realm.RealmList
+import io.realm.annotations.RealmModule
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -44,6 +46,7 @@ import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
+    var db: Realm? = null
     lateinit var emojiPopup: EmojiPopup
     var emojiButton: Button? = null
     var messageSent: EmojiTextView? = null
@@ -81,7 +84,7 @@ class ChatActivity : AppCompatActivity() {
     var saveStar: Button? = null
     //List messages and saved messages
     var messages: ArrayList<ChatModel>? = null
-    var savedMessages: RealmList<SavedMessagesModel>? = null
+    var savedMessages: MutableList<SavedMessagesModel>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +99,7 @@ class ChatActivity : AppCompatActivity() {
 
         messages = ArrayList()
         savedMessages = RealmList()
+        db = Realm.getDefaultInstance()
 
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -159,7 +163,18 @@ class ChatActivity : AppCompatActivity() {
         //Save star on click
         saveStar?.onClick {
             RealmUtil().savedChatTime(currentDate?.toString())
+//            RealmUtil().getMess(savedMessages!!)
+            savedMessages?.forEach {
+                when (it.messageMy){
+                    null -> return@forEach
+                    "" -> return@forEach
+                    else -> {
+                        RealmUtil().saveMessageMy(it.from, it.messageMy, it.messageLF, it.time)
+                    }
+                }
+            }
             toast("Chat successfully saved")
+            //TODO:
         }
 
         //Hide and open widget when spinner layout clicked
@@ -324,9 +339,11 @@ class ChatActivity : AppCompatActivity() {
             val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
 //          Saved Messages
-            SavedMessagesModel().from = from
-            SavedMessagesModel().messageLF = message
-            RealmUtil().saveMessageMy(from, null, message, currentDate)
+//            SavedMessagesModel().list = from
+//            SavedMessagesModel().list = message
+//            SavedMessagesModel().list = currentDate
+            //TODO: save messages to Realm
+
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
         }
@@ -352,9 +369,13 @@ class ChatActivity : AppCompatActivity() {
             val myMessage = ChatModel(uidMy!!, text!!, currentDate)
             messages?.add(myMessage)
 //            Save Messages
-            SavedMessagesModel().from = uidMy
-            SavedMessagesModel().messageMy = text
-            RealmUtil().saveMessageMy(uidMy, text, null, currentDate)
+//            var x = SavedMessagesModel()
+//            x.from = uidMy
+//            x.messageLF = text
+//            x.time = currentDate
+//            savedMessages?.add(x)
+
+            //TODO: save messages to Realm
 
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)

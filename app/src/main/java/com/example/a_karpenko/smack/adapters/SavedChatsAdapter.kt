@@ -47,10 +47,11 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
     open inner class ClickListener: View.OnClickListener{
         override fun onClick(v: View?) {
-            val savedMessages = realm?.where(SavedMessagesModel::class.java)?.findAll()
+//            val savedMessages = realm?.where(SavedMessagesModel::class.java)?.findAll()
             val intent: Intent? = Intent(context, SavedMessages::class.java)
             intent?.putExtra("id", recyclerView.indexOfChild(v))
-            context.startActivity(intent)
+            activity.startActivity(intent)
+            activity.finish()
 
 //            Toast.makeText(context, recyclerView.indexOfChild(v).toString(), Toast.LENGTH_SHORT)?.show()
         }

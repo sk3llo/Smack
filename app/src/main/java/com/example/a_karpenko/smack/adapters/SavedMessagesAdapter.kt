@@ -16,15 +16,9 @@ import io.realm.RealmList
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class SavedMessagesAdapter(var messages: RealmList<SavedMessagesModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class SavedMessagesAdapter(var messages: MutableList<SavedMessagesModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var uidMy = FirebaseAuth.getInstance().currentUser?.uid
-
-    val myRoomRef = FirebaseFirestore.getInstance()
-            .collection("Users").document("${RealmUtil().foundUserUid()}")
-            .collection("rooms").document("$uidMy")
-            .collection("messages")
-
 
     val send: Int? = 1
     val receive: Int? = 2
@@ -57,7 +51,6 @@ open class SavedMessagesAdapter(var messages: RealmList<SavedMessagesModel>) : R
             receive.messageReceived?.text = sendHolder!!.messageLF
             receive.messageReceivedTime?.text = time
         }
-
     }
 
 

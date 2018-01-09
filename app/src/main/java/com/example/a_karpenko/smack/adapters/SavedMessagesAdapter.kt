@@ -40,11 +40,11 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
         val sendHolder = messages[position]
 
         if (holder is MessageSentViewHolder) {
-            holder.messageSent?.text = sendHolder!!.message
+            holder.messageSent?.text = sendHolder.message
             holder.messageSentTime?.text = time
         } else if (holder is MessageReceivedViewHolder) {
             val receive: MessageReceivedViewHolder = holder
-            receive.messageReceived?.text = sendHolder!!.message
+            receive.messageReceived?.text = sendHolder.message
             receive.messageReceivedTime?.text = time
         }
     }
@@ -52,7 +52,7 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
 
     override fun getItemViewType(position: Int): Int {
         val getMessage = messages[position]
-        return if(getMessage!!.from == uidMy){
+        return if(getMessage.from == uidMy){
             send!!
         } else {
             receive!!

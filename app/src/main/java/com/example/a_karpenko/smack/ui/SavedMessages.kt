@@ -8,8 +8,10 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
+import com.example.a_karpenko.smack.models.chat.SavedChatId
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
+import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
 
 class SavedMessages : AppCompatActivity() {
@@ -38,7 +40,14 @@ class SavedMessages : AppCompatActivity() {
         recycler = findViewById(R.id.savedMessagesList)
         recycler?.setHasFixedSize(true)
         //Retrieve saved messages from Realm
+
+        val intent = intent.getIntExtra("id", -1)
+        val id = SavedChatId().queryAll()[intent].id
+
         messages = RealmUtil().retrieveMessages()
+
+        messages?.get(id!!)
+
 
         val adapter = SavedMessagesAdapter(messages!!)
         val manager = LinearLayoutManager(this)
@@ -47,7 +56,6 @@ class SavedMessages : AppCompatActivity() {
         recycler?.layoutManager = manager
         recycler?.adapter = adapter
 
-        val intent = intent.getIntExtra("id", -1)
 
 
 //        if (intent >= 0){

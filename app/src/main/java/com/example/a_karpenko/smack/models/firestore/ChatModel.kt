@@ -13,8 +13,6 @@ import java.util.*
 @RealmClass
 open class ChatModel: RealmModel {
 
-    var id: Int? = null
-
     var from: String = ""
     var message: String? = null
     @ServerTimestamp

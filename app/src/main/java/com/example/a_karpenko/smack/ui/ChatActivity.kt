@@ -24,6 +24,7 @@ import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
+import com.example.a_karpenko.smack.models.chat.SavedChatId
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
+import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
 import org.jetbrains.anko.doAsync
@@ -163,7 +165,7 @@ class ChatActivity : AppCompatActivity() {
             RealmUtil().savedChatTime(currentDate?.toString())
             //Save messages
             RealmUtil().saveMessages(messages!!)
-            toast("Chat successfully saved + ${ChatModel().queryLast()?.id}")
+            toast("Chat successfully saved + ${SavedChatId().queryLast()?.id}")
             //TODO:
         }
 
@@ -371,7 +373,6 @@ class ChatActivity : AppCompatActivity() {
             messageInputText.text = null
     }
 }
-
 
     override fun onStart() {
         super.onStart()

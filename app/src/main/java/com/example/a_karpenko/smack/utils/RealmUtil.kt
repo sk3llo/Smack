@@ -10,6 +10,7 @@ import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
+import com.example.a_karpenko.smack.models.chat.SavedChatId
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.example.a_karpenko.smack.models.chat.SavedChatsTime
@@ -180,7 +181,7 @@ open class RealmUtil {
     fun addFounduserUid(uid: String?){
         try {
             realm?.beginTransaction()
-            var foundUserUid = realm?.createObject(FoundUserUid::class.java, getNextKey((FoundUserUid())))
+            val foundUserUid = realm?.createObject(FoundUserUid::class.java, getNextKey((FoundUserUid())))
             foundUserUid?.foundUserUid = uid
             realm?.commitTransaction()
         } finally {
@@ -205,8 +206,9 @@ open class RealmUtil {
     fun saveMessages(savedMessages: ArrayList<ChatModel>){
         try {
             realm?.beginTransaction()
-            getNextKey(ChatModel())
-            realm?.copyToRealmOrUpdate(savedMessages)
+//            realm?.copyToRealmOrUpdate(savedMessages)
+            realm?.copyToRealm(savedMessages)
+            realm?.createObject(SavedChatId::class.java, getNextKey(SavedChatId()))
             realm?.commitTransaction()
         } finally {
             realm?.close()
@@ -214,7 +216,7 @@ open class RealmUtil {
     }
     fun retrieveMessages(): MutableList<ChatModel>? {
         realm?.beginTransaction()
-        val list = realm?.copyFromRealm(realm?.where(ChatModel::class.java)?.findAll())
+        val list = realm?.where(ChatModel::class.java)?.findAll()
         realm?.commitTransaction()
         realm?.close()
         return list

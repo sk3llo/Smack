@@ -12,19 +12,18 @@ import com.example.a_karpenko.smack.models.age_looking_for.Under18
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
-import com.example.a_karpenko.smack.models.saved_chats.SavedChatsTime
-import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
+import com.example.a_karpenko.smack.models.chat.SavedChatsTime
 import com.vicpin.krealmextensions.*
 import io.realm.*
-import java.util.*
 import kotlin.collections.ArrayList
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 open class RealmUtil {
 
     var realm: Realm? = Realm.getDefaultInstance()
 
     //increment id by 1
-    open fun getNextKey(realmObject: RealmObject): Int?{
+    open fun getNextKey(realmObject: RealmModel): Int?{
         val number = realm?.where(realmObject::class.java)?.max("id")
 
         return try {
@@ -33,7 +32,7 @@ open class RealmUtil {
             } else {
                 0
             }
-        } catch (e:ArrayIndexOutOfBoundsException){
+        } catch (e: ArrayIndexOutOfBoundsException){
             0
         }
     }
@@ -202,29 +201,24 @@ open class RealmUtil {
     }
     fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)?.findAll()
 
-    //Save and retrieve messages Realm
-    fun saveMessageMy(from: String?, messageMy: String?, messageLF: String?, time: Date?){
-
+    //Save messages to Realm
+    fun saveMessages(savedMessages: ArrayList<ChatModel>){
         try {
             realm?.beginTransaction()
-            realm?.createObject(SavedMessagesModel::class.java)?.from = from
-            realm?.createObject(SavedMessagesModel::class.java)?.messageMy = messageMy
-            realm?.createObject(SavedMessagesModel::class.java)?.messageLF = messageLF
-            realm?.createObject(SavedMessagesModel::class.java)?.time = time
+            getNextKey(ChatModel())
+            realm?.copyToRealmOrUpdate(savedMessages)
             realm?.commitTransaction()
         } finally {
             realm?.close()
         }
     }
-
-    fun getSavedMessage() = SavedMessagesModel().queryAll()
-    fun getMess(savedMessages: MutableList<SavedMessagesModel>){
-        try {
-            realm?.beginTransaction()
-            realm?.createObject(SavedMessagesModel::class.java)
-            realm?.commitTransaction()
-        } finally {
-            realm?.close()
-        }
+    fun retrieveMessages(): MutableList<ChatModel>? {
+        realm?.beginTransaction()
+        val list = realm?.copyFromRealm(realm?.where(ChatModel::class.java)?.findAll())
+        realm?.commitTransaction()
+        realm?.close()
+        return list
     }
+
+
 }

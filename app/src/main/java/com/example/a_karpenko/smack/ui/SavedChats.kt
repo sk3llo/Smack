@@ -42,8 +42,6 @@ open class SavedChats : AppCompatActivity() {
         recycler?.adapter = adapter
         recycler?.layoutManager = manager
 
-        recycler?.onClick {
-        }
 
     }
 

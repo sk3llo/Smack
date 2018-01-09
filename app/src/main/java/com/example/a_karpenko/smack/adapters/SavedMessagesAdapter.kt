@@ -8,15 +8,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.firestore.ChatModel
-import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
-import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import io.realm.RealmList
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class SavedMessagesAdapter(var messages: MutableList<SavedMessagesModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var uidMy = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -44,11 +40,11 @@ open class SavedMessagesAdapter(var messages: MutableList<SavedMessagesModel>) :
         val sendHolder = messages[position]
 
         if (holder is MessageSentViewHolder) {
-            holder.messageSent?.text = sendHolder!!.messageMy
+            holder.messageSent?.text = sendHolder!!.message
             holder.messageSentTime?.text = time
         } else if (holder is MessageReceivedViewHolder) {
             val receive: MessageReceivedViewHolder = holder
-            receive.messageReceived?.text = sendHolder!!.messageLF
+            receive.messageReceived?.text = sendHolder!!.message
             receive.messageReceivedTime?.text = time
         }
     }
@@ -67,12 +63,12 @@ open class SavedMessagesAdapter(var messages: MutableList<SavedMessagesModel>) :
         return messages.size
     }
 
-    fun add(item: SavedMessagesModel, position: Int){
+    fun add(item: ChatModel, position: Int){
         messages.add(position, item)
         notifyItemInserted(position)
     }
 
-    fun remove(item: SavedMessagesModel){
+    fun remove(item: ChatModel){
         val position: Int? = messages.indexOf(item)
         messages.removeAt(position!!)
         notifyItemRemoved(position)

@@ -8,6 +8,7 @@ import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
@@ -26,7 +27,6 @@ import com.example.a_karpenko.smack.core.queryData.PresenceChecker
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
-import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -34,9 +34,8 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
+import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
-import io.realm.RealmList
-import io.realm.annotations.RealmModule
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -84,7 +83,6 @@ class ChatActivity : AppCompatActivity() {
     var saveStar: Button? = null
     //List messages and saved messages
     var messages: ArrayList<ChatModel>? = null
-    var savedMessages: MutableList<SavedMessagesModel>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +96,6 @@ class ChatActivity : AppCompatActivity() {
         }
 
         messages = ArrayList()
-        savedMessages = RealmList()
         db = Realm.getDefaultInstance()
 
         //Network info
@@ -162,18 +159,11 @@ class ChatActivity : AppCompatActivity() {
 
         //Save star on click
         saveStar?.onClick {
+            //Save Chat
             RealmUtil().savedChatTime(currentDate?.toString())
-//            RealmUtil().getMess(savedMessages!!)
-            savedMessages?.forEach {
-                when (it.messageMy){
-                    null -> return@forEach
-                    "" -> return@forEach
-                    else -> {
-                        RealmUtil().saveMessageMy(it.from, it.messageMy, it.messageLF, it.time)
-                    }
-                }
-            }
-            toast("Chat successfully saved")
+            //Save messages
+            RealmUtil().saveMessages(messages!!)
+            toast("Chat successfully saved + ${ChatModel().queryLast()?.id}")
             //TODO:
         }
 
@@ -335,13 +325,8 @@ class ChatActivity : AppCompatActivity() {
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
-            val time = snapshot.documentChanges.last().document["timeStamp"].toString()
             val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
-//          Saved Messages
-//            SavedMessagesModel().list = from
-//            SavedMessagesModel().list = message
-//            SavedMessagesModel().list = currentDate
             //TODO: save messages to Realm
 
             adapter?.notifyDataSetChanged()
@@ -369,12 +354,6 @@ class ChatActivity : AppCompatActivity() {
             val myMessage = ChatModel(uidMy!!, text!!, currentDate)
             messages?.add(myMessage)
 //            Save Messages
-//            var x = SavedMessagesModel()
-//            x.from = uidMy
-//            x.messageLF = text
-//            x.time = currentDate
-//            savedMessages?.add(x)
-
             //TODO: save messages to Realm
 
             if (messages?.size != 0) {
@@ -421,10 +400,11 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        when (leftChatLayout?.visibility){
+        when (leftChatLayout?.visibility) {
             View.VISIBLE -> closeActivity()
             View.GONE -> firstDialog()
         }
+        emojiButton?.setBackgroundResource(R.drawable.emoji_ic_smile)
     }
 
     //TODO: check if onPause calls before onDestroy method

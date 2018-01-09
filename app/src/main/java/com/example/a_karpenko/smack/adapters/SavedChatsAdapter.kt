@@ -7,10 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.saved_chats.SavedChatsTime
-import com.example.a_karpenko.smack.models.saved_chats.SavedMessagesModel
+import com.example.a_karpenko.smack.models.chat.SavedChatsTime
+import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.ui.SavedChats
 import com.example.a_karpenko.smack.ui.SavedMessages
 import com.example.a_karpenko.smack.utils.RealmUtil
@@ -47,7 +46,10 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
     open inner class ClickListener: View.OnClickListener{
         override fun onClick(v: View?) {
-//            val savedMessages = realm?.where(SavedMessagesModel::class.java)?.findAll()
+
+            var list = RealmUtil().retrieveMessages()
+            list?.get(recyclerView.indexOfChild(v))
+
             val intent: Intent? = Intent(context, SavedMessages::class.java)
             intent?.putExtra("id", recyclerView.indexOfChild(v))
             activity.startActivity(intent)

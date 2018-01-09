@@ -1,4 +1,4 @@
-package com.example.a_karpenko.smack.models.saved_chats
+package com.example.a_karpenko.smack.models.chat
 
 import io.realm.RealmObject
 import io.realm.annotations.Index

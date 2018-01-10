@@ -8,11 +8,14 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
-import com.example.a_karpenko.smack.models.chat.SavedChatId
+import com.example.a_karpenko.smack.models.chat.EndMessagesSize
+import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 
 class SavedMessages : AppCompatActivity() {
 
@@ -20,6 +23,7 @@ class SavedMessages : AppCompatActivity() {
     var recycler: RecyclerView? = null
     var messages: MutableList<ChatModel>? = null
     var realm: Realm? = null
+    var getIntent: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,28 +45,49 @@ class SavedMessages : AppCompatActivity() {
         recycler?.setHasFixedSize(true)
         //Retrieve saved messages from Realm
 
-        val intent = intent.getIntExtra("id", -1)
-        val id = SavedChatId().queryAll()[intent].id
+        getIntent = intent.getIntExtra("id", 0)
+
+
 
         messages = RealmUtil().retrieveMessages()
+        val showMessages = messages?.subList(startList()!!, RealmUtil().getEndMessagesSize()?.size!!)?.toMutableList()
 
-        messages?.get(id!!)
+        val fakeList: MutableList<ChatModel>? = showMessages
 
 
-        val adapter = SavedMessagesAdapter(messages!!)
+        val adapter = SavedMessagesAdapter(showMessages!!)
         val manager = LinearLayoutManager(this)
         manager.stackFromEnd = true
         manager.orientation = LinearLayoutManager.VERTICAL
+        manager.stackFromEnd = true
         recycler?.layoutManager = manager
         recycler?.adapter = adapter
 
 
-
-//        if (intent >= 0){
-//            messages?.so
-//        }
+//        toast(getIntent.toString() +
+//                " sms: " + "${StartMessagesSize().queryAll().size} " +
+//                "ind: ${StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!!} " +
+//                "end: ${EndMessagesSize().queryAll().size} ")
 
     }
+
+    fun startList(): Int? {
+        return if (getIntent == 0) {
+                return 0
+            } else if (StartMessagesSize().queryAll().size == StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!! && getIntent != 0) {
+                return StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!!
+            } else if (StartMessagesSize().queryAll().size != StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!! && getIntent != 0) {
+                return StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!!
+            } else {
+                0
+            }
+//        } catch (e: ArrayIndexOutOfBoundsException){
+//            return 0
+//        }
+    }
+
+
+
 
     override fun onBackPressed() {
         startActivity(Intent(this@SavedMessages, SavedChats::class.java))

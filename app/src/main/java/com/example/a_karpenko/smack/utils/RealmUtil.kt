@@ -9,8 +9,9 @@ import com.example.a_karpenko.smack.models.age_looking_for.From23to26
 import com.example.a_karpenko.smack.models.age_looking_for.From27to35
 import com.example.a_karpenko.smack.models.age_looking_for.Over36
 import com.example.a_karpenko.smack.models.age_looking_for.Under18
+import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
-import com.example.a_karpenko.smack.models.chat.SavedChatId
+import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.example.a_karpenko.smack.models.chat.SavedChatsTime
@@ -208,7 +209,6 @@ open class RealmUtil {
             realm?.beginTransaction()
 //            realm?.copyToRealmOrUpdate(savedMessages)
             realm?.copyToRealm(savedMessages)
-            realm?.createObject(SavedChatId::class.java, getNextKey(SavedChatId()))
             realm?.commitTransaction()
         } finally {
             realm?.close()
@@ -222,5 +222,25 @@ open class RealmUtil {
         return list
     }
 
+    fun saveStartMessagesSize(size: Int?){
+        try {
+            realm?.beginTransaction()
+            realm?.createObject(StartMessagesSize::class.java)?.startMessagesSize = size
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+    fun saveEndMessagesSize(size: Int?){
+        try {
+            realm?.beginTransaction()
+            realm?.copyToRealm(EndMessagesSize())?.endMessagesSize = size!!
+            realm?.commitTransaction()
+        } finally {
+            realm?.close()
+        }
+    }
+    fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.findAll()
+    fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.findAll()
 
 }

@@ -8,7 +8,6 @@ import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.IBinder
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
@@ -24,7 +23,8 @@ import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
-import com.example.a_karpenko.smack.models.chat.SavedChatId
+import com.example.a_karpenko.smack.models.chat.EndMessagesSize
+import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
@@ -35,7 +35,6 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
-import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
 import org.jetbrains.anko.doAsync
@@ -161,11 +160,14 @@ class ChatActivity : AppCompatActivity() {
 
         //Save star on click
         saveStar?.onClick {
-            //Save Chat
-            RealmUtil().savedChatTime(currentDate?.toString())
-            //Save messages
-            RealmUtil().saveMessages(messages!!)
-            toast("Chat successfully saved + ${SavedChatId().queryLast()?.id}")
+            doAsync {
+                //Save Chat
+                RealmUtil().savedChatTime(currentDate?.toString())
+                //Save messages
+                RealmUtil().saveMessages(messages!!)
+                RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
+            }
+            toast("Chat successfully saved + ${messages?.size}")
             //TODO:
         }
 
@@ -333,6 +335,7 @@ class ChatActivity : AppCompatActivity() {
 
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
+
         }
     }
 
@@ -398,6 +401,15 @@ class ChatActivity : AppCompatActivity() {
         Handler().postDelayed({
             PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence()
         }, 1500)
+
+        //Add start messages size to Realm
+        doAsync {
+            if(EndMessagesSize().queryLast()?.endMessagesSize != 0) {
+                RealmUtil().saveStartMessagesSize(EndMessagesSize().queryLast()?.endMessagesSize)
+            } else {
+                RealmUtil().saveStartMessagesSize(0)
+            }
+        }
     }
 
     override fun onBackPressed() {

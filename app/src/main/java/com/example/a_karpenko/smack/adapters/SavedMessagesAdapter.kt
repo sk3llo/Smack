@@ -21,11 +21,9 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == send) {
-            Log.d("Messages adapter***** ", "$viewType == sent")
             val send = LayoutInflater.from(parent?.context).inflate(R.layout.message_sent, parent, false)
             object : MessageSentViewHolder(send) {}
         } else  {
-            Log.d("Messages adapter***** ", "$viewType == received")
             val receive = LayoutInflater.from(parent?.context).inflate(R.layout.message_received, parent, false)
             object : MessageReceivedViewHolder(receive) {}
         }

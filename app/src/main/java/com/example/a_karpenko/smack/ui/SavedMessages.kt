@@ -6,14 +6,17 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.util.Log
+import android.widget.Toast
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
 import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.queryAll
+import com.vicpin.krealmextensions.*
 import io.realm.Realm
+import io.realm.Sort
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
@@ -24,6 +27,7 @@ class SavedMessages : AppCompatActivity() {
     var messages: MutableList<ChatModel>? = null
     var realm: Realm? = null
     var getIntent: Int? = null
+    var list: MutableList<ChatModel>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,21 +45,26 @@ class SavedMessages : AppCompatActivity() {
         }
 
         messages = ArrayList()
+        list = ArrayList()
         recycler = findViewById(R.id.savedMessagesList)
         recycler?.setHasFixedSize(true)
-        //Retrieve saved messages from Realm
 
+        //Retrieve saved messages from Realm
         getIntent = intent.getIntExtra("id", 0)
 
+        messages = if (getIntent == 0){
+            RealmUtil().retrieveMessages()?.subList(startList()!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
+        } else {
+            RealmUtil().retrieveMessages()?.subList(startList()!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
+        }
+//
+//        messages = RealmUtil().retrieveMessages()
+//        val showMessages = messages?.subList(startList()!!, RealmUtil().getEndMessagesSize()?.size!! + 1)?.toMutableList()
+//
+//        var fakeList: MutableList<ChatModel>? = ArrayList()
 
 
-        messages = RealmUtil().retrieveMessages()
-        val showMessages = messages?.subList(startList()!!, RealmUtil().getEndMessagesSize()?.size!!)?.toMutableList()
-
-        val fakeList: MutableList<ChatModel>? = showMessages
-
-
-        val adapter = SavedMessagesAdapter(showMessages!!)
+        val adapter = SavedMessagesAdapter(messages!!)
         val manager = LinearLayoutManager(this)
         manager.stackFromEnd = true
         manager.orientation = LinearLayoutManager.VERTICAL
@@ -63,30 +72,42 @@ class SavedMessages : AppCompatActivity() {
         recycler?.layoutManager = manager
         recycler?.adapter = adapter
 
-
-//        toast(getIntent.toString() +
-//                " sms: " + "${StartMessagesSize().queryAll().size} " +
-//                "ind: ${StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!!} " +
-//                "end: ${EndMessagesSize().queryAll().size} ")
+        Log.d("SavedMessages********* ", getIntent.toString() +
+                "\n start: " + "${startList()} " +
+                "\nintent: ${RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!} " +
+                "\nend: ${RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!} ")
 
     }
 
     fun startList(): Int? {
-        return if (getIntent == 0) {
-                return 0
-            } else if (StartMessagesSize().queryAll().size == StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!! && getIntent != 0) {
-                return StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!!
-            } else if (StartMessagesSize().queryAll().size != StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!! && getIntent != 0) {
-                return StartMessagesSize().queryAll()[getIntent!!].startMessagesSize!!
-            } else {
-                0
-            }
-//        } catch (e: ArrayIndexOutOfBoundsException){
+//        return try {
+//            if (getIntent != null && getIntent == 0) {
+//                return 0
+//            } else if (getIntent != null
+//                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
+//                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
+//                    && getIntent != 0) {
+//                toast("==")
+//                return RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize
+//            } else if (getIntent != null
+//                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
+//                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
+//                    && getIntent != 0) {
+////                return StartMessagesSize().queryAll()[getIntent!!].startMessagesSize
+//                toast("!=")
+//                return RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+////                return StartMessagesSize().querySorted("startMessagesSize", Sort.ASCENDING)[getIntent!!].startMessagesSize
+//            } else {
+//                toast("else: Hueva")
+//                0
+//            }
+//        } catch (e: java.lang.IndexOutOfBoundsException){
+//            toast("catch: Hueva")
 //            return 0
 //        }
+//    }
+        return RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
     }
-
-
 
 
     override fun onBackPressed() {

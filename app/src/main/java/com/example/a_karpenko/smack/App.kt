@@ -8,7 +8,7 @@ import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
-class App : Application() {
+class App: Application() {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)

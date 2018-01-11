@@ -17,6 +17,7 @@ import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.example.a_karpenko.smack.models.chat.SavedChatsTime
 import com.vicpin.krealmextensions.*
 import io.realm.*
+import org.jetbrains.anko.doAsync
 import kotlin.collections.ArrayList
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -223,18 +224,26 @@ open class RealmUtil {
     }
 
     fun saveStartMessagesSize(size: Int?){
-        try {
-            realm?.beginTransaction()
-            realm?.createObject(StartMessagesSize::class.java)?.startMessagesSize = size
-            realm?.commitTransaction()
-        } finally {
-            realm?.close()
-        }
+        doAsync {
+            try {
+                if (getStartMessagesSize() != null && getStartMessagesSize()?.isNotEmpty()!!) {
+                    realm?.beginTransaction()
+                    realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = size
+                    realm?.commitTransaction()
+                } else if (getStartMessagesSize() != null && getStartMessagesSize()?.isEmpty()!!) {
+                    realm?.beginTransaction()
+                    realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = 0
+                    realm?.commitTransaction()
+                }
+            } finally {
+                realm?.close()
+            }
+         }
     }
     fun saveEndMessagesSize(size: Int?){
         try {
             realm?.beginTransaction()
-            realm?.copyToRealm(EndMessagesSize())?.endMessagesSize = size!!
+            realm?.createObject(EndMessagesSize::class.java, getNextKey(EndMessagesSize()))?.endMessagesSize = size
             realm?.commitTransaction()
         } finally {
             realm?.close()

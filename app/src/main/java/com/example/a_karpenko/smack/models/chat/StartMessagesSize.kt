@@ -8,6 +8,9 @@ import io.realm.annotations.Required
 
 open class StartMessagesSize : RealmObject() {
 
+    @PrimaryKey
+    var id: Int? = null
+
     //Save list size at the beginning and the end
     //and when user save the chat afterward i use this values to query it
     @Index

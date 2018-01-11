@@ -35,6 +35,7 @@ import com.google.firebase.firestore.*
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
+import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
 import org.jetbrains.anko.doAsync
@@ -167,7 +168,7 @@ class ChatActivity : AppCompatActivity() {
                 RealmUtil().saveMessages(messages!!)
                 RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
             }
-            toast("Chat successfully saved + ${messages?.size}")
+            toast("Chat successfully saved + ${RealmUtil().retrieveMessages()?.size}")
             //TODO:
         }
 
@@ -404,11 +405,11 @@ class ChatActivity : AppCompatActivity() {
 
         //Add start messages size to Realm
         doAsync {
-            if(EndMessagesSize().queryLast()?.endMessagesSize != 0) {
-                RealmUtil().saveStartMessagesSize(EndMessagesSize().queryLast()?.endMessagesSize)
-            } else {
-                RealmUtil().saveStartMessagesSize(0)
-            }
+//            if(RealmUtil().getEndMessagesSize()?.size != 0 && RealmUtil().getEndMessagesSize()?.isNotEmpty()!!) {
+                RealmUtil().saveStartMessagesSize(RealmUtil().retrieveMessages()?.size)
+//            } else {
+//                RealmUtil().saveStartMessagesSize(0)
+//            }
         }
     }
 

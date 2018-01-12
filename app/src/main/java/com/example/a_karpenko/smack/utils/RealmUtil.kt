@@ -1,5 +1,6 @@
 package com.example.a_karpenko.smack.utils
 
+import android.util.Log
 import android.view.View
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
@@ -223,23 +224,23 @@ open class RealmUtil {
         return list
     }
 
-    fun saveStartMessagesSize(size: Int?){
-        doAsync {
-            try {
-                if (getStartMessagesSize() != null && getStartMessagesSize()?.isNotEmpty()!!) {
-                    realm?.beginTransaction()
-                    realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = size
-                    realm?.commitTransaction()
-                } else if (getStartMessagesSize() != null && getStartMessagesSize()?.isEmpty()!!) {
-                    realm?.beginTransaction()
-                    realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = 0
-                    realm?.commitTransaction()
-                }
+    //Save messages
+    fun saveStartMessagesSize(size: Int?) {
+        try {
+            if (getStartMessagesSize()?.size!! <= 0) {
+                realm?.beginTransaction()
+                realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = 0
+                realm?.commitTransaction()
+            } else if (getStartMessagesSize()?.size!! > 0
+                    && getStartMessagesSize()?.last()?.startMessagesSize!! != size) {
+                realm?.beginTransaction()
+                realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = size
+                realm?.commitTransaction()
+            }
             } finally {
                 realm?.close()
             }
-         }
-    }
+        }
     fun saveEndMessagesSize(size: Int?){
         try {
             realm?.beginTransaction()

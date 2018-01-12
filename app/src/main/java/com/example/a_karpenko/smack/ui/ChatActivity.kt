@@ -162,14 +162,13 @@ class ChatActivity : AppCompatActivity() {
         //Save star on click
         saveStar?.onClick {
             doAsync {
-                //Save Chat
-                RealmUtil().savedChatTime(currentDate?.toString())
                 //Save messages
                 RealmUtil().saveMessages(messages!!)
+                //Save Chat
+                RealmUtil().savedChatTime(currentDate?.toString())
                 RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
             }
             toast("Chat successfully saved + ${RealmUtil().retrieveMessages()?.size}")
-            //TODO:
         }
 
         //Hide and open widget when spinner layout clicked
@@ -332,8 +331,6 @@ class ChatActivity : AppCompatActivity() {
             val message = snapshot.documentChanges.last().document["message"].toString()
             val receivedQuery = ChatModel(from, message, currentDate)
             messages?.add(receivedQuery)
-            //TODO: save messages to Realm
-
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
 
@@ -359,9 +356,6 @@ class ChatActivity : AppCompatActivity() {
             //Add data to model
             val myMessage = ChatModel(uidMy!!, text!!, currentDate)
             messages?.add(myMessage)
-//            Save Messages
-            //TODO: save messages to Realm
-
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
             }
@@ -405,11 +399,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Add start messages size to Realm
         doAsync {
-//            if(RealmUtil().getEndMessagesSize()?.size != 0 && RealmUtil().getEndMessagesSize()?.isNotEmpty()!!) {
-                RealmUtil().saveStartMessagesSize(RealmUtil().retrieveMessages()?.size)
-//            } else {
-//                RealmUtil().saveStartMessagesSize(0)
-//            }
+            RealmUtil().saveStartMessagesSize(RealmUtil().retrieveMessages()?.size)
         }
     }
 
@@ -421,7 +411,6 @@ class ChatActivity : AppCompatActivity() {
         emojiButton?.setBackgroundResource(R.drawable.emoji_ic_smile)
     }
 
-    //TODO: check if onPause calls before onDestroy method
     override fun onDestroy() {
         super.onDestroy()
         listener()?.remove()

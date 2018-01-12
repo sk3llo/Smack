@@ -52,16 +52,7 @@ class SavedMessages : AppCompatActivity() {
         //Retrieve saved messages from Realm
         getIntent = intent.getIntExtra("id", 0)
 
-        messages = if (getIntent == 0){
-            RealmUtil().retrieveMessages()?.subList(startList()!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
-        } else {
-            RealmUtil().retrieveMessages()?.subList(startList()!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
-        }
-//
-//        messages = RealmUtil().retrieveMessages()
-//        val showMessages = messages?.subList(startList()!!, RealmUtil().getEndMessagesSize()?.size!! + 1)?.toMutableList()
-//
-//        var fakeList: MutableList<ChatModel>? = ArrayList()
+        messages = RealmUtil().retrieveMessages()?.subList(startList()!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
 
 
         val adapter = SavedMessagesAdapter(messages!!)
@@ -72,41 +63,29 @@ class SavedMessages : AppCompatActivity() {
         recycler?.layoutManager = manager
         recycler?.adapter = adapter
 
-        Log.d("SavedMessages********* ", getIntent.toString() +
-                "\n start: " + "${startList()} " +
-                "\nintent: ${RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!} " +
-                "\nend: ${RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!} ")
-
     }
 
+    // Get first index based on clicked recyclerview item (intent)
     fun startList(): Int? {
-//        return try {
-//            if (getIntent != null && getIntent == 0) {
-//                return 0
-//            } else if (getIntent != null
-//                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
-//                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
-//                    && getIntent != 0) {
-//                toast("==")
-//                return RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize
-//            } else if (getIntent != null
-//                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
-//                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
-//                    && getIntent != 0) {
-////                return StartMessagesSize().queryAll()[getIntent!!].startMessagesSize
-//                toast("!=")
-//                return RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
-////                return StartMessagesSize().querySorted("startMessagesSize", Sort.ASCENDING)[getIntent!!].startMessagesSize
-//            } else {
-//                toast("else: Hueva")
-//                0
-//            }
-//        } catch (e: java.lang.IndexOutOfBoundsException){
-//            toast("catch: Hueva")
-//            return 0
-//        }
-//    }
-        return RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
+        return try {
+            if (getIntent != null && getIntent == 0) {
+                0
+            } else if (getIntent != null
+                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
+                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
+                    && getIntent != 0) {
+                RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize
+            } else if (getIntent != null
+                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
+                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
+                    && getIntent != 0) {
+                RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+            } else {
+                RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+            }
+        } catch (e: java.lang.IndexOutOfBoundsException){
+            RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+        }
     }
 
 

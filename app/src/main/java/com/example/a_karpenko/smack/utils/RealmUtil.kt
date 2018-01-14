@@ -253,4 +253,32 @@ open class RealmUtil {
     fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.findAll()
     fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.findAll()
 
+    //Change all messages if some row is deleted
+    fun changeEndMessages(pos: Int?) {
+        realm?.beginTransaction()
+        val end = realm?.where(EndMessagesSize::class.java)
+                ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos!!]?.endMessagesSize!!)?.findAll()
+        if (!end?.isEmpty()!!) {
+            end.forEach {
+                it?.endMessagesSize = it?.endMessagesSize!! - RealmUtil().getEndMessagesSize()!![pos!!]?.endMessagesSize!!
+                realm?.insertOrUpdate(it)
+            }
+        }
+        realm?.commitTransaction()
+        realm?.close()
+    }
+    fun changeStartMessages(pos: Int?) {
+        realm?.beginTransaction()
+        val start = realm?.where(StartMessagesSize::class.java)
+                ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos!!]?.startMessagesSize!!)?.findAll()
+        if (!start?.isEmpty()!!){
+            start.forEach {
+                it?.startMessagesSize = it?.startMessagesSize!! - RealmUtil().getStartMessagesSize()!![pos!!]?.startMessagesSize!!
+                realm?.insertOrUpdate(it)
+            }
+        }
+        realm?.commitTransaction()
+        realm?.close()
+    }
+
 }

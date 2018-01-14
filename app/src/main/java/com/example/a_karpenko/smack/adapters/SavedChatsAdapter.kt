@@ -2,30 +2,22 @@ package com.example.a_karpenko.smack.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.SavedChatsTime
-import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.ui.SavedChats
 import com.example.a_karpenko.smack.ui.SavedMessages
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.queryAll
 import io.realm.*
-import org.jetbrains.anko.collections.forEachByIndex
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.sdk25.coroutines.onClick
 
 open class SavedChatsAdapter(var recyclerView: RecyclerView,
                              var activity: SavedChats,
@@ -84,36 +76,55 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
     open inner class ClickListener(private var pos: Int): View.OnClickListener{
         override fun onClick(v: View?) {
 
-                Log.d("MainActivity****** ", "startSize0: ${EndMessagesSize().queryAll()[0].endMessagesSize}")
+            Log.d("SavedChatAdapter****** ", "endSize 0: ${EndMessagesSize().queryAll()[0].endMessagesSize}")
 
             if (v?.id == R.id.trash){
+
+                RealmUtil().changeEndMessages(pos)
+                RealmUtil().changeStartMessages(pos)
+                realm?.beginTransaction()
+
                 val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)?.findAll()
 
-                val endMessage = EndMessagesSize().queryAll()
-                endMessage.toMutableList().forEach {
-                    it.endMessagesSize = it.endMessagesSize!! - EndMessagesSize().queryAll()[pos].endMessagesSize!!
-                    Log.d("MainActivity****** ", "sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
+                if (!RealmUtil().getStartMessagesSize()?.isEmpty()!! && !RealmUtil().getEndMessagesSize()?.isEmpty()!!) {
+                    RealmUtil().getStartMessagesSize()!![0]?.startMessagesSize = 0
                 }
-
-                realm?.beginTransaction()
-                //Substract deleted row from other rows
-
-                val startMessage = realm?.where(StartMessagesSize::class.java)?.findAll()
-
-                when {
-                    pos == 0 && startMessage?.size!! >= 1 -> startMessage.forEach { it?.startMessagesSize = 0 }
-//                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! == 0 -> startMessage?.forEach{
-//                        it?.startMessagesSize = 0
-//                    }
-                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! != 0 -> startMessage?.forEach{
-                        it?.startMessagesSize!! - RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!
-                    }
-                }
-
+//
+//                val endMessage = EndMessagesSize().queryAll()
+//
+//                endMessage.forEach {
+//                    it.endMessagesSize = it.endMessagesSize!! - EndMessagesSize().queryAll()[pos].endMessagesSize!!
+//                    Log.d("MainActivity****** ", "endMessageSize*************: ${it.endMessagesSize}")
+//                }
+//
+//                realm?.copyToRealmOrUpdate(endMessage)
+//
+//                realm?.beginTransaction()
+//                //Substract deleted row from other rows
+//
+//                val startMessage = realm?.where(StartMessagesSize::class.java)?.findAll()
+//
+////                when {
+////                    pos == 0 && startMessage?.size!! <= 2 -> startMessage.forEach { it?.startMessagesSize = 0 }
+//////                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! == 0 -> startMessage?.forEach{
+//////                        it?.startMessagesSize = 0
+//////                    }
+////                    pos != 0 -> {
+//                        startMessage?.forEach {
+//                            it?.startMessagesSize = it?.startMessagesSize!! - RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!
+//                            Log.d("MainActivity****** ", "startMessageSize*************: ${it.startMessagesSize}")
+//                        }
+//                        if (!RealmUtil().getStartMessagesSize()?.isEmpty()!!) {
+//                            RealmUtil().getStartMessagesSize()!![0]?.startMessagesSize = 0
+//                        }
+////                    }
+////                }
 
                 for (i in RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! + 1..RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!) {
-                    Log.d("SavedChatAdapter*** ", "$i")
-                    list?.deleteFromRealm(i)
+                    if (list?.isNotEmpty()!!) {
+                        Log.d("SavedChatAdapter*** ", "$i")
+                        list?.deleteFromRealm(i)
+                    }
                 }
                 RealmUtil().getStartMessagesSize()?.deleteFromRealm(pos)
                 RealmUtil().getEndMessagesSize()?.deleteFromRealm(pos)

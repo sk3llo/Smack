@@ -412,7 +412,6 @@ class ChatActivity : AppCompatActivity() {
             View.VISIBLE -> closeActivity()
             View.GONE -> firstDialog()
         }
-        emojiButton?.setBackgroundResource(R.drawable.emoji_ic_smile)
     }
 
     override fun onDestroy() {

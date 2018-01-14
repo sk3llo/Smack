@@ -20,7 +20,7 @@ import io.realm.Sort
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 
-class SavedMessages : AppCompatActivity() {
+open class SavedMessages : AppCompatActivity() {
 
     var toolbar: Toolbar? = null
     var recycler: RecyclerView? = null
@@ -52,7 +52,7 @@ class SavedMessages : AppCompatActivity() {
         //Retrieve saved messages from Realm
         getIntent = intent.getIntExtra("id", 0)
 
-        messages = RealmUtil().retrieveMessages()?.subList(startList()!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
+        messages = RealmUtil().retrieveMessages()?.subList(startList(getIntent)!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
 
 
         val adapter = SavedMessagesAdapter(messages!!)
@@ -66,25 +66,25 @@ class SavedMessages : AppCompatActivity() {
     }
 
     // Get first index based on clicked recyclerview item (intent)
-    fun startList(): Int? {
+    open fun startList(intent: Int?): Int? {
         return try {
-            if (getIntent != null && getIntent == 0) {
+            if (intent != null && intent == 0) {
                 0
-            } else if (getIntent != null
+            } else if (intent != null
                     && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
-                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
-                    && getIntent != 0) {
+                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize!!
+                    && intent != 0) {
                 RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize
-            } else if (getIntent != null
+            } else if (intent != null
                     && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
-                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize!!
-                    && getIntent != 0) {
-                RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize!!
+                    && intent != 0) {
+                RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize
             } else {
-                RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+                RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
             }
         } catch (e: java.lang.IndexOutOfBoundsException){
-            RealmUtil().getStartMessagesSize()!![getIntent!!]?.startMessagesSize
+            RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
         }
     }
 

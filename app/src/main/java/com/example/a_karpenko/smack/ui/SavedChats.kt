@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.widget.Button
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedChatsAdapter
 import com.example.a_karpenko.smack.utils.RealmUtil
@@ -42,8 +43,10 @@ open class SavedChats : AppCompatActivity() {
         recycler?.adapter = adapter
         recycler?.layoutManager = manager
 
-
     }
+
+
+
 
     override fun onBackPressed() {
         startActivity(Intent(this@SavedChats, MainActivity::class.java))

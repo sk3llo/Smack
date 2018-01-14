@@ -158,6 +158,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+
     }
 
     fun startChat() {

@@ -61,18 +61,6 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
         return messages.size
     }
 
-    fun add(item: ChatModel, position: Int){
-        messages.add(position, item)
-        notifyItemInserted(position)
-    }
-
-    fun remove(item: ChatModel){
-        val position: Int? = messages.indexOf(item)
-        messages.removeAt(position!!)
-        notifyItemRemoved(position)
-    }
-
-
     open class MessageSentViewHolder(view: View?) : RecyclerView.ViewHolder(view) {
         var messageSent : TextView? = view?.findViewById(R.id.messageSentText)
         var messageSentTime : TextView? = view?.findViewById(R.id.messageSentTime)

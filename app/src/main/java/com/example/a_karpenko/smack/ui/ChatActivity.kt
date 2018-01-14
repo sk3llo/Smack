@@ -162,13 +162,17 @@ class ChatActivity : AppCompatActivity() {
         //Save star on click
         saveStar?.onClick {
             doAsync {
-                //Save messages
-                RealmUtil().saveMessages(messages!!)
-                //Save Chat
-                RealmUtil().savedChatTime(currentDate?.toString())
-                RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
+                if (messages?.size!! > 0) {
+                    //Save messages
+                    RealmUtil().saveMessages(messages!!)
+                    //Save Chat
+                    RealmUtil().savedChatTime(currentDate?.toString())
+                    RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
+                    runOnUiThread {toast("Chat successfully saved")}
+                } else {
+                    runOnUiThread {toast("Oops, chat is empty!")}
+                }
             }
-            toast("Chat successfully saved + ${RealmUtil().retrieveMessages()?.size}")
         }
 
         //Hide and open widget when spinner layout clicked

@@ -8,16 +8,20 @@
 
     <TextView
             android:id="@+id/savedChatDate"
+            android:layout_gravity="center_vertical"
             android:textSize="20sp"
             android:layout_weight="100"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
-    <CheckBox
-            android:id="@+id/savedChatDone"
-            android:focusable="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+    <Button
+            android:id="@+id/trash"
+            android:layout_marginRight="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_trash_selector"
+            android:layout_gravity="center_vertical"/>
 
 
 </LinearLayout>

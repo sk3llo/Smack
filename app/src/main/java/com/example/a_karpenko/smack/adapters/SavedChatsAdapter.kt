@@ -20,8 +20,7 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.ui.SavedChats
 import com.example.a_karpenko.smack.ui.SavedMessages
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.delete
-import com.vicpin.krealmextensions.queryAll
+import com.vicpin.krealmextensions.*
 import io.realm.*
 import org.jetbrains.anko.collections.forEachByIndex
 import org.jetbrains.anko.doAsync
@@ -84,37 +83,74 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
     open inner class ClickListener(private var pos: Int): View.OnClickListener{
         override fun onClick(v: View?) {
 
-                Log.d("MainActivity****** ", "startSize0: ${EndMessagesSize().queryAll()[0].endMessagesSize}")
-
-            if (v?.id == R.id.trash){
+            if (v?.id == R.id.trash) {
                 val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)?.findAll()
+                val endMessage = realm?.where(EndMessagesSize::class.java)
+                        ?.greaterThan("endMessagesSize", EndMessagesSize().queryAll()[pos].endMessagesSize!!)?.findAll()
+//                        .query { it.greaterThan("endMessagesSize", EndMessagesSize().queryAll()[pos].endMessagesSize!!) }
+                val startMessage = realm?.where(StartMessagesSize::class.java)
+                        ?.greaterThan("startMessagesSize", StartMessagesSize().queryAll()[pos].startMessagesSize!!)?.findAll()
+//                        .query{ it.greaterThan("startMessagesSize", StartMessagesSize().queryAll()[pos].startMessagesSize!!) }
 
-                val endMessage = EndMessagesSize().queryAll()
-                endMessage.toMutableList().forEach {
-                    it.endMessagesSize = it.endMessagesSize!! - EndMessagesSize().queryAll()[pos].endMessagesSize!!
-                    Log.d("MainActivity****** ", "sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
-                }
+                var x = StartMessagesSize().query {it.greaterThan("startMessagesSize", StartMessagesSize().queryAll()[pos].startMessagesSize!!).findAll()}
+                var y = EndMessagesSize().query {it.greaterThan("endMessagesSize", EndMessagesSize().queryAll()[pos].endMessagesSize!!).findAll()}
 
-                realm?.beginTransaction()
-                //Substract deleted row from other rows
+                    y?.forEach {
+                        if (it.endMessagesSize!! != EndMessagesSize().queryAll()[pos].endMessagesSize!!) {
+                            it.endMessagesSize = it.endMessagesSize!! - EndMessagesSize().queryAll()[pos].endMessagesSize!!
+                            Log.d("SavedChatsAdapter**** ", "end sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
+                            realm?.beginTransaction()
+                            realm?.insertOrUpdate(it)
+                            realm?.commitTransaction()
+                            realm?.close()
+                        }
+                    }
+                    x?.forEach {
+                        if (it.startMessagesSize!! != StartMessagesSize().queryAll()[pos].startMessagesSize!!) {
+                            it.startMessagesSize = it.startMessagesSize!! - StartMessagesSize().queryAll()[pos].startMessagesSize!!
+                            Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.startMessagesSize}")
+                            realm?.beginTransaction()
+                            realm?.insertOrUpdate(it)
+                            realm?.commitTransaction()
+                            realm?.close()
+                        }
+                    }
 
-                val startMessage = realm?.where(StartMessagesSize::class.java)?.findAll()
 
-                when {
-                    pos == 0 && startMessage?.size!! >= 1 -> startMessage.forEach { it?.startMessagesSize = 0 }
-//                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! == 0 -> startMessage?.forEach{
-//                        it?.startMessagesSize = 0
-//                    }
-                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! != 0 -> startMessage?.forEach{
-                        it?.startMessagesSize!! - RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!
+                realm?.executeTransaction {
+                    if (pos >= 1) {
+                        for (i in RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!.minus(1) downTo (RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!)) {
+                            Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
+                            list?.deleteFromRealm(i)
+                        }
+                    } else if (pos == 0 && StartMessagesSize().queryAll().size > 1 && EndMessagesSize().queryAll().size > 1) {
+                        for (i in RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!.minus(1) downTo 0) {
+                            Log.d("SavedChatAdapter*** ", "i >= 1: $i")
+                            list?.deleteFromRealm(i)
+                        }
+                    } else if (pos == 0 && StartMessagesSize().queryAll().size == 1 && EndMessagesSize().queryAll().size == 1) {
+                        list?.deleteAllFromRealm()
                     }
                 }
 
 
-                for (i in RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! + 1..RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!) {
-                    Log.d("SavedChatAdapter*** ", "$i")
-                    list?.deleteFromRealm(i)
-                }
+
+                realm?.beginTransaction()
+                //Substract deleted row from other rows
+
+//                when {
+//                    pos == 0 && startMessage?.size!! >= 1 -> startMessage.forEach { it?.startMessagesSize = 0 }
+////                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! == 0 -> startMessage?.forEach{
+////                        it?.startMessagesSize = 0
+////                    }
+//                    RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!! != 0 -> startMessage?.forEach{
+//                        it?.startMessagesSize!! - RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!
+//                    }
+//                }
+
+
+//TODO: messages
+
                 RealmUtil().getStartMessagesSize()?.deleteFromRealm(pos)
                 RealmUtil().getEndMessagesSize()?.deleteFromRealm(pos)
                 RealmUtil().getSavedChatTime()?.deleteFromRealm(pos)
@@ -122,7 +158,17 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                 realm?.commitTransaction()
                 realm?.close()
                 recyclerView.removeViewAt(pos)
-                notifyItemRemoved(pos)
+//                notifyItemRemoved(pos)
+
+                if (pos == 0 && StartMessagesSize().queryAll().size > 1){
+                    val start = StartMessagesSize().queryAll()
+                    start[0].startMessagesSize = 0
+                    realm?.beginTransaction()
+                    realm?.insertOrUpdate(start)
+                    realm?.commitTransaction()
+                    realm?.close()
+                }
+
 //                notifyItemRangeChanged(pos, data?.size!!)
 
             } else {

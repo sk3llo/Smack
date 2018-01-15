@@ -12,9 +12,12 @@ import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedChatsAdapter
 import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.StartMessagesSize
+import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
+import com.vicpin.krealmextensions.count
 import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
+import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
 open class SavedChats : AppCompatActivity() {
@@ -25,15 +28,9 @@ open class SavedChats : AppCompatActivity() {
     var realm: Realm? = null
     var adapter: SavedChatsAdapter? = null
 
-
-    var fakeButton: Button? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_chats)
-
-
-        fakeButton = findViewById(R.id.huinya_button)
 
         realm = Realm.getDefaultInstance()
         toolbar = findViewById(R.id.savedChatToolbar)
@@ -45,6 +42,18 @@ open class SavedChats : AppCompatActivity() {
             finish()
         }
 
+        var fake: Button? = find(R.id.fake)
+
+        fake?.onClick {
+            Log.d("SavedChats******** ", "end size: ${EndMessagesSize().queryAll().size}")
+            Log.d("SavedChats******** ", "start size: ${StartMessagesSize().queryAll().size}")
+            Log.d("SavedChats******** ", "end 0: ${EndMessagesSize().queryAll()[0].endMessagesSize}")
+            Log.d("SavedChats******** ", "end 1: ${EndMessagesSize().queryAll()[1].endMessagesSize}")
+            Log.d("SavedChats******** ", "start 0: ${StartMessagesSize().queryAll()[0].startMessagesSize}")
+            Log.d("SavedChats******** ", "start 1: ${StartMessagesSize().queryAll()[1].startMessagesSize}")
+            Log.d("SavedChats******** ", "chatModelSize: ${ChatModel().queryAll().size}")
+        }
+
         recycler = findViewById(R.id.savedChatList)
         val manager = object : LinearLayoutManager(this) {}
         manager.orientation = LinearLayoutManager.VERTICAL
@@ -52,16 +61,6 @@ open class SavedChats : AppCompatActivity() {
 
         recycler?.adapter = adapter
         recycler?.layoutManager = manager
-
-
-        fakeButton?.onClick {
-            Log.d("MainActivity****** ", "endMessageSize*************: ${EndMessagesSize().queryAll().size}")
-            Log.d("MainActivity****** ", "startMessageSize*************: ${StartMessagesSize().queryAll().size}")
-            Log.d("MainActivity****** ", "endMessage00000000: ${EndMessagesSize().queryAll()[0].endMessagesSize}")
-            Log.d("MainActivity****** ", "startMessage00000000: ${StartMessagesSize().queryAll()[0].startMessagesSize}")
-
-        }
-
 
     }
 

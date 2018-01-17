@@ -28,6 +28,7 @@ open class RealmUtil {
 
     //increment id by 1
     open fun getNextKey(realmObject: RealmModel): Int?{
+
         val number = realm?.where(realmObject::class.java)?.max("id")
 
         return try {
@@ -36,7 +37,7 @@ open class RealmUtil {
             } else {
                 0
             }
-        } catch (e: ArrayIndexOutOfBoundsException){
+        } catch (e: ArrayIndexOutOfBoundsException) {
             0
         }
     }
@@ -203,14 +204,14 @@ open class RealmUtil {
             realm?.close()
         }
     }
-    fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)?.findAll()
+    fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)?.findAllSorted("id")
 
     //Save messages to Realm
     fun saveMessages(savedMessages: ArrayList<ChatModel>){
         try {
             realm?.beginTransaction()
 //            realm?.copyToRealmOrUpdate(savedMessages)
-            realm?.copyToRealm(savedMessages)
+            realm?.insert(savedMessages)
             realm?.commitTransaction()
         } finally {
             realm?.close()

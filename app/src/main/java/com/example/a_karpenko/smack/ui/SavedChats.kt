@@ -59,6 +59,7 @@ open class SavedChats : AppCompatActivity() {
         manager.orientation = LinearLayoutManager.VERTICAL
         adapter = SavedChatsAdapter(recycler!!, this, this, RealmUtil().getSavedChatTime()!!, true)
 
+        recycler?.setHasFixedSize(true)
         recycler?.adapter = adapter
         recycler?.layoutManager = manager
 

@@ -38,6 +38,7 @@ import com.vanniktech.emoji.EmojiTextView
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
+import io.realm.RealmModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -47,7 +48,7 @@ import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
-    var db: Realm? = null
+    var realm: Realm? = null
     lateinit var emojiPopup: EmojiPopup
     var emojiButton: Button? = null
     var messageSent: EmojiTextView? = null
@@ -98,7 +99,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         messages = ArrayList()
-        db = Realm.getDefaultInstance()
+        realm = Realm.getDefaultInstance()
 
         //Network info
         cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -206,9 +207,9 @@ class ChatActivity : AppCompatActivity() {
         startOver?.onClick{
             if (ni != null && ni?.isConnectedOrConnecting!!) {
                 //Add doc to Firestore with "Online" Action
-                val db: FirebaseFirestore? = FirebaseFirestore.getInstance()
+                val realm: FirebaseFirestore? = FirebaseFirestore.getInstance()
                 val user = FirebaseAuth.getInstance().currentUser
-                db?.collection("WL")?.document("${user?.uid}")?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
+                realm?.collection("WL")?.document("${user?.uid}")?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
                     Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${user?.uid}")
                 }
                 //Start Waiting Activity
@@ -337,7 +338,6 @@ class ChatActivity : AppCompatActivity() {
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
-
         }
     }
 
@@ -375,6 +375,24 @@ class ChatActivity : AppCompatActivity() {
             messageInputText.text = null
     }
 }
+
+
+    private fun getNextKey(realmObject: RealmModel): Int?{
+
+        val number = realm?.where(realmObject::class.java)?.max("id")
+
+        return try {
+            if (number != null) {
+                number.toInt() + 1
+            } else {
+                0
+            }
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            0
+        }
+    }
+
+
 
     override fun onStart() {
         super.onStart()

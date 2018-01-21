@@ -17,6 +17,7 @@ import com.example.a_karpenko.smack.utils.RealmUtil
 import com.vicpin.krealmextensions.count
 import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
+import io.realm.Sort
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -45,12 +46,22 @@ open class SavedChats : AppCompatActivity() {
         var fake: Button? = find(R.id.fake)
 
         fake?.onClick {
-            Log.d("SavedChats******** ", "end size: ${EndMessagesSize().queryAll().size}")
-            Log.d("SavedChats******** ", "start size: ${StartMessagesSize().queryAll().size}")
-            Log.d("SavedChats******** ", "end 0: ${EndMessagesSize().queryAll()[0].endMessagesSize}")
-            Log.d("SavedChats******** ", "end 1: ${EndMessagesSize().queryAll()[1].endMessagesSize}")
-            Log.d("SavedChats******** ", "start 0: ${StartMessagesSize().queryAll()[0].startMessagesSize}")
-            Log.d("SavedChats******** ", "start 1: ${StartMessagesSize().queryAll()[1].startMessagesSize}")
+            Log.d("SavedChats******** ", "start size: ${StartMessagesSize().queryAll().size}    " + "end size: ${EndMessagesSize().queryAll().size}")
+            Log.d("SavedChats******** ", "start 0: ${realm?.where(StartMessagesSize::class.java)
+                    ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![0]?.startMessagesSize!!}     " +
+                    "end 0: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![0]?.endMessagesSize!!}")
+            try {
+                Log.d("SavedChats******** ", "start 1: ${realm?.where(StartMessagesSize::class.java)
+                        ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![1]?.startMessagesSize!!}     " + "end 1: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![1]?.endMessagesSize!!}")
+            } catch (e: IndexOutOfBoundsException){
+                return@onClick
+            }
+            try{
+                Log.d("SavedChats******** ", "start 2: ${realm?.where(StartMessagesSize::class.java)
+                        ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![2]?.startMessagesSize!!}     " + "end 2: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![2]?.endMessagesSize!!}")
+            } catch (e: IndexOutOfBoundsException){
+                return@onClick
+            }
             Log.d("SavedChats******** ", "chatModelSize: ${ChatModel().queryAll().size}")
         }
 

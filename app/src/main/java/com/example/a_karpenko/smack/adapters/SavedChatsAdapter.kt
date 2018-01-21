@@ -88,7 +88,7 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
             if (v?.id == R.id.trash) {
                 realm?.executeTransaction {
 
-                val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)?.findAllSorted("timeStamp", Sort.DESCENDING)
+                val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)?.findAllSorted("timeStamp", Sort.ASCENDING)
                 val endMessage = realm?.where(EndMessagesSize::class.java)
                         ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos]!!.endMessagesSize!!)
                         ?.findAllSorted("endMessagesSize", Sort.ASCENDING)
@@ -97,23 +97,24 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                         ?.findAllSorted("startMessagesSize", Sort.ASCENDING)
 
                 val endSize = realm?.where(EndMessagesSize::class.java)
-                        ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.endMessagesSize!!
+                        ?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![pos]?.endMessagesSize!!
 
                 val startSize = realm?.where(StartMessagesSize::class.java)
-                        ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.startMessagesSize!!
+                        ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![pos]?.startMessagesSize!!
+
 
 
 
                 if (endMessage?.isNotEmpty()!! && startMessage?.isNotEmpty()!!) {
 
-                    endMessage.forEach {
-                        it?.endMessagesSize = it?.endMessagesSize?.minus(endSize)
-                        Log.d("SavedChatsAdapter**** ", "end sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
-                    }
-
                     startMessage.forEach { start ->
                         start.startMessagesSize = start.startMessagesSize!!.minus(endSize)
                         Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
+                    }
+
+                    endMessage.forEach {
+                        it?.endMessagesSize = it?.endMessagesSize?.minus(endSize)
+                        Log.d("SavedChatsAdapter**** ", "end sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
                     }
 
                     //                    endMessage?.forEach {
@@ -124,22 +125,24 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
                 }
 
-                    if (pos >= 1) {
-                        for (i in endSize.minus(1)
-                                downTo startSize) {
-                            Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
-                            list?.deleteFromRealm(i)
-                        }
-                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! > 1
-                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! > 1) {
-                        for (i in endSize.minus(1) downTo 0) {
-                            Log.d("SavedChatAdapter*** ", "pos = 0: $i")
-                            list?.deleteFromRealm(i)
-                        }
-                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! == 1
-                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! == 1) {
-                        list?.deleteAllFromRealm()
+
+
+                if (pos >= 1) {
+                    for (i in endSize.minus(1)
+                            downTo startSize) {
+                        Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
+                        list?.deleteFromRealm(i)
                     }
+                } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! > 1
+                        && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! > 1) {
+                    for (i in endSize.minus(1) downTo 0) {
+                        Log.d("SavedChatAdapter*** ", "pos = 0: $i")
+                        list?.deleteFromRealm(i)
+                    }
+                } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! == 1
+                        && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! == 1) {
+                    list?.deleteAllFromRealm()
+                }
 
 
 
@@ -165,8 +168,8 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 //                RealmUtil().getStartMessagesSize()?.deleteFromRealm(pos)
 //                RealmUtil().getEndMessagesSize()?.deleteFromRealm(pos)
 //                RealmUtil().getSavedChatTime()?.deleteFromRealm(pos)
-                realm?.where(StartMessagesSize::class.java)?.equalTo("id", pos)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
-                realm?.where(EndMessagesSize::class.java)?.equalTo("id", pos)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
+                realm?.where(StartMessagesSize::class.java)?.findAllSorted("startMessagesSize", Sort.ASCENDING)?.deleteFromRealm(pos)
+                realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)?.deleteFromRealm(pos)
 //                if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()!!.size > 1){
 //                    val start = realm?.where(StartMessagesSize::class.java)?.findAll()!!
 //                    start[0]?.startMessagesSize = 0

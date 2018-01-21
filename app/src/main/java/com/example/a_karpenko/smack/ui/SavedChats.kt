@@ -48,17 +48,17 @@ open class SavedChats : AppCompatActivity() {
         fake?.onClick {
             Log.d("SavedChats******** ", "start size: ${StartMessagesSize().queryAll().size}    " + "end size: ${EndMessagesSize().queryAll().size}")
             Log.d("SavedChats******** ", "start 0: ${realm?.where(StartMessagesSize::class.java)
-                    ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![0]?.startMessagesSize!!}     " +
-                    "end 0: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![0]?.endMessagesSize!!}")
+                    ?.findAllSorted("id", Sort.ASCENDING)!![0]?.startMessagesSize!!}     " +
+                    "end 0: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)!![0]?.endMessagesSize!!}")
             try {
                 Log.d("SavedChats******** ", "start 1: ${realm?.where(StartMessagesSize::class.java)
-                        ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![1]?.startMessagesSize!!}     " + "end 1: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![1]?.endMessagesSize!!}")
+                        ?.findAllSorted("id", Sort.ASCENDING)!![1]?.startMessagesSize!!}     " + "end 1: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)!![1]?.endMessagesSize!!}")
             } catch (e: IndexOutOfBoundsException){
                 return@onClick
             }
             try{
                 Log.d("SavedChats******** ", "start 2: ${realm?.where(StartMessagesSize::class.java)
-                        ?.findAllSorted("startMessagesSize", Sort.ASCENDING)!![2]?.startMessagesSize!!}     " + "end 2: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("endMessagesSize", Sort.ASCENDING)!![2]?.endMessagesSize!!}")
+                        ?.findAllSorted("id", Sort.ASCENDING)!![2]?.startMessagesSize!!}     " + "end 2: ${realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)!![2]?.endMessagesSize!!}")
             } catch (e: IndexOutOfBoundsException){
                 return@onClick
             }

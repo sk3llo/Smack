@@ -39,6 +39,7 @@ import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
 import io.realm.RealmModel
+import io.realm.RealmObject
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -315,6 +316,23 @@ class ChatActivity : AppCompatActivity() {
 
 
 
+    private fun getNextKey(realmObject: RealmModel): Int?{
+
+        val number = realm?.where(realmObject::class.java)?.max("id")
+
+        return try {
+            if (number != null || number == 0) {
+                number.toInt() + 1
+            } else {
+                0
+            }
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            0
+        }
+    }
+
+
+
     //Register listener for live messages
     fun listener() = foundUserRef?.addSnapshotListener { snapshot, exception ->
 
@@ -377,20 +395,6 @@ class ChatActivity : AppCompatActivity() {
 }
 
 
-    private fun getNextKey(realmObject: RealmModel): Int?{
-
-        val number = realm?.where(realmObject::class.java)?.max("id")
-
-        return try {
-            if (number != null) {
-                number.toInt() + 1
-            } else {
-                0
-            }
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            0
-        }
-    }
 
 
 

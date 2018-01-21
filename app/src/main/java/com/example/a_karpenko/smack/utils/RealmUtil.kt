@@ -215,7 +215,7 @@ open class RealmUtil {
     }
     fun retrieveMessages(): MutableList<ChatModel>? {
         realm?.beginTransaction()
-        val list = realm?.where(ChatModel::class.java)?.findAll()
+        val list = realm?.where(ChatModel::class.java)?.findAllSorted("timeStamp", Sort.ASCENDING)
         realm?.commitTransaction()
         realm?.close()
         return list

@@ -1,7 +1,6 @@
 package com.example.a_karpenko.smack.adapters
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,6 @@ import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.google.firebase.auth.FirebaseAuth
-import java.text.SimpleDateFormat
-import java.util.*
 
 open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -31,19 +28,19 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         //Time
-        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
-        val time: String? = formatDate?.format(Date())
+//        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
+//        val time: String? = formatDate?.format(Date())
 
         //Array of items
         val sendHolder = messages[position]
 
         if (holder is MessageSentViewHolder) {
             holder.messageSent?.text = sendHolder.message
-            holder.messageSentTime?.text = time
+            holder.messageSentTime?.text = messages[position].time.toString()
         } else if (holder is MessageReceivedViewHolder) {
             val receive: MessageReceivedViewHolder = holder
             receive.messageReceived?.text = sendHolder.message
-            receive.messageReceivedTime?.text = time
+            receive.messageReceivedTime?.text = messages[position].time.toString()
         }
     }
 

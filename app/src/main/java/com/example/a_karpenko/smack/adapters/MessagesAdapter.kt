@@ -11,10 +11,6 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import io.realm.RealmList
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 var uidMy = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -43,8 +39,9 @@ open class MessagesAdapter(var messages: ArrayList<ChatModel>) : RecyclerView.Ad
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         //Time
-        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
-        val time: String? = formatDate?.format(Date())
+//        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
+//        val time: String? = formatDate?.format(Date())
+        val time = messages[position].time
 
         //Array of items
         val sendHolder = messages[position]

@@ -1,8 +1,8 @@
 package com.example.a_karpenko.smack.ui
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -14,7 +14,6 @@ import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.count
 import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
 import io.realm.Sort
@@ -43,7 +42,7 @@ open class SavedChats : AppCompatActivity() {
             finish()
         }
 
-        var fake: Button? = find(R.id.fake)
+        val fake: Button? = find(R.id.fake)
 
         fake?.onClick {
             Log.d("SavedChats******** ", "start size: ${StartMessagesSize().queryAll().size}    " + "end size: ${EndMessagesSize().queryAll().size}")

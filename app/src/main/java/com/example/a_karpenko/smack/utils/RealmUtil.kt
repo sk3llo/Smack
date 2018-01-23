@@ -1,25 +1,22 @@
 package com.example.a_karpenko.smack.utils
 
-import android.util.Log
 import android.view.View
 import com.example.a_karpenko.smack.R
-import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
-import com.example.a_karpenko.smack.models.my_age.MyAgeModel
-import com.example.a_karpenko.smack.models.age_looking_for.From19to22
-import com.example.a_karpenko.smack.models.age_looking_for.From23to26
-import com.example.a_karpenko.smack.models.age_looking_for.From27to35
-import com.example.a_karpenko.smack.models.age_looking_for.Over36
-import com.example.a_karpenko.smack.models.age_looking_for.Under18
+import com.example.a_karpenko.smack.models.age_looking_for.*
 import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.FoundUserUid
+import com.example.a_karpenko.smack.models.chat.SavedChatsTime
 import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
+import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
-import com.example.a_karpenko.smack.models.chat.SavedChatsTime
-import com.vicpin.krealmextensions.*
-import io.realm.*
-import org.jetbrains.anko.doAsync
-import kotlin.collections.ArrayList
+import com.example.a_karpenko.smack.models.my_age.MyAgeModel
+import com.vicpin.krealmextensions.queryLast
+import io.realm.Realm
+import io.realm.RealmModel
+import io.realm.RealmResults
+import io.realm.Sort
+import java.util.*
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 open class RealmUtil {
@@ -205,7 +202,14 @@ open class RealmUtil {
         }
     }
     fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)
-            ?.findAllSortedAsync("id", Sort.ASCENDING)
+            ?.findAllSorted("id", Sort.ASCENDING)
+
+//    //Save messags time
+//    fun saveMessagesTime(time: Date?){
+//        realm?.executeTransaction {
+//            var mTime = realm?.cop
+//        }
+//    }
 
     //Save messages to Realm
     fun saveMessages(savedMessages: ArrayList<ChatModel>){

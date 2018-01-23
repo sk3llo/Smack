@@ -6,19 +6,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
-import android.widget.Toast
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
-import com.example.a_karpenko.smack.models.chat.EndMessagesSize
-import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.*
 import io.realm.Realm
-import io.realm.Sort
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 
 open class SavedMessages : AppCompatActivity() {
 
@@ -62,7 +54,6 @@ open class SavedMessages : AppCompatActivity() {
         manager.stackFromEnd = true
         recycler?.layoutManager = manager
         recycler?.adapter = adapter
-
     }
 
     // Get first index based on clicked recyclerview item (intent)
@@ -87,7 +78,6 @@ open class SavedMessages : AppCompatActivity() {
             RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
         }
     }
-
 
     override fun onBackPressed() {
         startActivity(Intent(this@SavedMessages, SavedChats::class.java))

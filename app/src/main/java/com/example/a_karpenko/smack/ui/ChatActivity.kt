@@ -17,33 +17,37 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import com.afollestad.materialdialogs.*
-import com.example.a_karpenko.smack.adapters.MessagesAdapter
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.GravityEnum
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.Theme
 import com.example.a_karpenko.smack.R
+import com.example.a_karpenko.smack.adapters.MessagesAdapter
 import com.example.a_karpenko.smack.core.EditTextWatcher
 import com.example.a_karpenko.smack.core.queryData.PresenceChecker
-import com.example.a_karpenko.smack.models.chat.EndMessagesSize
-import com.example.a_karpenko.smack.models.chat.StartMessagesSize
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.firestore.InputModel
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
-import com.vicpin.krealmextensions.queryAll
-import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
 import io.realm.RealmModel
-import io.realm.RealmObject
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.toast
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -87,6 +91,8 @@ class ChatActivity : AppCompatActivity() {
     var saveStar: Button? = null
     //List messages and saved messages
     var messages: ArrayList<ChatModel>? = null
+    //Time
+    lateinit var time: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +104,10 @@ class ChatActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window?.statusBarColor = R.color.chatStatusBar
         }
+
+        //Message time
+        val formatDate: SimpleDateFormat = object: SimpleDateFormat("h:mm a") {}
+        time = formatDate.format(Date())
 
         messages = ArrayList()
         realm = Realm.getDefaultInstance()
@@ -342,7 +352,7 @@ class ChatActivity : AppCompatActivity() {
         }
         //Add empty messageMy if the snapshot is empty (to show first messageMy)
         if (snapshot == null || snapshot.isEmpty){
-            foundUserRef?.add(ChatModel(uidMy.toString(), "empyMessage", currentDate))
+            foundUserRef?.add(ChatModel(uidMy.toString(), "empyMessage", time, currentDate))
         }
 
         if (snapshot != null
@@ -352,7 +362,7 @@ class ChatActivity : AppCompatActivity() {
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
-            val receivedQuery = ChatModel(from, message, currentDate)
+            val receivedQuery = ChatModel(from, message, time, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -376,7 +386,7 @@ class ChatActivity : AppCompatActivity() {
         if (text?.length != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(uidMy!!, text!!, currentDate)
+            val myMessage = ChatModel(uidMy!!, text!!, time, currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)

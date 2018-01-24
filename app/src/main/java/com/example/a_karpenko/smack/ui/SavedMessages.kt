@@ -49,7 +49,6 @@ open class SavedMessages : AppCompatActivity() {
 
         val adapter = SavedMessagesAdapter(messages!!)
         val manager = LinearLayoutManager(this)
-        manager.stackFromEnd = true
         manager.orientation = LinearLayoutManager.VERTICAL
         manager.stackFromEnd = true
         recycler?.layoutManager = manager

@@ -93,6 +93,7 @@ class ChatActivity : AppCompatActivity() {
     var messages: ArrayList<ChatModel>? = null
     //Time
     lateinit var time: String
+    var millis: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +109,7 @@ class ChatActivity : AppCompatActivity() {
         //Message time
         val formatDate: SimpleDateFormat = object: SimpleDateFormat("h:mm a") {}
         time = formatDate.format(Date())
+        millis = System.currentTimeMillis()!!
 
         messages = ArrayList()
         realm = Realm.getDefaultInstance()
@@ -352,7 +354,7 @@ class ChatActivity : AppCompatActivity() {
         }
         //Add empty messageMy if the snapshot is empty (to show first messageMy)
         if (snapshot == null || snapshot.isEmpty){
-            foundUserRef?.add(ChatModel(uidMy.toString(), "empyMessage", time, currentDate))
+            foundUserRef?.add(ChatModel(millis!!, uidMy.toString(), "emptyMessage", time, currentDate))
         }
 
         if (snapshot != null
@@ -362,7 +364,7 @@ class ChatActivity : AppCompatActivity() {
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
-            val receivedQuery = ChatModel(from, message, time, currentDate)
+            val receivedQuery = ChatModel(millis!!, from, message, time, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -386,7 +388,7 @@ class ChatActivity : AppCompatActivity() {
         if (text?.length != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(uidMy!!, text!!, time, currentDate)
+            val myMessage = ChatModel(millis!!, uidMy!!, text!!, time, currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)

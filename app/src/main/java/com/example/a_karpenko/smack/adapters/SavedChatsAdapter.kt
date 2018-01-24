@@ -18,17 +18,19 @@ import com.example.a_karpenko.smack.ui.SavedChats
 import com.example.a_karpenko.smack.ui.SavedMessages
 import com.example.a_karpenko.smack.utils.RealmUtil
 import io.realm.*
+import org.jetbrains.anko.toast
 
 open class SavedChatsAdapter(var recyclerView: RecyclerView,
                              var activity: SavedChats,
                              var context: Context,
-                             data: OrderedRealmCollection<SavedChatsTime>,
-                             animResults: Boolean): RealmRecyclerViewAdapter<SavedChatsTime, SavedChatsAdapter.ViewHolder>(data, animResults){
+                             var coll: OrderedRealmCollection<SavedChatsTime>,
+                             animResults: Boolean): RealmRecyclerViewAdapter<SavedChatsTime, SavedChatsAdapter.ViewHolder>(coll, animResults){
 
     var realm = Realm.getDefaultInstance()
 
+
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        val savedChats: SavedChatsTime? = data!![position]
+        val savedChats: SavedChatsTime? = coll.sort("id", Sort.ASCENDING)[position]
         holder?.date?.text = savedChats?.time.toString()
         holder?.trash?.setOnClickListener(ClickListener(position))
     }
@@ -50,56 +52,62 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
     open inner class ClickListener(private var pos: Int): View.OnClickListener{
         override fun onClick(v: View?) {
 
-            if (v?.id == R.id.trash) {
+            if (v?.id == R.id.trash && !realm?.isInTransaction!!) {
+
+                var orc = coll.sort("id", Sort.ASCENDING)
+
                 realm?.executeTransaction {
 
-                val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)?.findAllSorted("timeStamp", Sort.ASCENDING)
-
-                // Query all results that are greater than pos to change them
-                val endMessage = realm?.where(EndMessagesSize::class.java)
-                        ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!)
-                        ?.findAllSorted("id", Sort.ASCENDING)
-                val startMessage = realm?.where(StartMessagesSize::class.java)
-                        ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!)
+                val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)
                         ?.findAllSorted("id", Sort.ASCENDING)
 
-                // Query pos startMessagesSize and endMessagesSize
-                val endSize = realm?.where(EndMessagesSize::class.java)
-                        ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.endMessagesSize!!
+                try {
 
-                val startSize = realm?.where(StartMessagesSize::class.java)
-                        ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.startMessagesSize!!
+                    // Query pos startMessagesSize and endMessagesSize
+                    val endSize = realm?.where(EndMessagesSize::class.java)
+                            ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.endMessagesSize!!
 
-                    
-                // Delete messages between startMessagesSize and endMessagesSize
-                if (pos >= 1) {
-                    for (i in endSize.minus(1)
-                            downTo startSize) {
-                        Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
-                        list?.deleteFromRealm(i)
+                    val startSize = realm?.where(StartMessagesSize::class.java)
+                            ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.startMessagesSize!!
+
+                    // Delete messages between startMessagesSize and endMessagesSize
+                    if (pos >= 1) {
+                        for (i in endSize.minus(1)
+                                downTo startSize) {
+                            Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
+                            list?.deleteFromRealm(i)
+                        }
+                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! > 1
+                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! > 1) {
+                        for (i in endSize.minus(1) downTo 0) {
+                            Log.d("SavedChatAdapter*** ", "pos = 0: $i")
+                            list?.deleteFromRealm(i)
+                        }
+                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! == 1
+                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! == 1) {
+                        list?.deleteAllFromRealm()
                     }
-                } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! > 1
-                        && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! > 1) {
-                    for (i in endSize.minus(1) downTo 0) {
-                        Log.d("SavedChatAdapter*** ", "pos = 0: $i")
-                        list?.deleteFromRealm(i)
-                    }
-                } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! == 1
-                        && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! == 1) {
-                    list?.deleteAllFromRealm()
-                }
 
 
+                    // Query all results that are greater than pos to change them
+                    val endMessage = realm?.where(EndMessagesSize::class.java)
+                            ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!)
+                            ?.findAllSorted("id", Sort.ASCENDING)
+                    val startMessage = realm?.where(StartMessagesSize::class.java)
+                            ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!)
+                            ?.findAllSorted("id", Sort.ASCENDING)
 
                     // Change startMessagesSize and endMessagesSize
                     if (endMessage?.isNotEmpty()!! && startMessage?.isNotEmpty()!!) {
 
-                        if (pos == 0) {
+                        if (pos == 0 && startMessage.size > 1) {
                             startMessage.forEach { start ->
                                 start.startMessagesSize = start.startMessagesSize!!.minus(endSize)
                                 Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
                             }
-                        } else if (pos >= 1){
+                        } else if (pos == 0 && startMessage.size == 1){
+
+                        } else if (pos >= 1) {
                             startMessage.forEach { start ->
                                 start.startMessagesSize = start.startMessagesSize!!.minus(endSize - startSize)
                                 Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
@@ -113,13 +121,19 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                     }
 
 
+                } catch (e: ArrayIndexOutOfBoundsException){
+                    activity.toast("zaebis")
+                }
 
                 // Delete startMessagesSize and endMessagesSize at given position
                 realm?.where(StartMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
                 realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
+//                realm?.where(SavedChatsTime::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(recyclerView.indexOfChild(v))
 
                 // At last delete the recycler item
-                data?.deleteFromRealm(pos)
+                orc?.deleteFromRealm(pos)
+//                notifyItemRemoved(pos)
+//                notifyItemRangeRemoved(pos, itemCount)
 
               }
 
@@ -134,7 +148,7 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
 
     override fun getItemCount(): Int {
-        return data?.size!!
+        return coll.size
     }
 
 

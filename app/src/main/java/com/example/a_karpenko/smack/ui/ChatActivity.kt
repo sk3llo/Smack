@@ -16,6 +16,8 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.LinearLayout
@@ -46,6 +48,7 @@ import io.realm.RealmModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.sdk25.coroutines.onTouch
 import org.jetbrains.anko.toast
 import java.text.SimpleDateFormat
 import java.util.*
@@ -94,10 +97,17 @@ class ChatActivity : AppCompatActivity() {
     //Time
     lateinit var time: String
     var millis: Long? = null
+    //Saved btn anim
+    var scaleAnimation: Animation? = null
+    var rotationAnim: Animation? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
+
+        //Anim
+        scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.saved_btn_scale_anim)
+        rotationAnim = AnimationUtils.loadAnimation(this, R.anim.saved_btn_rotation_anim)
 
         //Set image for chat background
         //And it has constant size even when keybord is opened
@@ -174,17 +184,27 @@ class ChatActivity : AppCompatActivity() {
         }
 
         //Save star on click
-        saveStar?.onClick {
+        saveStar?.onTouch { v, event ->
             doAsync {
                 if (messages?.size!! > 0) {
+                    runOnUiThread {
+                        toast("Chat successfully saved")
+                        v.setBackgroundResource(android.R.drawable.star_big_on)
+                        v.startAnimation(scaleAnimation)
+                    }
                     //Save messages
                     RealmUtil().saveMessages(messages!!)
                     //Save Chat
                     RealmUtil().savedChatTime(currentDate?.toString())
                     RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
-                    runOnUiThread {toast("Chat successfully saved")}
+                    v.isClickable = false
+                    v.isEnabled = false
+                    v.isFocusable = false
                 } else {
-                    runOnUiThread {toast("Oops, chat is empty!")}
+                    runOnUiThread {
+                        v.startAnimation(rotationAnim)
+                        toast("Oops, chat is empty!")
+                    }
                 }
             }
         }

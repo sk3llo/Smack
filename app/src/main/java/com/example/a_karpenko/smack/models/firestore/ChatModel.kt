@@ -3,8 +3,6 @@ package com.example.a_karpenko.smack.models.firestore
 
 import com.google.firebase.firestore.ServerTimestamp
 import io.realm.RealmModel
-import io.realm.annotations.Index
-import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import java.util.*
 

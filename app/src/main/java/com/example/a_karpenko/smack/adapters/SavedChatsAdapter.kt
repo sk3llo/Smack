@@ -30,8 +30,9 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        val savedChats: SavedChatsTime? = coll.sort("id", Sort.ASCENDING)[position]
+        val savedChats: SavedChatsTime? = coll[position]
         holder?.date?.text = savedChats?.time.toString()
+
         holder?.trash?.setOnClickListener(ClickListener(position))
     }
 
@@ -54,6 +55,7 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
             if (v?.id == R.id.trash && !realm?.isInTransaction!!) {
 
+                //Ordered Realm Collection
                 var orc = coll.sort("id", Sort.ASCENDING)
 
                 realm?.executeTransaction {
@@ -128,12 +130,11 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                 // Delete startMessagesSize and endMessagesSize at given position
                 realm?.where(StartMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
                 realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
-//                realm?.where(SavedChatsTime::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(recyclerView.indexOfChild(v))
 
-                // At last delete the recycler item
+
+                notifyItemRangeRemoved(pos, itemCount)
+                    // At last delete the recycler item
                 orc?.deleteFromRealm(pos)
-//                notifyItemRemoved(pos)
-//                notifyItemRangeRemoved(pos, itemCount)
 
               }
 

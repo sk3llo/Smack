@@ -44,7 +44,6 @@ import com.vanniktech.emoji.EmojiEditText
 import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
 import io.realm.Realm
-import io.realm.RealmModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -100,6 +99,8 @@ class ChatActivity : AppCompatActivity() {
     //Saved btn anim
     var scaleAnimation: Animation? = null
     var rotationAnim: Animation? = null
+
+    var toast: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,24 +187,37 @@ class ChatActivity : AppCompatActivity() {
         //Save star on click
         saveStar?.onTouch { v, event ->
             doAsync {
+                //Display toast only once
+                //Was on repeat before like 5 times - now this shit is fixed
+                fun displayToast(){
+                    if (toast != null){
+                        toast?.cancel()
+                    }
+                    toast = toast("Oops, chat is empty!")
+                    toast?.show()
+                }
+
                 if (messages?.size!! > 0) {
                     runOnUiThread {
                         toast("Chat successfully saved")
                         v.setBackgroundResource(android.R.drawable.star_big_on)
                         v.startAnimation(scaleAnimation)
+
+                        v.isEnabled = false
+                        v.isClickable = false
+                        v.isFocusable = false
                     }
                     //Save messages
                     RealmUtil().saveMessages(messages!!)
                     //Save Chat
                     RealmUtil().savedChatTime(currentDate?.toString())
                     RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
-                    v.isEnabled = false
-                    v.isClickable = false
-                    v.isFocusable = false
+
                 } else {
                     runOnUiThread {
                         v.startAnimation(rotationAnim)
-                        toast("Oops, chat is empty!")
+                        // Fix shitty toast
+                        displayToast()
                     }
                 }
             }
@@ -346,25 +360,6 @@ class ChatActivity : AppCompatActivity() {
             }
             .onNegative { dialog, which -> dialog.dismiss() }.show()!!
 
-
-
-    private fun getNextKey(realmObject: RealmModel): Int?{
-
-        val number = realm?.where(realmObject::class.java)?.max("id")
-
-        return try {
-            if (number != null || number == 0) {
-                number.toInt() + 1
-            } else {
-                0
-            }
-        } catch (e: ArrayIndexOutOfBoundsException) {
-            0
-        }
-    }
-
-
-
     //Register listener for live messages
     fun listener() = foundUserRef?.addSnapshotListener { snapshot, exception ->
 
@@ -417,7 +412,6 @@ class ChatActivity : AppCompatActivity() {
             //Add data to Firestore
             foundUserRef?.get()?.addOnCompleteListener { fu ->
                 myRoomRef?.get()?.addOnCompleteListener { me ->
-//                    foundUserRef?.document("messageMy" + (fu.result?.size()!! + 1))?.set(myMessage)
                     myRoomRef?.document("message" + (me.result?.size()!! + 1))?.set(myMessage)
                 }
             }
@@ -425,9 +419,6 @@ class ChatActivity : AppCompatActivity() {
             messageInputText.text = null
     }
 }
-
-
-
 
 
     override fun onStart() {

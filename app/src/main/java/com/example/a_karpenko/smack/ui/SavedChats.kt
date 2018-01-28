@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
+import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedChatsAdapter
 import com.example.a_karpenko.smack.utils.RealmUtil
@@ -19,10 +21,14 @@ open class SavedChats : AppCompatActivity() {
 //    var list: ArrayList<SavedChatsTime>? = null
     var realm: Realm? = null
     var adapter: SavedChatsAdapter? = null
+    var emptyTextView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_chats)
+
+        emptyTextView = findViewById(R.id.emptyChatsText)
+
 
         window?.setBackgroundDrawableResource(R.drawable.chat_back)
 
@@ -70,6 +76,13 @@ open class SavedChats : AppCompatActivity() {
         recycler?.addItemDecoration(decor)
         recycler?.adapter = adapter
         recycler?.layoutManager = manager
+
+        if (RealmUtil().retrieveMessages()?.size!! >= 1){
+            emptyTextView?.visibility = View.GONE
+        } else {
+            emptyTextView?.visibility = View.VISIBLE
+        }
+
 
     }
 

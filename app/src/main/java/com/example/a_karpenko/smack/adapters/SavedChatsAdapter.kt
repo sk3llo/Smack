@@ -56,7 +56,8 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
             if (v?.id == R.id.trash && !realm?.isInTransaction!!) {
 
                 //Ordered Realm Collection
-                var orc = coll.sort("id", Sort.ASCENDING)
+                val orc = coll.sort("id", Sort.ASCENDING)
+                val emptyTextView: TextView? = activity.findViewById(R.id.emptyChatsText)
 
                 realm?.executeTransaction {
 
@@ -136,6 +137,11 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                     // At last delete the recycler item
                 orc?.deleteFromRealm(pos)
 
+                if (realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.size!! >= 1){
+                    emptyTextView?.visibility = View.GONE
+                } else {
+                    emptyTextView?.visibility = View.VISIBLE
+                }
               }
 
             } else {

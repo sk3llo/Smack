@@ -14,13 +14,16 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/appBarLayout2">
+            android:id="@+id/appBarLayout2"
+            android:background="@null"
+            app:elevation="0dp"
+    >
 
         <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/savedChatToolbar"
-                android:background="@android:color/transparent"
+                android:background="@color/supaDupaLightBlue"
         >
 
                 <!--<Button-->

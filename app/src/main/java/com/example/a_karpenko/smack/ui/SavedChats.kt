@@ -24,6 +24,8 @@ open class SavedChats : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_chats)
 
+        window?.setBackgroundDrawableResource(R.drawable.chat_back)
+
         realm = Realm.getDefaultInstance()
         toolbar = findViewById(R.id.savedChatToolbar)
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)

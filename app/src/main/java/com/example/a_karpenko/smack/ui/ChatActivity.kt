@@ -197,8 +197,8 @@ class ChatActivity : AppCompatActivity() {
                     //Save Chat
                     RealmUtil().savedChatTime(currentDate?.toString())
                     RealmUtil().saveEndMessagesSize(RealmUtil().retrieveMessages()?.size)
-                    v.isClickable = false
                     v.isEnabled = false
+                    v.isClickable = false
                     v.isFocusable = false
                 } else {
                     runOnUiThread {

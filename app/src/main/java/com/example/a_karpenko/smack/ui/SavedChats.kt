@@ -34,7 +34,7 @@ open class SavedChats : AppCompatActivity() {
             finish()
         }
 
-        val fake: Button? = find(R.id.fake)
+//        val fake: Button? = find(R.id.fake)
 
 //        fake?.onClick {
 //            Log.d("SavedChats******** ", "start size: ${StartMessagesSize().queryAll().size}    " + "end size: ${EndMessagesSize().queryAll().size}")

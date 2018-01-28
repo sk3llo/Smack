@@ -61,16 +61,16 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                 realm?.executeTransaction {
 
                 val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)
-                        ?.findAllSorted("id", Sort.ASCENDING)
+                        ?.sort("id", Sort.ASCENDING)?.findAll()
 
                 try {
 
                     // Query pos startMessagesSize and endMessagesSize
                     val endSize = realm?.where(EndMessagesSize::class.java)
-                            ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.endMessagesSize!!
+                            ?.sort("id", Sort.ASCENDING)?.findAll()!![pos]?.endMessagesSize!!
 
                     val startSize = realm?.where(StartMessagesSize::class.java)
-                            ?.findAllSorted("id", Sort.ASCENDING)!![pos]?.startMessagesSize!!
+                            ?.sort("id", Sort.ASCENDING)?.findAll()!![pos]?.startMessagesSize!!
 
                     // Delete messages between startMessagesSize and endMessagesSize
                     if (pos >= 1) {
@@ -94,10 +94,10 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                     // Query all results that are greater than pos to change them
                     val endMessage = realm?.where(EndMessagesSize::class.java)
                             ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!)
-                            ?.findAllSorted("id", Sort.ASCENDING)
+                            ?.sort("id", Sort.ASCENDING)?.findAll()
                     val startMessage = realm?.where(StartMessagesSize::class.java)
                             ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!)
-                            ?.findAllSorted("id", Sort.ASCENDING)
+                            ?.sort("id", Sort.ASCENDING)?.findAll()
 
                     // Change startMessagesSize and endMessagesSize
                     if (endMessage?.isNotEmpty()!! && startMessage?.isNotEmpty()!!) {
@@ -128,8 +128,8 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
                 }
 
                 // Delete startMessagesSize and endMessagesSize at given position
-                realm?.where(StartMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
-                realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)?.deleteFromRealm(pos)
+                realm?.where(StartMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.deleteFromRealm(pos)
+                realm?.where(EndMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.deleteFromRealm(pos)
 
 
                 notifyItemRangeRemoved(pos, itemCount)

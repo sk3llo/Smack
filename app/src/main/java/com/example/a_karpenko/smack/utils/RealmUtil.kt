@@ -202,7 +202,7 @@ open class RealmUtil {
         }
     }
     fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)
-            ?.findAllSorted("id", Sort.ASCENDING)?.sort("id", Sort.ASCENDING)
+            ?.sort("id", Sort.ASCENDING)?.findAll()?.sort("id", Sort.ASCENDING)
 
 //    //Save messags time
 //    fun saveMessagesTime(time: Date?){
@@ -219,7 +219,7 @@ open class RealmUtil {
     }
     fun retrieveMessages(): MutableList<ChatModel>? {
         realm?.beginTransaction()
-        val list = realm?.where(ChatModel::class.java)?.findAllSorted("id", Sort.ASCENDING)
+        val list = realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
         realm?.commitTransaction()
         realm?.close()
         return list
@@ -251,8 +251,8 @@ open class RealmUtil {
             realm?.close()
         }
     }
-    fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)
-    fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.findAllSorted("id", Sort.ASCENDING)
+    fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
+    fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
 
     //Change all messages if some row is deleted
     fun changeEndMessages(pos: Int?) {

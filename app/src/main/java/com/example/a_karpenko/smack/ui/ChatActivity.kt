@@ -106,7 +106,7 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
 
-        //Anim
+        //Save chat btn animation
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.saved_btn_scale_anim)
         rotationAnim = AnimationUtils.loadAnimation(this, R.anim.saved_btn_rotation_anim)
 

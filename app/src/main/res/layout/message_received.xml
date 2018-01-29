@@ -10,6 +10,7 @@
     <com.vanniktech.emoji.EmojiTextView
             android:id="@+id/messageReceivedText"
             android:text="Received"
+            android:textAlignment="center"
             android:minWidth="50dp"
             android:maxWidth="240dp"
             android:textSize="16sp"
@@ -24,7 +25,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"/>
+            android:layout_marginBottom="4dp"/>
 
     <TextView
             android:text="11:11"

@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.google.firebase.auth.FirebaseAuth
+import com.vicpin.krealmextensions.queryAll
 
 open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -29,18 +30,18 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         //Time
 //        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
-//        val time: String? = formatDate?.format(Date())
+        val time: String? = ChatModel().queryAll()[position].time.toString()
 
         //Array of items
         val sendHolder = messages[position]
 
         if (holder is MessageSentViewHolder) {
             holder.messageSent?.text = sendHolder.message
-            holder.messageSentTime?.text = messages[position].time.toString()
+            holder.messageSentTime?.text = time
         } else if (holder is MessageReceivedViewHolder) {
             val receive: MessageReceivedViewHolder = holder
             receive.messageReceived?.text = sendHolder.message
-            receive.messageReceivedTime?.text = messages[position].time.toString()
+            receive.messageReceivedTime?.text = time
         }
     }
 

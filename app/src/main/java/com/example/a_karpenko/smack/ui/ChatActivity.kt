@@ -196,7 +196,7 @@ class ChatActivity : AppCompatActivity() {
                     toast = toast("Oops, chat is empty!")
                     toast?.show()
                 }
-
+                // If chat size > 0 then save it
                 if (messages?.size!! > 0) {
                     runOnUiThread {
                         toast("Chat successfully saved")

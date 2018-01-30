@@ -1,12 +1,14 @@
 package com.example.a_karpenko.smack.adapters
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.firestore.ChatModel
+import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.vicpin.krealmextensions.queryAll
 
@@ -30,18 +32,20 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         //Time
 //        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
-        val time: String? = ChatModel().queryAll()[position].time.toString()
+        val time: String? = RealmUtil().retrieveMessages()!![position].time.toString()
 
         //Array of items
         val sendHolder = messages[position]
 
+        Log.d("SavedMessagesAdapter", "$sendHolder")
+
         if (holder is MessageSentViewHolder) {
             holder.messageSent?.text = sendHolder.message
-            holder.messageSentTime?.text = time
+            holder.messageSentTime?.text = messages[position].time
         } else if (holder is MessageReceivedViewHolder) {
             val receive: MessageReceivedViewHolder = holder
             receive.messageReceived?.text = sendHolder.message
-            receive.messageReceivedTime?.text = time
+            receive.messageReceivedTime?.text = messages[position].time
         }
     }
 

@@ -93,14 +93,13 @@ class ChatActivity : AppCompatActivity() {
     var saveStar: Button? = null
     //List messages and saved messages
     var messages: ArrayList<ChatModel>? = null
-    //Time
-    lateinit var time: String
-    var millis: Long? = null
     //Saved btn anim
     var scaleAnimation: Animation? = null
     var rotationAnim: Animation? = null
 
     var toast: Toast? = null
+    var millis: Long? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,9 +117,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         //Message time
-        val formatDate: SimpleDateFormat = object: SimpleDateFormat("h:mm a") {}
-        time = formatDate.format(Date())
-        millis = System.currentTimeMillis()!!
+        millis = System.currentTimeMillis()
 
         messages = ArrayList()
         realm = Realm.getDefaultInstance()
@@ -363,13 +360,16 @@ class ChatActivity : AppCompatActivity() {
     //Register listener for live messages
     fun listener() = foundUserRef?.addSnapshotListener { snapshot, exception ->
 
+        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
+        val time: String? = formatDate?.format(Date())
+
         if (exception != null) {
             Toast.makeText(this.applicationContext, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             return@addSnapshotListener
         }
         //Add empty messageMy if the snapshot is empty (to show first messageMy)
         if (snapshot == null || snapshot.isEmpty){
-            foundUserRef?.add(ChatModel(millis!!, uidMy.toString(), "emptyMessage", time, currentDate))
+            foundUserRef?.add(ChatModel(millis!!, uidMy.toString(), "emptyMessage", time!!, currentDate))
         }
 
         if (snapshot != null
@@ -379,7 +379,7 @@ class ChatActivity : AppCompatActivity() {
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
-            val receivedQuery = ChatModel(millis!!, from, message, time, currentDate)
+            val receivedQuery = ChatModel(millis!!, from, message, time!!, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -399,11 +399,14 @@ class ChatActivity : AppCompatActivity() {
 
     private fun onSendClick() {
         val text = messageInputText.text?.toString()?.trim()
+        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
+        val time: String? = formatDate?.format(Date())
+
 
         if (text?.length != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(millis!!, uidMy!!, text!!, time, currentDate)
+            val myMessage = ChatModel(millis!!, uidMy!!, text!!, time!!, currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)

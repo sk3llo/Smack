@@ -13,6 +13,7 @@
             android:id="@+id/savedChatDate"
             android:layout_gravity="center_vertical"
             android:textSize="20sp"
+            android:textStyle="bold|italic"
             android:layout_weight="100"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>

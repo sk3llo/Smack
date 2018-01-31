@@ -9,6 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.GravityEnum
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.Theme
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.models.chat.EndMessagesSize
 import com.example.a_karpenko.smack.models.chat.SavedChatsTime
@@ -31,7 +35,8 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val savedChats: SavedChatsTime? = coll[position]
-        holder?.date?.text = savedChats?.time.toString()
+        val text = "   Chat from " + savedChats?.time?.drop(3)?.dropLast(9)
+        holder?.date?.text = text
 
         holder?.trash?.setOnClickListener(ClickListener(position))
     }
@@ -54,95 +59,111 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
         override fun onClick(v: View?) {
 
             if (v?.id == R.id.trash && !realm?.isInTransaction!!) {
+                // Open Alert dialog
+                MaterialDialog.Builder(activity)
+                        .title("You are deleting saved conversation").content("Are you sure?")
+                        .positiveText("Yes").negativeText("No")
+                        .theme(Theme.LIGHT)
+                        .btnSelector(R.drawable.alert_positive_btn_selector, DialogAction.POSITIVE)
+                        .btnSelector(R.drawable.alert_negative_btn_selector, DialogAction.NEGATIVE)
+                        .positiveColorRes(R.color.white)
+                        .negativeColorRes(R.color.white)
+                        .backgroundColorRes(R.color.material_grey_300)
+                        .contentGravity(GravityEnum.CENTER)
+                        .titleGravity(GravityEnum.CENTER)
+                        .buttonsGravity(GravityEnum.CENTER)
 
-                //Ordered Realm Collection
-                val orc = coll.sort("id", Sort.ASCENDING)
-                val emptyTextView: TextView? = activity.findViewById(R.id.emptyChatsText)
+                        .onPositive { dialog, which ->
 
-                realm?.executeTransaction {
+                            //Ordered Realm Collection
+                            val orc = coll.sort("id", Sort.ASCENDING)
+                            val emptyTextView: TextView? = activity.findViewById(R.id.emptyChatsText)
 
-                val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)
-                        ?.sort("id", Sort.ASCENDING)?.findAll()
+                            realm?.executeTransaction {
 
-                try {
+                                val list: RealmResults<ChatModel>? = realm?.where(ChatModel::class.java)
+                                        ?.sort("id", Sort.ASCENDING)?.findAll()
 
-                    // Query pos startMessagesSize and endMessagesSize
-                    val endSize = realm?.where(EndMessagesSize::class.java)
-                            ?.sort("id", Sort.ASCENDING)?.findAll()!![pos]?.endMessagesSize!!
+                                try {
 
-                    val startSize = realm?.where(StartMessagesSize::class.java)
-                            ?.sort("id", Sort.ASCENDING)?.findAll()!![pos]?.startMessagesSize!!
+                                    // Query pos startMessagesSize and endMessagesSize
+                                    val endSize = realm?.where(EndMessagesSize::class.java)
+                                            ?.sort("id", Sort.ASCENDING)?.findAll()!![pos]?.endMessagesSize!!
 
-                    // Delete messages between startMessagesSize and endMessagesSize
-                    if (pos >= 1) {
-                        for (i in endSize.minus(1)
-                                downTo startSize) {
-                            Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
-                            list?.deleteFromRealm(i)
-                        }
-                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! > 1
-                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! > 1) {
-                        for (i in endSize.minus(1) downTo 0) {
-                            Log.d("SavedChatAdapter*** ", "pos = 0: $i")
-                            list?.deleteFromRealm(i)
-                        }
-                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! == 1
-                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! == 1) {
-                        list?.deleteAllFromRealm()
-                    }
+                                    val startSize = realm?.where(StartMessagesSize::class.java)
+                                            ?.sort("id", Sort.ASCENDING)?.findAll()!![pos]?.startMessagesSize!!
+
+                                    // Delete messages between startMessagesSize and endMessagesSize
+                                    if (pos >= 1) {
+                                        for (i in endSize.minus(1)
+                                                downTo startSize) {
+                                            Log.d("SavedChatAdapter*** ", "i >= 1: ${i}")
+                                            list?.deleteFromRealm(i)
+                                        }
+                                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! > 1
+                                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! > 1) {
+                                        for (i in endSize.minus(1) downTo 0) {
+                                            Log.d("SavedChatAdapter*** ", "pos = 0: $i")
+                                            list?.deleteFromRealm(i)
+                                        }
+                                    } else if (pos == 0 && realm?.where(StartMessagesSize::class.java)?.findAll()?.size!! == 1
+                                            && realm?.where(EndMessagesSize::class.java)?.findAll()?.size!! == 1) {
+                                        list?.deleteAllFromRealm()
+                                    }
 
 
-                    // Query all results that are greater than pos to change them
-                    val endMessage = realm?.where(EndMessagesSize::class.java)
-                            ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!)
-                            ?.sort("id", Sort.ASCENDING)?.findAll()
-                    val startMessage = realm?.where(StartMessagesSize::class.java)
-                            ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!)
-                            ?.sort("id", Sort.ASCENDING)?.findAll()
+                                    // Query all results that are greater than pos to change them
+                                    val endMessage = realm?.where(EndMessagesSize::class.java)
+                                            ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos]?.endMessagesSize!!)
+                                            ?.sort("id", Sort.ASCENDING)?.findAll()
+                                    val startMessage = realm?.where(StartMessagesSize::class.java)
+                                            ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos]?.startMessagesSize!!)
+                                            ?.sort("id", Sort.ASCENDING)?.findAll()
 
-                    // Change startMessagesSize and endMessagesSize
-                    if (endMessage?.isNotEmpty()!! && startMessage?.isNotEmpty()!!) {
+                                    // Change startMessagesSize and endMessagesSize
+                                    if (endMessage?.isNotEmpty()!! && startMessage?.isNotEmpty()!!) {
 
-                        if (pos == 0 && startMessage.size > 1) {
-                            startMessage.forEach { start ->
-                                start.startMessagesSize = start.startMessagesSize!!.minus(endSize)
-                                Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
+                                        if (pos == 0 && startMessage.size > 1) {
+                                            startMessage.forEach { start ->
+                                                start.startMessagesSize = start.startMessagesSize!!.minus(endSize)
+                                                Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
+                                            }
+                                        } else if (pos >= 1) {
+                                            startMessage.forEach { start ->
+                                                start.startMessagesSize = start.startMessagesSize!!.minus(endSize - startSize)
+                                                Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
+                                            }
+                                        }
+
+                                        endMessage.forEach {
+                                            it?.endMessagesSize = it?.endMessagesSize?.minus(endSize - startSize)
+                                            Log.d("SavedChatsAdapter**** ", "end sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
+                                        }
+                                    }
+
+
+                                } catch (e: ArrayIndexOutOfBoundsException) {
+                                    activity.toast("zaebis")
+                                }
+
+                                // Delete startMessagesSize and endMessagesSize at given position
+                                realm?.where(StartMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.deleteFromRealm(pos)
+                                realm?.where(EndMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.deleteFromRealm(pos)
+
+
+                                notifyItemRangeRemoved(pos, itemCount)
+                                // At last delete the recycler item
+                                orc?.deleteFromRealm(pos)
+
+                                if (realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.size!! >= 1) {
+                                    emptyTextView?.visibility = View.GONE
+                                } else {
+                                    emptyTextView?.visibility = View.VISIBLE
+                                }
                             }
-                        } else if (pos == 0 && startMessage.size == 1){
 
-                        } else if (pos >= 1) {
-                            startMessage.forEach { start ->
-                                start.startMessagesSize = start.startMessagesSize!!.minus(endSize - startSize)
-                                Log.d("SavedChatsAdapter**** ", "start sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${start.startMessagesSize}")
-                            }
                         }
-
-                        endMessage.forEach {
-                            it?.endMessagesSize = it?.endMessagesSize?.minus(endSize - startSize)
-                            Log.d("SavedChatsAdapter**** ", "end sizeeeeeeeeeeeeeeeeeeeEEEEEEE: ${it.endMessagesSize}")
-                        }
-                    }
-
-
-                } catch (e: ArrayIndexOutOfBoundsException){
-                    activity.toast("zaebis")
-                }
-
-                // Delete startMessagesSize and endMessagesSize at given position
-                realm?.where(StartMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.deleteFromRealm(pos)
-                realm?.where(EndMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.deleteFromRealm(pos)
-
-
-                notifyItemRangeRemoved(pos, itemCount)
-                    // At last delete the recycler item
-                orc?.deleteFromRealm(pos)
-
-                if (realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.size!! >= 1){
-                    emptyTextView?.visibility = View.GONE
-                } else {
-                    emptyTextView?.visibility = View.VISIBLE
-                }
-              }
+                        .onNegative { dialog, which -> dialog.dismiss() }.show()!!
 
             } else {
                 val intent: Intent? = Intent(context, SavedMessages::class.java)

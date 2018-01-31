@@ -30,14 +30,8 @@ open class SavedMessagesAdapter(var messages: MutableList<ChatModel>) : Recycler
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-        //Time
-//        val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
-        val time: String? = RealmUtil().retrieveMessages()!![position].time.toString()
-
         //Array of items
         val sendHolder = messages[position]
-
-        Log.d("SavedMessagesAdapter", "$sendHolder")
 
         if (holder is MessageSentViewHolder) {
             holder.messageSent?.text = sendHolder.message

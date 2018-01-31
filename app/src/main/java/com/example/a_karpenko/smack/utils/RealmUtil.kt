@@ -11,6 +11,7 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.example.a_karpenko.smack.models.my_age.MyAgeModel
+import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
 import io.realm.RealmModel
@@ -24,7 +25,7 @@ open class RealmUtil {
     var realm: Realm? = Realm.getDefaultInstance()
 
     //increment id by 1
-    open fun getNextKey(realmObject: RealmModel): Int?{
+    open fun getNextKey(realmObject: RealmModel): Int? {
 
         val number = realm?.where(realmObject::class.java)?.max("id")
 
@@ -41,7 +42,7 @@ open class RealmUtil {
 
     //Age you are looking for
     //Add 1(yes) or 0(no) to realm based on option
-    fun lookingForAge(int: Int?, view: View?){
+    fun lookingForAge(int: Int?, view: View?) {
 
         try {
             when {
@@ -83,6 +84,7 @@ open class RealmUtil {
 
     //Query last choice
     fun under18LookingFor(): Int? = Under18().queryLast()?.under18
+
     fun from19to22LookingFor(): Int? = From19to22().queryLast()?.from19to22
     fun from23to26LookingFor(): Int? = From23to26().queryLast()?.from23to26
     fun from27to35LookingFor(): Int? = From27to35().queryLast()?.from27to35
@@ -90,7 +92,7 @@ open class RealmUtil {
 
     //My age
     //Add 1(yes) or 0(no) based on option
-    fun myAge(int: Int?, view: View?){
+    fun myAge(int: Int?, view: View?) {
 
         try {
             when {
@@ -138,10 +140,10 @@ open class RealmUtil {
 
     //Choose my and looking for gender
     //Add 1(yes) or 0(no) based on option
-    fun gender(int: Int?, view: View){
+    fun gender(int: Int?, view: View) {
 
-        try{
-            when (view.id){
+        try {
+            when (view.id) {
                 R.id.maleGenderMy -> {
                     realm?.beginTransaction()
                     val maleGenderMy = realm?.createObject(MyGenderModel::class.java, getNextKey(MyGenderModel()))
@@ -179,7 +181,7 @@ open class RealmUtil {
     fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
 
     //Add found user uid to Realm
-    fun addFounduserUid(uid: String?){
+    fun addFounduserUid(uid: String?) {
         try {
             realm?.beginTransaction()
             val foundUserUid = realm?.createObject(FoundUserUid::class.java, getNextKey((FoundUserUid())))
@@ -189,10 +191,11 @@ open class RealmUtil {
             realm?.close()
         }
     }
+
     fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
 
     //Save and retrieve chat Realm
-    fun savedChatTime(time: String?){
+    fun savedChatTime(time: String?) {
         try {
             realm?.beginTransaction()
             realm?.createObject(SavedChatsTime::class.java, getNextKey(SavedChatsTime()))?.time = time
@@ -201,6 +204,7 @@ open class RealmUtil {
             realm?.close()
         }
     }
+
     fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)
             ?.sort("id", Sort.ASCENDING)?.findAll()?.sort("id", Sort.ASCENDING)
 
@@ -212,11 +216,12 @@ open class RealmUtil {
 //    }
 
     //Save messages to Realm
-    fun saveMessages(savedMessages: ArrayList<ChatModel>){
+    fun saveMessages(savedMessages: ArrayList<ChatModel>) {
         realm?.executeTransaction {
-                 realm?.insert(savedMessages)
+            realm?.insert(savedMessages)
         }
     }
+
     fun retrieveMessages(): MutableList<ChatModel>? {
         realm?.beginTransaction()
         val list = realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
@@ -228,21 +233,22 @@ open class RealmUtil {
     //Save messages
     fun saveStartMessagesSize(size: Int?) {
         try {
-            if (getStartMessagesSize()?.size!! <= 0) {
+            if (getStartMessagesSize().size <= 0) {
                 realm?.beginTransaction()
                 realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = 0
                 realm?.commitTransaction()
-            } else if (getStartMessagesSize()?.size!! > 0
-                    && getStartMessagesSize()?.last()?.startMessagesSize!! != size) {
+            } else if (getStartMessagesSize().size > 0
+                    && getStartMessagesSize().last()?.startMessagesSize!! != size) {
                 realm?.beginTransaction()
                 realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = size
                 realm?.commitTransaction()
             }
-            } finally {
-                realm?.close()
-            }
+        } finally {
+            realm?.close()
         }
-    fun saveEndMessagesSize(size: Int?){
+    }
+
+    fun saveEndMessagesSize(size: Int?) {
         try {
             realm?.beginTransaction()
             realm?.createObject(EndMessagesSize::class.java, getNextKey(EndMessagesSize()))?.endMessagesSize = size
@@ -251,35 +257,8 @@ open class RealmUtil {
             realm?.close()
         }
     }
-    fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
-    fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
 
-    //Change all messages if some row is deleted
-    fun changeEndMessages(pos: Int?) {
-        realm?.beginTransaction()
-        val end = realm?.where(EndMessagesSize::class.java)
-                ?.greaterThan("endMessagesSize", RealmUtil().getEndMessagesSize()!![pos!!]?.endMessagesSize!!)?.findAll()
-        if (!end?.isEmpty()!!) {
-            end.forEach {
-                it?.endMessagesSize = it?.endMessagesSize!! - RealmUtil().getEndMessagesSize()!![pos!!]?.endMessagesSize!!
-                realm?.insertOrUpdate(it)
-            }
-        }
-        realm?.commitTransaction()
-        realm?.close()
-    }
-    fun changeStartMessages(pos: Int?) {
-        realm?.beginTransaction()
-        val start = realm?.where(StartMessagesSize::class.java)
-                ?.greaterThan("startMessagesSize", RealmUtil().getStartMessagesSize()!![pos!!]?.startMessagesSize!!)?.findAll()
-        if (!start?.isEmpty()!!){
-            start.forEach {
-                it?.startMessagesSize = it?.startMessagesSize!! - RealmUtil().getStartMessagesSize()!![pos!!]?.startMessagesSize!!
-                realm?.insertOrUpdate(it)
-            }
-        }
-        realm?.commitTransaction()
-        realm?.close()
-    }
+    fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.sort("id")?.findAll()!!
+    fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.sort("id")?.findAll()!!
 
 }

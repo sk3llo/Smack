@@ -1,6 +1,7 @@
 package com.example.a_karpenko.smack.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -25,6 +26,10 @@ open class SavedMessages : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_messages)
         window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window?.statusBarColor = R.color.chatStatusBar
+        }
+
 
         realm = Realm.getDefaultInstance()
         toolbar = findViewById(R.id.savedMessagesToolbar)

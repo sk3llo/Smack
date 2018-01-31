@@ -11,7 +11,10 @@ import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
 import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
+import io.realm.OrderedRealmCollection
 import io.realm.Realm
+import io.realm.RealmResults
+import io.realm.Sort
 
 open class SavedMessages : AppCompatActivity() {
 
@@ -41,7 +44,6 @@ open class SavedMessages : AppCompatActivity() {
             finish()
         }
 
-        messages = ArrayList()
         list = ArrayList()
         recycler = findViewById(R.id.savedMessagesList)
         recycler?.setHasFixedSize(true)
@@ -49,10 +51,12 @@ open class SavedMessages : AppCompatActivity() {
         //Retrieve saved messages from Realm
         getIntent = intent.getIntExtra("id", 0)
 
-        messages = RealmUtil().retrieveMessages()?.subList(startList(getIntent)!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)?.toMutableList()
+//        messages = RealmUtil().retrieveMessages()?.subList(startList(getIntent)!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)
+
+        val orc: OrderedRealmCollection<ChatModel>? = realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
 
 
-        val adapter = SavedMessagesAdapter(messages!!)
+        val adapter = SavedMessagesAdapter(orc!!, getIntent!!)
         val manager = LinearLayoutManager(this)
         manager.orientation = LinearLayoutManager.VERTICAL
         manager.stackFromEnd = true
@@ -61,27 +65,27 @@ open class SavedMessages : AppCompatActivity() {
     }
 
     // Get first index based on clicked recyclerview item (intent)
-    open fun startList(intent: Int?): Int? {
-        return try {
-            if (intent != null && intent == 0) {
-                0
-            } else if (intent != null
-                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
-                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize!!
-                    && intent != 0) {
-                RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize
-            } else if (intent != null
-                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
-                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize!!
-                    && intent != 0) {
-                RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize
-            } else {
-                RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
-            }
-        } catch (e: java.lang.IndexOutOfBoundsException){
-            RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
-        }
-    }
+//    open fun startList(intent: Int?): Int? {
+//        return try {
+//            if (intent != null && intent == 0) {
+//                0
+//            } else if (intent != null
+//                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
+//                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize == RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize!!
+//                    && intent != 0) {
+//                RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize
+//            } else if (intent != null
+//                    && RealmUtil().getStartMessagesSize()?.isNotEmpty()!!
+//                    && RealmUtil().getStartMessagesSize()?.last()?.startMessagesSize != RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize!!
+//                    && intent != 0) {
+//                RealmUtil().getStartMessagesSize()!![intent]?.startMessagesSize
+//            } else {
+//                RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
+//            }
+//        } catch (e: java.lang.IndexOutOfBoundsException){
+//            RealmUtil().getStartMessagesSize()!![intent!!]?.startMessagesSize
+//        }
+//    }
 
     override fun onBackPressed() {
         startActivity(Intent(this@SavedMessages, SavedChats::class.java))

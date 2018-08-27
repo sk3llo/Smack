@@ -30,7 +30,7 @@ class EditTextWatcher(private var editText: EditText?, foundUser: String?, priva
         if (exception != null){
             Log.d("EditTextWatcher**** ", "Failed to get LF input")
         }
-        if (snapshot.exists() && snapshot["input"] == true){
+        if (snapshot!!.exists() && snapshot["input"] == true){
             typeView?.text = "Someone is typing..."
             typeView?.visibility = View.VISIBLE
         } else if(snapshot.exists() && snapshot["input"] == false){

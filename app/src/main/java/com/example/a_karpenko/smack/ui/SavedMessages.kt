@@ -52,9 +52,9 @@ open class SavedMessages : AppCompatActivity() {
         getIntent = intent.getIntExtra("id", 0)
 
 //        messages = RealmUtil().retrieveMessages()?.subList(startList(getIntent)!!, RealmUtil().getEndMessagesSize()!![getIntent!!]?.endMessagesSize!!)
-
+        realm?.beginTransaction()
         val orc: OrderedRealmCollection<ChatModel>? = realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
-
+        realm?.commitTransaction()
 
         val adapter = SavedMessagesAdapter(orc!!, getIntent!!)
         val manager = LinearLayoutManager(this)

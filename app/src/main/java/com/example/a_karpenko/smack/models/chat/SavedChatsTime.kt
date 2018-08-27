@@ -8,7 +8,7 @@ open class SavedChatsTime : RealmObject() {
 
     @PrimaryKey
     @Index
-    var id: Int? = 0
+    var id: Int? = null
 
     var time: String? = ""
 }

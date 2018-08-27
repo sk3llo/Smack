@@ -27,19 +27,19 @@ val receive: Int? = 2
 
 open class MessagesAdapter(var messages: ArrayList<ChatModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == send) {
             Log.d("Messages adapter***** ", "$viewType == sent")
-            val send = LayoutInflater.from(parent?.context).inflate(R.layout.message_sent, parent, false)
+            val send = LayoutInflater.from(parent.context).inflate(R.layout.message_sent, parent, false)
             object : MessageSentViewHolder(send) {}
         } else  {
             Log.d("Messages adapter***** ", "$viewType == received")
-            val receive = LayoutInflater.from(parent?.context).inflate(R.layout.message_received, parent, false)
+            val receive = LayoutInflater.from(parent.context).inflate(R.layout.message_received, parent, false)
             object : MessageReceivedViewHolder(receive) {}
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         //Time
         val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
         val time: String? = formatDate?.format(Date())

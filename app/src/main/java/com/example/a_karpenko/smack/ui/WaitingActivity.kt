@@ -47,7 +47,7 @@ class WaitingActivity: AppCompatActivity() {
                 db?.collection("WL")?.document("$uidMy")?.delete()
             }
             else {
-                val last = snapshot.documentChanges
+                val last = snapshot!!.documentChanges
 
                 last.forEach {
                     if (it.type == DocumentChange.Type.MODIFIED) {

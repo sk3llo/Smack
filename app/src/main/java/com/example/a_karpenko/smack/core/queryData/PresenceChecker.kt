@@ -39,7 +39,7 @@ class PresenceChecker(foundUser: String?,
             Log.d("PresenceChecker**** ", "Failed to check LF presence")
         }
 
-        if (snapshot.exists() && snapshot["presence"] == false){
+        if (snapshot!!.exists() && snapshot["presence"] == false){
             typeView?.text = "User has left the chat."
             typeView?.visibility = View.VISIBLE
             editText?.isEnabled = false

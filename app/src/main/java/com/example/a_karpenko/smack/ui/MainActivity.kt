@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.support.v7.app.AppCompatActivity
@@ -17,6 +18,7 @@ import com.example.a_karpenko.smack.adapters.uidMy
 import com.example.a_karpenko.smack.core.queryData.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
+import com.example.a_karpenko.smack.models.firestore.OnlineChecker
 import com.example.a_karpenko.smack.models.firestore.PresenceModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
 import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
@@ -26,9 +28,14 @@ import com.example.a_karpenko.smack.utils.RealmUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.realm.Realm
+import io.realm.RealmObject
+import io.realm.annotations.RealmClass
+import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,10 +76,13 @@ class MainActivity : AppCompatActivity() {
     var currentDate: Date? = null
     //Start
     var star: Button? = null
+    //Count online users
+    var online: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+
 
         this.context = context
 
@@ -80,6 +90,15 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         user = auth?.currentUser
         db = FirebaseFirestore.getInstance()
+        val settings: FirebaseFirestoreSettings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        db?.firestoreSettings = settings
+
+
+        //Add Online status to DB
+        db?.collection("Online")?.document(uidMy!!)?.set(OnlineChecker())
+
 
         //Realm
         Realm.init(this)
@@ -92,6 +111,8 @@ class MainActivity : AppCompatActivity() {
         //Main choose chat person vars
         maleGenderMy = findViewById(R.id.maleGenderMy)
         femaleGenderMy = findViewById(R.id.femaleGenderMy)
+
+        online = find(R.id.online)
 
         maleGenderLookingFor = findViewById(R.id.maleGenderLookingFor)
         femaleGenderLookingFor = findViewById(R.id.femaleGenderLookingFor)
@@ -158,9 +179,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
+        //check online users
+        Handler()?.postDelayed({
+            onlineChecker()
+        }, 1500)
 
     }
+
+
+    fun onlineChecker() {
+        if (db?.collection("Online")?.get()?.exception == null) {
+            db?.collection("Online")?.get()?.addOnSuccessListener {
+                online?.text = "Online: ${it?.size()}"
+            }
+            db?.collection("Online")?.addSnapshotListener { snapshot, exception ->
+                online?.text = "Online: ${snapshot?.size()}"
+            }
+        }
+    }
+
+
 
     fun startChat() {
         //check all optionsMy: false if empty, true if not
@@ -254,9 +292,13 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (!WaitingActivity().isDestroyed){
             WaitingActivity().finish()
-        finish()
 //         System.exit(0)
-    }
+        }
+        //Delete online presence
+        if (db?.collection("Online")?.document("$uidMy") != null){
+            db?.collection("Online")?.document("$uidMy")?.delete()
+        }
+        finish()
 }
 
     override fun onStart() {
@@ -274,6 +316,10 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         if (realm != null){
             realm?.close()
+        }
+        //Delete online presence
+        if (db?.collection("Online")?.document("$uidMy") != null){
+            db?.collection("Online")?.document("$uidMy")?.delete()
         }
     }
 

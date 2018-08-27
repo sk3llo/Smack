@@ -183,6 +183,10 @@ class ChatActivity : AppCompatActivity() {
 
         //Save star on click
         saveStar?.onTouch { v, event ->
+            Log.d("CHAT_ACTIVITY*** ", "BINGO, SAVE STAR WAS JUST CLICKED")
+            v.isEnabled = false
+            v.isClickable = false
+            v.isFocusable = false
             doAsync {
                 //Display toast only once
                 //Was on repeat before like 5 times - now this shit is fixed
@@ -200,9 +204,7 @@ class ChatActivity : AppCompatActivity() {
                         v.setBackgroundResource(android.R.drawable.star_big_on)
                         v.startAnimation(scaleAnimation)
 
-                        v.isEnabled = false
-                        v.isClickable = false
-                        v.isFocusable = false
+
                     }
                     //Save messages
                     RealmUtil().saveMessages(messages!!)
@@ -359,7 +361,6 @@ class ChatActivity : AppCompatActivity() {
 
     //Register listener for live messages
     fun listener() = foundUserRef?.addSnapshotListener { snapshot, exception ->
-
         val formatDate: SimpleDateFormat? = object: SimpleDateFormat("h:mm a") {}
         val time: String? = formatDate?.format(Date())
 

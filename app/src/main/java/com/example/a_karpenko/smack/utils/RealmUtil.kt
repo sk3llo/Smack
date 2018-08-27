@@ -11,6 +11,7 @@ import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.models.gender.LookingForGenderModel
 import com.example.a_karpenko.smack.models.gender.MyGenderModel
 import com.example.a_karpenko.smack.models.my_age.MyAgeModel
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryLast
 import io.realm.Realm
@@ -18,6 +19,7 @@ import io.realm.RealmModel
 import io.realm.RealmResults
 import io.realm.Sort
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 open class RealmUtil {
@@ -218,11 +220,11 @@ open class RealmUtil {
     //Save messages to Realm
     fun saveMessages(savedMessages: ArrayList<ChatModel>) {
         realm?.executeTransaction {
-            realm?.insert(savedMessages)
+            realm?.copyToRealm(savedMessages)
         }
     }
 
-    fun retrieveMessages(): MutableList<ChatModel>? {
+    fun retrieveMessages(): RealmResults<ChatModel>? {
         realm?.beginTransaction()
         val list = realm?.where(ChatModel::class.java)?.sort("id", Sort.ASCENDING)?.findAll()
         realm?.commitTransaction()
@@ -233,7 +235,7 @@ open class RealmUtil {
     //Save messages
     fun saveStartMessagesSize(size: Int?) {
         try {
-            if (getStartMessagesSize().size <= 0) {
+            if (getStartMessagesSize().size == 0) {
                 realm?.beginTransaction()
                 realm?.createObject(StartMessagesSize::class.java, getNextKey(StartMessagesSize()))?.startMessagesSize = 0
                 realm?.commitTransaction()

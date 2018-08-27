@@ -33,15 +33,15 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
     var realm = Realm.getDefaultInstance()
 
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val savedChats: SavedChatsTime? = coll[position]
         val text = "   Chat from " + savedChats?.time?.drop(3)?.dropLast(9)
-        holder?.date?.text = text
+        holder.date?.text = text
 
-        holder?.trash?.setOnClickListener(ClickListener(position))
+        holder.trash?.setOnClickListener(ClickListener(position))
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(context).inflate(R.layout.saved_chat_row, parent, false)
         v.setOnClickListener(ClickListener(recyclerView.indexOfChild(v)))
         return ViewHolder(v)

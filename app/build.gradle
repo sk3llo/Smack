@@ -6,6 +6,10 @@ apply plugin: 'kotlin-kapt'
 android {
     signingConfigs {
         config {
+            keyAlias 'key0'
+            keyPassword 'L0xotron'
+            storeFile file('C:/Users/user/Desktop/omgs/key.jks')
+            storePassword 'L0xotron'
         }
     }
     compileSdkVersion rootProject.ext.compileSdkVersion

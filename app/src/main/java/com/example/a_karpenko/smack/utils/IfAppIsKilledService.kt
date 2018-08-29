@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.example.a_karpenko.smack.adapters.uidMy
 import com.example.a_karpenko.smack.models.firestore.PresenceModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -36,6 +37,10 @@ class IfAppIsKilledService : Service() {
                     .collection("presence")
                     .document("my")
             presence.set(PresenceModel("0"))
+            //Delete me from online
+            if (FirebaseFirestore.getInstance()?.collection("Online")?.document("$uidMy")?.get()?.exception == null){
+                FirebaseFirestore.getInstance()?.collection("Online")?.document("$uidMy")?.delete()
+            }
             Log.e("ClearFromRecentService", "END")
             stopSelf()
         }

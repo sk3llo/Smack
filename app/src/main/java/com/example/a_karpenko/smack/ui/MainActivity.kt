@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity() {
 //         System.exit(0)
         }
         //Delete online presence
-        if (db?.collection("Online")?.document("$uidMy") != null){
+        if (db?.collection("Online")?.document("$uidMy")?.get()?.exception != null){
             db?.collection("Online")?.document("$uidMy")?.delete()
         }
         finish()
@@ -319,9 +319,9 @@ class MainActivity : AppCompatActivity() {
             realm?.close()
         }
         //Delete online presence
-        if (db?.collection("Online")?.document("$uidMy") != null){
-            db?.collection("Online")?.document("$uidMy")?.delete()
-        }
+//        if (db?.collection("Online")?.document("$uidMy") != null){
+//            db?.collection("Online")?.document("$uidMy")?.delete()
+//        }
     }
 
 }

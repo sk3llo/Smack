@@ -41,7 +41,6 @@ class SplashActivity : AppCompatActivity() {
         //Start checking if the app is being killed
         startService(Intent(baseContext, IfAppIsKilledService().javaClass))
 
-
     }
 
     override fun onBackPressed() {

@@ -3,15 +3,19 @@ package com.example.a_karpenko.smack.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.core.queryData.WaitingListQuery
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 
 class WaitingActivity: AppCompatActivity() {
 
@@ -34,6 +38,7 @@ class WaitingActivity: AppCompatActivity() {
         WaitingListQuery(this,this).checkWL()
         checkWListener()
 
+        Handler().postDelayed({searchingUsers()}, 1500)
     }
 
 
@@ -44,6 +49,7 @@ class WaitingActivity: AppCompatActivity() {
                 db?.collection("WL")?.document("$uidMy")?.delete()
             }
             else {
+
                 val last = snapshot!!.documentChanges
 
                 last.forEach {
@@ -60,6 +66,26 @@ class WaitingActivity: AppCompatActivity() {
                 }
             }
       }
+
+    fun searchingUsers(){
+        //Searching users on WL list
+        doAsync {
+
+            var searchingText: TextView? = find(R.id.searchingText)
+            var db = FirebaseFirestore.getInstance()?.collection("WL")
+            if (db.get().exception == null) {
+                db.get().addOnCompleteListener {
+                    runOnUiThread { searchingText?.text = "Searching: ${it.result.size()}" }
+                }
+                db.addSnapshotListener { snapshot, exception ->
+                    if (exception == null) {
+                        runOnUiThread { searchingText?.text = "Searching: ${snapshot?.size()}" }
+                    }
+                }
+            }
+
+        }
+    }
 
 
     fun stopSearch(view: View?){

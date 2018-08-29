@@ -5,22 +5,12 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedChatsAdapter
-import com.example.a_karpenko.smack.models.chat.EndMessagesSize
-import com.example.a_karpenko.smack.models.chat.StartMessagesSize
-import com.example.a_karpenko.smack.models.firestore.ChatModel
 import com.example.a_karpenko.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
-import io.realm.Sort
-import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk25.coroutines.onClick
-import javax.annotation.Nullable
 
 open class SavedChats : AppCompatActivity() {
 

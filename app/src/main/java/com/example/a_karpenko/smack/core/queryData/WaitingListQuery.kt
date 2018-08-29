@@ -6,6 +6,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
 import android.widget.Toast
+import com.example.a_karpenko.smack.R.id.emojiButton
+import com.example.a_karpenko.smack.R.id.messageInputText
+import com.example.a_karpenko.smack.models.firestore.PresenceModel
 import com.example.a_karpenko.smack.ui.ChatActivity
 import com.example.a_karpenko.smack.ui.MainActivity
 import com.example.a_karpenko.smack.ui.WaitingActivity

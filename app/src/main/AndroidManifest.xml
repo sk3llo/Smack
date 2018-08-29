@@ -47,6 +47,9 @@
         </activity>
         <activity android:name=".ui.SavedMessages">
         </activity>
+
+        <service android:name="com.example.a_karpenko.smack.utils.IfAppIsKilledService" android:stopWithTask="false" />
+
     </application>
 
 </manifest>

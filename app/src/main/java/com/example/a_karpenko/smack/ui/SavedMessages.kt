@@ -10,10 +10,8 @@ import android.support.v7.widget.Toolbar
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.SavedMessagesAdapter
 import com.example.a_karpenko.smack.models.firestore.ChatModel
-import com.example.a_karpenko.smack.utils.RealmUtil
 import io.realm.OrderedRealmCollection
 import io.realm.Realm
-import io.realm.RealmResults
 import io.realm.Sort
 
 open class SavedMessages : AppCompatActivity() {

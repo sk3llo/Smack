@@ -13,7 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.vanniktech.emoji.EmojiEditText
 import java.util.*
 
-class PresenceChecker(foundUser: String?,
+open class PresenceChecker(foundUser: String?,
                       private var typeView: TextView?,
                       private var editText: EmojiEditText?,
                       private var emojiButton: Button?) {
@@ -30,16 +30,18 @@ class PresenceChecker(foundUser: String?,
             .collection("presence")
             .document("my")
 
-    fun getIn() = presenceMy.set(PresenceModel(true))
+    fun getIn() = presenceMy.set(PresenceModel("1"))
+//    set(PresenceModel(true))
 
-    fun getOut() = presenceMy.set(PresenceModel(false))
+    fun getOut() = presenceMy.set(PresenceModel("0"))
+//            set(PresenceModel(false))
 
     fun checkLfPresence() = presenceLF.addSnapshotListener { snapshot, exception ->
         if (exception != null){
             Log.d("PresenceChecker**** ", "Failed to check LF presence")
         }
 
-        if (snapshot!!.exists() && snapshot["presence"] == false){
+        if (snapshot!!.exists() && snapshot.get("presence")?.toString() == "0"){
             typeView?.text = "User has left the chat."
             typeView?.visibility = View.VISIBLE
             editText?.isEnabled = false

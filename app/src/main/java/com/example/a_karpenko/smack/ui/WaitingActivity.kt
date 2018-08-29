@@ -2,7 +2,6 @@ package com.example.a_karpenko.smack.ui
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -13,8 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import org.jetbrains.anko.doAsync
-import kotlin.collections.ArrayList
 
 class WaitingActivity: AppCompatActivity() {
 

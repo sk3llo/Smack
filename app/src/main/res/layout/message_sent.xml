@@ -10,7 +10,7 @@
         tools:layout_editor_absoluteX="0dp"
         android:layout_gravity="bottom|end"
         android:paddingTop="2dp"
-        >
+>
 
     <com.vanniktech.emoji.EmojiTextView
             android:id="@+id/messageSentText"
@@ -19,18 +19,15 @@
             android:background="@drawable/message_sent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="50dp"
-            android:textAlignment="center"
-            android:maxWidth="240dp"
+            android:minWidth="30dp"
+            android:textAlignment="textStart"
+            android:maxWidth="220dp"
             android:padding="8dp"
             app:emojiSize="25dp"
             android:textColor="@color/black"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="4dp"
-            />
-
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@+id/imageView3"
+            android:layout_marginEnd="11dp" app:layout_constraintBottom_toBottomOf="@+id/imageView3"/>
     <TextView
             android:id="@+id/messageSentTime"
             android:text="11:40"
@@ -40,5 +37,11 @@
             android:layout_marginRight="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/messageSentText"
             app:layout_constraintRight_toLeftOf="@+id/messageSentText"/>
+    <ImageView
+            android:layout_width="25dp"
+            android:layout_height="13dp" app:srcCompat="@drawable/right_bubble_corner"
+            android:id="@+id/imageView3" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="4dp"/>
 
 </android.support.constraint.ConstraintLayout>

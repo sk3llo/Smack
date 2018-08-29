@@ -14,6 +14,7 @@ import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -170,6 +171,7 @@ class ChatActivity : AppCompatActivity() {
         sendMessageButton = findViewById(R.id.sendMessagebutton)
         recyclerView = findViewById(R.id.messageList)
         toolbar = findViewById(R.id.chatToolbar)
+        emojiButton = findViewById(R.id.emojiButton)
 
         //Toolbar
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
@@ -255,13 +257,21 @@ class ChatActivity : AppCompatActivity() {
                 //Add doc to Firestore with "Online" Action
                 val realm: FirebaseFirestore? = FirebaseFirestore.getInstance()
                 val user = FirebaseAuth.getInstance().currentUser
-                realm?.collection("WL")?.document("${user?.uid}")?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
-                    Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${user?.uid}")
+                realm?.collection("WL")?.document("${user?.uid}")
+                        ?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
+                            Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${user?.uid}")
+                            //Leave Chat Presence
+                            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+                            Log.d("CHAT_ACTIVITY***!*!*!*!", "263 -_*-*-*-*-*_*-*GET OUT!!!")
+                            //Start Waiting Activity
+                            startActivity(Intent(this@ChatActivity, WaitingActivity::class.java))
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                            finish()
                 }
-                //Start Waiting Activity
-                startActivity(Intent(this@ChatActivity, WaitingActivity::class.java))
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                finish()
+//                //Start Waiting Activity
+//                startActivity(Intent(this@ChatActivity, WaitingActivity::class.java))
+//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+//                finish()
             } else {
                 toast("Please, check your Internet connection")
             }
@@ -273,7 +283,6 @@ class ChatActivity : AppCompatActivity() {
         }
 
         //Emojis
-        emojiButton = findViewById(R.id.emojiButton)
         val rootView: View? = findViewById(R.id.chatRootView)
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView).build(messageInputText)
         emojiButton?.setOnClickListener {
@@ -316,6 +325,9 @@ class ChatActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             }
         }
+
+
+
     }
 
     private fun closeActivity() {
@@ -353,6 +365,7 @@ class ChatActivity : AppCompatActivity() {
                 listener()?.remove()
                 input?.set(InputModel(false, currentDate))
                 PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+                Log.d("CHAT_ACTIVITY*!*!*!*!", "362 -_*-*-*-*-*_*-*- GET OUT!!!")
                 PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
                 //Remove typing listener for user LF
                 EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
@@ -430,6 +443,7 @@ class ChatActivity : AppCompatActivity() {
         //Broadcast network state
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
+//            //Get in (presence == true)
             runOnUiThread {
                 typingTextView?.visibility = View.GONE
                 messageInputText.isEnabled = true
@@ -442,14 +456,13 @@ class ChatActivity : AppCompatActivity() {
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputMy()
             //Check if User's typing
             EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF()
-            //Get in (presence == true)
-            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getIn()
         }
-        //Check LF presence after 1.5 sec
-        Handler().postDelayed({
-            PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence()
-        }, 1500)
-
+        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getIn().addOnCompleteListener {
+            //Check LF presence after 1.5 sec
+            Handler()?.postDelayed({
+                PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence()
+            }, 5000)
+        }
         //Add start messages size to Realm
         doAsync {
             RealmUtil().saveStartMessagesSize(RealmUtil().retrieveMessages()?.size)
@@ -467,10 +480,15 @@ class ChatActivity : AppCompatActivity() {
         super.onDestroy()
         listener()?.remove()
         input?.set(InputModel(false, currentDate))
+
+//        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
         EditTextWatcher(messageInputText, uidLF, typingTextView).checkInputLF().remove()
-        PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).getOut()
+        Log.d("CHAT_ACTIVITY***!*!*!*!", "263 -_*-*-*-*-*_*-*GET OUT!!!")
         PresenceChecker(uidLF, typingTextView, messageInputText, emojiButton).checkLfPresence().remove()
     }
+
+
+
 }
 
 

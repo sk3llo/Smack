@@ -8,34 +8,32 @@ import android.net.NetworkInfo
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.Snackbar
-import android.view.View
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.example.a_karpenko.smack.R
 import com.example.a_karpenko.smack.adapters.uidMy
-import com.example.a_karpenko.smack.core.queryData.MyOptionsChecker
 import com.example.a_karpenko.smack.core.addData.AddOptionsFirestore
+import com.example.a_karpenko.smack.core.queryData.MyOptionsChecker
 import com.example.a_karpenko.smack.models.firestore.LoginCheckerModel
 import com.example.a_karpenko.smack.models.firestore.OnlineChecker
 import com.example.a_karpenko.smack.models.firestore.PresenceModel
 import com.example.a_karpenko.smack.utils.ConnectionChangeUtil
-import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
-import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
-import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
 import com.example.a_karpenko.smack.utils.RealmUtil
+import com.example.a_karpenko.smack.utils.chooser_options.GenderChooser
+import com.example.a_karpenko.smack.utils.chooser_options.LookingForAgeChooser
+import com.example.a_karpenko.smack.utils.chooser_options.MyAgeChooser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import io.realm.Realm
-import io.realm.RealmObject
-import io.realm.annotations.RealmClass
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -204,7 +202,8 @@ class MainActivity : AppCompatActivity() {
         //check all optionsMy: false if empty, true if not
         if (MyOptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
             //Add doc to Firestore with "Online" Action
-            db?.collection("WL")?.document("${user?.uid}")?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
+            db?.collection("WL")?.document("${user?.uid}")
+                    ?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
                 Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${user?.uid}")
             }
             //Start Waiting Activity
@@ -304,10 +303,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         //Stop Searching for new chat
-        db?.collection("Users")?.document(uidMy.toString())
-                ?.collection("presence")?.document("my")
-                ?.set(PresenceModel(false))
-        db?.collection("WL")?.document(uidMy.toString())?.delete()
+        doAsync {
+            db?.collection("Users")?.document(uidMy.toString())
+                    ?.collection("presence")?.document("my")
+                    ?.set(PresenceModel("0"))
+            db?.collection("WL")?.document(uidMy.toString())?.delete()
+        }
         //Register Broadcast receiver
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }

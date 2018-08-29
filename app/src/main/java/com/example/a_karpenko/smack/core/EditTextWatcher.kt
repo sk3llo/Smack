@@ -13,7 +13,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
-class EditTextWatcher(private var editText: EditText?, foundUser: String?, private var typeView: TextView?) {
+class EditTextWatcher(private var editText: EditText?,
+                      foundUser: String?,
+                      private var typeView: TextView?) {
 
     val inputMy = FirebaseFirestore.getInstance()
             .collection("Users")

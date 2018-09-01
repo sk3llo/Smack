@@ -100,13 +100,15 @@ class ChatActivity : AppCompatActivity() {
     var rotationAnim: Animation? = null
 
     var toast: Toast? = null
-//    var millis: Int? = null
+//    var chatMessageId: Int? = null
 
 
     @SuppressLint("ResourceAsColor", "PrivateResource")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
+        //Use to "close the wall" when the user is found
+        RealmUtil().addIsUserFound(true)
 
         //Save chat btn animation
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.saved_btn_scale_anim)
@@ -120,7 +122,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         //Message time
-//        millis = System.currentTimeMillis()
+//        chatMessageId = System.currentTimeMillis()
 
         messages = RealmList()
         realm = Realm.getDefaultInstance()
@@ -274,6 +276,7 @@ class ChatActivity : AppCompatActivity() {
                             Log.d("CHAT_ACTIVITY***!*!*!*!", "263 -_*-*-*-*-*_*-*GET OUT!!!")
                             //Start Waiting Activity
                             startActivity(Intent(this@ChatActivity, WaitingActivity::class.java))
+//                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                             finish()
                 }
@@ -389,7 +392,7 @@ class ChatActivity : AppCompatActivity() {
         }
         //Add empty messageMy if the snapshot is empty (to show first messageMy)
         if (snapshot == null || snapshot.isEmpty){
-            foundUserRef?.add(ChatModel(millis()!!, uidMy.toString(), "emptyMessage", time!!, currentDate))
+            foundUserRef?.add(ChatModel(chatMessageId()!!, uidMy.toString(), "emptyMessage", time!!, currentDate))
         }
 
         if (snapshot != null
@@ -399,7 +402,7 @@ class ChatActivity : AppCompatActivity() {
                 && snapshot.documentChanges.last().document["from"].toString() == uidLF) {
             val from = snapshot.documentChanges.last().document["from"].toString()
             val message = snapshot.documentChanges.last().document["message"].toString()
-            val receivedQuery = ChatModel(millis()!!, from, message, time!!, currentDate)
+            val receivedQuery = ChatModel(chatMessageId()!!, from, message, time!!, currentDate)
             messages?.add(receivedQuery)
             adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -426,7 +429,7 @@ class ChatActivity : AppCompatActivity() {
         if (text?.length != 0) {
             //User's uid,name etc
             //Add data to model
-            val myMessage = ChatModel(millis()!!, uidMy!!, text!!, time!!, currentDate)
+            val myMessage = ChatModel(chatMessageId()!!, uidMy!!, text!!, time!!, currentDate)
             messages?.add(myMessage)
             if (messages?.size != 0) {
                 recyclerView?.scrollToPosition(messages?.size!! - 1)
@@ -475,10 +478,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun millis(): Long? {
+    //Use to increment each messege id and saves it to DB
+    fun chatMessageId(): Long? {
         realm?.beginTransaction()
         realm?.createObject(MessageID::class.java)?.id = realm?.where(MessageID::class.java)?.max("id")?.toLong()?.plus(1)
-//        val number = realm?.where(MessageID::class.java)?.max("id")?.toInt()?.inc()
         Log.d("CHAT_ACTIVITY***", "${realm?.where(MessageID::class.java)?.max("id")}")
         val num = realm?.where(MessageID::class.java)?.max("id")?.toLong()
         realm?.commitTransaction()

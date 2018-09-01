@@ -30,19 +30,16 @@ class IfAppIsKilledService : Service() {
     override fun onTaskRemoved(rootIntent: Intent) {
         //Set presence to 0 if app is killed
         doAsync {
-            try {
-                val presence = FirebaseFirestore.getInstance()
-                        .collection("Users")
-                        .document(RealmUtil().retrieveMyId()!!)
-                        .collection("presence")
-                        .document("my")
-                presence.set(PresenceModel("0"))
+            val presence = FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(RealmUtil().retrieveMyId()!!)
+                    .collection("presence")
+                    .document("my")
+            presence.update("presence", "0")
                 //Delete me from online
                 FirebaseFirestore.getInstance().collection("Online").document(RealmUtil().retrieveMyId()!!).delete()
                 Log.e("ClearFromRecentService", "END")
-            } finally {
                 stopSelf()
-            }
         }
     }
 }

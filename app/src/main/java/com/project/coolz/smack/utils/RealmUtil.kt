@@ -172,19 +172,15 @@ open class RealmUtil {
     fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
     fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
 
-    //Add found user uid to Realm
-    fun addFounduserUid(uid: String?) {
-        try {
-            realm?.beginTransaction()
-            val foundUserUid = realm?.createObject(FoundUserUid::class.java, getNextKey((FoundUserUid())))
-            foundUserUid?.foundUserUid = uid
-            realm?.commitTransaction()
-        } finally {
-            realm?.close()
+    //Add or retrive boolean if user is found
+    fun addIsUserFound(isFound: Boolean){
+        realm?.executeTransaction {
+            realm?.createObject(ChatWall::class.java, getNextKey(ChatWall()))?.isUserFound = isFound
         }
     }
-
-    fun foundUserUid(): String? = FoundUserUid().queryLast()?.foundUserUid
+    fun retrieveIsUserFound(): ChatWall? {
+        return realm?.where(ChatWall::class.java)?.sort("id", Sort.ASCENDING)?.findAll()?.last()
+        }
 
     //Save and retrieve chat Realm
     fun savedChatTime(time: String?) {
@@ -200,12 +196,6 @@ open class RealmUtil {
     fun getSavedChatTime(): RealmResults<SavedChatsTime>? = realm?.where(SavedChatsTime::class.java)
             ?.sort("id", Sort.ASCENDING)?.findAll()?.sort("id", Sort.ASCENDING)
 
-//    //Save messags time
-//    fun saveMessagesTime(time: Date?){
-//        realm?.executeTransaction {
-//            var mTime = realm?.cop
-//        }
-//    }
 
     //Save messages to Realm
     fun saveMessages(savedMessages: RealmList<ChatModel>) {

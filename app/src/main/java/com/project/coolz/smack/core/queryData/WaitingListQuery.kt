@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.DocumentReference
@@ -40,28 +41,34 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
     private var MeOver36LF = RealmUtil().over36LookingFor()
 
 
-    private val uidMy = RealmUtil().retrieveMyId()
+//    private val uidMy = RealmUtil().retrieveMyId()
 
     val myArray: MutableList<DocumentReference>? = ArrayList()
 
     //WL
-    private val WL = FirebaseFirestore.getInstance().collection("WL")
+//    private val WL = FirebaseFirestore.getInstance().collection("WL")
 
 
-    //Check if all users on waiting list
-    fun checkWL() =
-            WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
-                Log.d("WAITINGLISTQUERY****** ", "MYUID********::::  $uidMy")
-                val list = doc.result.documents.toMutableList()
-                list.filter {
-                    it.reference.id != uidMy
-                }.forEach {
-                    if (myArray?.size!! <= 0 && myArray?.isEmpty()) {
-                        checkOptions(it.reference)
-                        Log.d("WAITINGLISTQUERY****** ", "LF ID********::::  ${it.reference.id}")
-                    }
-                }
-            }
+                            //Check if all users on waiting list
+//    fun checkWL() {
+//        WL.whereEqualTo("waitingListOn", true).get().addOnCompleteListener { doc ->
+//            Log.d("WAITINGLIST_QUERY**** ", "MYUID********::::  $uidMy")
+//            val list = doc.result.documents.toMutableList()
+//            list.filter {
+//                it.reference.id != uidMy
+//            }.forEach {
+//                if (myArray?.size!! <= 0 && myArray.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+//                    doAsync { checkOptions(it.reference) }
+//                    Log.d("WAITING_LISTQUERY**** ", "LF ID********::::  ${it.reference.id}")
+//                }
+//            }
+//        }.addOnCompleteListener {
+//            if (RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+//                Log.d("WAITING_LISTQUERY**** ", "WL LISTENER CHECKED!!!!!!!")
+//                activity.checkWListener()
+//            }
+//        }
+//    }
 
     //    Check options for user who's true on waiting list
     fun checkOptions(foundUser: DocumentReference) {
@@ -87,7 +94,10 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                 && optMy.result.exists() && optLF.result.exists()) {
                             doAsync {
 
-                                    //Found user's refs
+                                //Add true to search for user
+                                RealmUtil().addIsUserFound(true)
+
+                                //Found user's refs
                                     val maleGenderMy = optMy.result["maleGenderMy"]
                                     val femaleGenderMy = optMy.result["femaleGenderMy"]
                                     val under18My = optMy.result["under18My"]
@@ -112,15 +122,16 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
+                                            Log.d("WAITING_LIST_QUERY*: ", "USER ID: ${myArray.elementAt(0)}")
                                         }
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -128,7 +139,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26LF == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -136,7 +147,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -144,7 +155,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -153,7 +164,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -161,7 +172,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -169,7 +180,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -177,7 +188,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -185,7 +196,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -194,7 +205,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -202,7 +213,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -210,7 +221,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -218,7 +229,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -226,7 +237,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -235,7 +246,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -243,7 +254,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -251,7 +262,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -259,7 +270,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -267,7 +278,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -276,7 +287,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -284,7 +295,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -292,7 +303,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -300,7 +311,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -308,7 +319,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -320,7 +331,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -328,7 +339,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -336,7 +347,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26LF == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -344,7 +355,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -352,7 +363,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -361,7 +372,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -369,7 +380,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -377,7 +388,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -385,7 +396,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -393,7 +404,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -402,7 +413,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -410,7 +421,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -418,7 +429,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -426,7 +437,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -434,7 +445,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -443,7 +454,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -451,7 +462,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -459,7 +470,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -467,7 +478,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -475,7 +486,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -484,7 +495,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -492,7 +503,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -500,7 +511,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -508,7 +519,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -516,7 +527,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeMaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -528,7 +539,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -536,7 +547,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -544,7 +555,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26LF == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -552,7 +563,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -560,7 +571,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeUnder18LF == 1
                                             && maleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -569,7 +580,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -577,7 +588,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -585,7 +596,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -593,7 +604,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -601,7 +612,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && maleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -610,7 +621,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -618,7 +629,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -626,7 +637,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -634,7 +645,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -642,7 +653,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && maleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -651,7 +662,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -659,7 +670,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -667,7 +678,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -675,7 +686,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -683,7 +694,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && maleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -692,7 +703,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -700,7 +711,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -708,7 +719,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -716,7 +727,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -724,7 +735,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeMaleGenderLF == 1 && MeOver36LF == 1
                                             && maleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -736,7 +747,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -744,7 +755,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -752,7 +763,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26LF == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -760,7 +771,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -768,7 +779,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeUnder18LF == 1
                                             && femaleGenderMy.toString() == "1" && under18My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -777,7 +788,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -785,7 +796,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -793,7 +804,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -801,7 +812,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -809,7 +820,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom19to22LF == 1
                                             && femaleGenderMy.toString() == "1" && from19to22My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -818,7 +829,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -826,7 +837,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -834,7 +845,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -842,7 +853,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -850,7 +861,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom23to26LF == 1
                                             && femaleGenderMy.toString() == "1" && from23to26My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -859,7 +870,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -867,7 +878,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -875,7 +886,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -883,7 +894,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -891,7 +902,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeFrom27to35LF == 1
                                             && femaleGenderMy.toString() == "1" && from27to35My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -900,7 +911,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeUnder18My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && maleGenderLF.toString() == "1" && under18LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -908,7 +919,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom19to22My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from19to22LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -916,7 +927,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom23to26My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from23to26LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -924,7 +935,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeFrom27to35My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && from27to35My.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -932,7 +943,7 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                                     } else if (MeFemaleGenderMy == 1 && MeOver36My == 1 && MeFemaleGenderLF == 1 && MeOver36LF == 1
                                             && femaleGenderMy.toString() == "1" && over36My.toString() == "1"
                                             && femaleGenderLF.toString() == "1" && over36LF.toString() == "1") {
-                                        if (myArray?.size!! <= 0 && activity.snapshotList?.size!! <= 0) {
+                                        if (myArray?.isEmpty()!! && activity.snapshotList?.isEmpty()!!) {
                                             activity.snapshotList?.add(foundUser)
                                             myArray.add(foundUser)
                                             checkOut(myArray.elementAt(0))
@@ -947,9 +958,9 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
 //                                    }
 
                     } else {
-                        activity?.startActivity(Intent(activity?.context, MainActivity::class.java))
-                        Toast.makeText(activity?.context, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
-                        activity?.finish()
+                        activity.startActivity(Intent(activity.context, MainActivity::class.java))
+                        Toast.makeText(activity.context, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
+                        activity.finish()
                     }
                 }
             }
@@ -957,13 +968,20 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
 
     //Start Chat activity
     private fun checkOut(foundUser: DocumentReference) {
-        Log.d("WaitingListQuery**** ", "CONNECTED USER: ${foundUser.id}")
-        //Start Chat Activity
-        val intent = Intent(context, ChatActivity::class.java)
-        intent.putExtra("foundUser", foundUser.id)
-        context.startActivity(intent)
-        activity.finish()
-        //Stop searching (took from Realm)
-        RealmUtil().addFounduserUid(foundUser.id)
+        var check: Boolean? = true
+        Log.d("WAITING_QUERY*: ", "ARRAY: ${myArray?.size!!}")
+        Log.d("WAITING_QUERY*: ", "SNAP: ${activity.snapshotList?.size!!}")
+        Log.d("WAITING_QUERY*: ", "isUserFound: ${RealmUtil().retrieveIsUserFound()?.isUserFound!!}")
+        if (myArray.size == 1 && check == true && RealmUtil().retrieveIsUserFound()?.isUserFound!! && activity.snapshotList?.size!! == 1) {
+            check = false
+            RealmUtil().addIsUserFound(false)
+            Log.d("WaitingListQuery**** ", "CONNECTED USER: ${foundUser.id}")
+            //Start Chat Activity
+            val intent = Intent(context, ChatActivity::class.java)
+            intent.putExtra("foundUser", foundUser.id)
+            context.startActivity(intent)
+//            activity.overridePendingTransition(android.R.anim.fade_out, android.R.anim.fade_in)
+            activity.finish()
+        }
     }
 }

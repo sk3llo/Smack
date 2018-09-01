@@ -31,7 +31,6 @@ class AddOptionsFirestore {
 //    fun waitingOn(): Task<Void> {
 //        return wl.set(LoginCheckerModel(true, currentDate)).addOnCompleteListener { complete ->
 //            if (complete.isSuccessful) {
-//                //TODO: Add checker for options on Firestore
 //                Log.d("App", "Entering db successful")
 //            } else {
 //                Log.d("App", "Failed to enter db")

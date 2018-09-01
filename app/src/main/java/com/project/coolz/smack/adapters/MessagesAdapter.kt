@@ -18,12 +18,6 @@ import java.util.*
 //var uidMy = FirebaseAuth.getInstance().currentUser?.uid
 var uidMy = RealmUtil().retrieveMyId()
 
-val myRoomRef = FirebaseFirestore.getInstance()
-                .collection("Users").document("${RealmUtil().foundUserUid()}")
-                .collection("rooms").document("$uidMy")
-                .collection("messages")
-
-
 val send: Int? = 1
 val receive: Int? = 2
 

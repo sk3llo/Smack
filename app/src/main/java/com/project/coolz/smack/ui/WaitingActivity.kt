@@ -6,15 +6,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.project.coolz.smack.App
 import com.project.coolz.smack.R
 import com.project.coolz.smack.core.queryData.WaitingListQuery
 import com.project.coolz.smack.utils.RealmUtil
+import io.realm.Realm
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 
@@ -23,12 +24,15 @@ class WaitingActivity: AppCompatActivity() {
     val context: Context? = this@WaitingActivity
     var uidMy: String? = null
     var db: FirebaseFirestore? = null
+    var realm: Realm? = null
 
     var snapshotList: MutableList<DocumentReference>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.waiting_activity)
+        //Use to "close the wall" when the user is found
+        RealmUtil().addIsUserFound(true)
 
 //        uidMy = FirebaseAuth.getInstance().currentUser?.uid
         uidMy = RealmUtil().retrieveMyId()
@@ -37,7 +41,7 @@ class WaitingActivity: AppCompatActivity() {
         snapshotList = ArrayList()
 
         //Start comparing options and searching for chat
-        WaitingListQuery(this,this).checkWL()
+//        WaitingListQuery(this,this).checkWL()
         checkWListener()
 
         Handler().postDelayed({searchingUsers()}, 1500)
@@ -55,13 +59,16 @@ class WaitingActivity: AppCompatActivity() {
                 val last = snapshot!!.documentChanges
 
                 last.forEach {
-                    if (it.type == DocumentChange.Type.MODIFIED) {
-                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0 && snapshotList!!.isEmpty()) {
-                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
-                        }
-                    }
+//                    if (it.type == DocumentChange.Type.MODIFIED) {
+//                        if (it.document.id != uidMy && it.document["waitingListOn"] == true
+//                                && snapshotList!!.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+//                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
+//                        }
+//                    }
                     if (it.type == DocumentChange.Type.ADDED) {
-                        if (it.document.id != uidMy && it.document["waitingListOn"] == true && snapshotList?.size!! <= 0 && snapshotList!!.isEmpty()) {
+                        if (it.document.id != uidMy && it.document["waitingListOn"] == true
+                                && snapshotList!!.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+                            Log.d("WAITING_ACTIVITY*: ", "USER ID: ${it.document.id} SNAPSHOT_SIZE: ${snapshotList?.size}")
                             WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
                         }
                     }
@@ -73,8 +80,8 @@ class WaitingActivity: AppCompatActivity() {
         //Searching users on WL list
         doAsync {
 
-            var searchingText: TextView? = find(R.id.searchingText)
-            var db = FirebaseFirestore.getInstance()?.collection("WL")
+            val searchingText: TextView? = find(R.id.searchingText)
+            val db = FirebaseFirestore.getInstance().collection("WL")
             if (db.get().exception == null) {
                 db.get().addOnCompleteListener {
                     runOnUiThread { searchingText?.text = "Searching: ${it.result.size()}" }
@@ -88,7 +95,6 @@ class WaitingActivity: AppCompatActivity() {
 
         }
     }
-
 
     fun stopSearch(view: View?){
         checkWListener()?.remove()

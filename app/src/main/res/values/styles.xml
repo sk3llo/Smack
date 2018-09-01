@@ -34,5 +34,11 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <!-- No animation theme-->
+    <style name="noAnimTheme" parent="AppTheme.NoActionBar">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowBackground">@color/waitingListBackground</item>
+    </style>
+
 
 </resources>

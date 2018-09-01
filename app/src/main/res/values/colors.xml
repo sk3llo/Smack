@@ -19,5 +19,6 @@
     <color name="dimBlueLight">#78bcd3</color>
     <color name="dimBlueDark">#87b1bf</color>
     <color name="supaDupaLightBlue">#b3cef9</color>
+    <color name="waitingListBackground">#4d78bc</color>
 
 </resources>

@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+        //Use to "close the wall" when the user is found
+        RealmUtil().addIsUserFound(true)
 
         //My ID
         myId = RealmUtil().retrieveMyId()
@@ -201,9 +203,9 @@ class MainActivity : AppCompatActivity() {
         //check all optionsMy: false if empty, true if not
         if (MyOptionsChecker(findViewById(android.R.id.content)).checkAndSend()) {
             //Add doc to Firestore with "Online" Action
-            db?.collection("WL")?.document("${myId}")
+            db?.collection("WL")?.document("$myId")
                     ?.set(LoginCheckerModel(true, currentDate))?.addOnCompleteListener {
-                Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: ${myId}")
+                Log.d("Main Activity***** ", "ADDED TRUE TO WL, USER: $myId")
             }
             //Start Waiting Activity
             startActivity(Intent(this@MainActivity, WaitingActivity::class.java))

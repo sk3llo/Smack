@@ -50,29 +50,42 @@ class WaitingActivity: AppCompatActivity() {
 
     //db Listener
     fun checkWListener() = db?.collection("WL")?.addSnapshotListener { snapshot, exception ->
+        RealmUtil().addIsUserFound(true)
             if (exception != null){
                 Snackbar.make(findViewById(android.R.id.content), "Please, check your Internet connection", Snackbar.LENGTH_SHORT)
                 db?.collection("WL")?.document("$uidMy")?.delete()
             }
             else {
-
                 val last = snapshot!!.documentChanges
 
-                last.forEach {
-//                    if (it.type == DocumentChange.Type.MODIFIED) {
+                for (i in last) {
+                    Handler().postDelayed({
+                        if (i.type == DocumentChange.Type.ADDED) {
+                            if (i.document.id != uidMy && i.document["waitingListOn"] == true
+                                    && snapshotList!!.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+                                Log.d("WAITING_ACTIVITY*: ", "USER ID: ${i.document.id} SNAPSHOT_SIZE: ${snapshotList?.size}")
+                                WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(i.document.reference)
+                            }
+                        }
+                    }, 100)
+
+                }
+
+//                last.forEach {
+////                    if (it.type == DocumentChange.Type.MODIFIED) {
+////                        if (it.document.id != uidMy && it.document["waitingListOn"] == true
+////                                && snapshotList!!.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+////                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
+////                        }
+////                    }
+//                    if (it.type == DocumentChange.Type.ADDED) {
 //                        if (it.document.id != uidMy && it.document["waitingListOn"] == true
 //                                && snapshotList!!.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
+//                            Log.d("WAITING_ACTIVITY*: ", "USER ID: ${it.document.id} SNAPSHOT_SIZE: ${snapshotList?.size}")
 //                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
 //                        }
 //                    }
-                    if (it.type == DocumentChange.Type.ADDED) {
-                        if (it.document.id != uidMy && it.document["waitingListOn"] == true
-                                && snapshotList!!.isEmpty() && RealmUtil().retrieveIsUserFound()?.isUserFound!!) {
-                            Log.d("WAITING_ACTIVITY*: ", "USER ID: ${it.document.id} SNAPSHOT_SIZE: ${snapshotList?.size}")
-                            WaitingListQuery(this@WaitingActivity, this@WaitingActivity).checkOptions(it.document.reference)
-                        }
-                    }
-                }
+//                }
             }
       }
 

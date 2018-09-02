@@ -107,8 +107,6 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_activity)
-        //Use to "close the wall" when the user is found
-        RealmUtil().addIsUserFound(true)
 
         //Save chat btn animation
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.saved_btn_scale_anim)
@@ -452,6 +450,8 @@ class ChatActivity : AppCompatActivity() {
         //Broadcast network state
         this.applicationContext.registerReceiver(ConnectionChangeUtil(), IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
         doAsync {
+            //Use to "close the wall" when the user is found
+            RealmUtil().addIsUserFound(true)
 //            //Get in (presence == true)
             runOnUiThread {
                 typingTextView?.visibility = View.GONE

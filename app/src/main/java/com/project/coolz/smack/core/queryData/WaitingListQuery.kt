@@ -968,20 +968,30 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
 
     //Start Chat activity
     private fun checkOut(foundUser: DocumentReference) {
-        var check: Boolean? = true
-        Log.d("WAITING_QUERY*: ", "ARRAY: ${myArray?.size!!}")
-        Log.d("WAITING_QUERY*: ", "SNAP: ${activity.snapshotList?.size!!}")
-        Log.d("WAITING_QUERY*: ", "isUserFound: ${RealmUtil().retrieveIsUserFound()?.isUserFound!!}")
-        if (myArray.size == 1 && check == true && RealmUtil().retrieveIsUserFound()?.isUserFound!! && activity.snapshotList?.size!! == 1) {
-            check = false
-            RealmUtil().addIsUserFound(false)
-            Log.d("WaitingListQuery**** ", "CONNECTED USER: ${foundUser.id}")
-            //Start Chat Activity
-            val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra("foundUser", foundUser.id)
-            context.startActivity(intent)
+        doAsync {
+            var check: Boolean? = true
+//            Log.d("WAITING_QUERY*: ", "ARRAY: ${myArray?.size!!}")
+//            Log.d("WAITING_QUERY*: ", "SNAP: ${activity.snapshotList?.size!!}")
+//            Log.d("WAITING_QUERY*: ", "isUserFound: ${RealmUtil().retrieveIsUserFound()?.isUserFound!!}")
+            if (myArray?.size == 1 && check == true && RealmUtil().retrieveIsUserFound()?.isUserFound!! && activity.snapshotList?.size!! == 1) {
+                check = false
+                Log.d("WAITING_QUERY*: ", "CHECK: $check")
+                RealmUtil().addIsUserFound(false)
+                Log.d("WaitingListQuery**** ", "CONNECTED USER: ${myArray?.elementAt(0).id/*foundUser.id*/}")
+                //Start Chat Activity
+                val intent = Intent(context, ChatActivity::class.java)
+                intent.putExtra("foundUser", myArray?.elementAt(0).id)
+                context.startActivity(intent)
 //            activity.overridePendingTransition(android.R.anim.fade_out, android.R.anim.fade_in)
-            activity.finish()
+                activity.finish()
+            }
+            if (!RealmUtil().retrieveIsUserFound()?.isUserFound!! && myArray?.size == 1 && activity.snapshotList?.size!! == 1 && check == true) {
+//                Log.d("WL_QUERY*!*!*!: ", "FALSE, 1 AND 1***********")
+                RealmUtil().addIsUserFound(true)
+                checkOut(foundUser)
+//                activity.checkWListener()?.remove()
+//                activity.checkWListener()
+            }
         }
     }
 }

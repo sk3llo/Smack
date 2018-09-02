@@ -36,6 +36,8 @@
 
     <!-- No animation theme-->
     <style name="noAnimTheme" parent="AppTheme.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <item name="android:windowBackground">@color/waitingListBackground</item>
     </style>

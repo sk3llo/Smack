@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/savedChatToolbar"
-                android:background="@color/supaDupaLightBlue"
+                android:background="@color/blueToolbar"
         >
 
             <!--<Button-->
@@ -35,11 +35,10 @@
 
 
     </android.support.design.widget.AppBarLayout>
-
     <android.support.v7.widget.RecyclerView
             android:id="@+id/savedChatList"
             android:layout_width="0dp"
-            android:background="@drawable/chat_back"
+            android:background="@drawable/savedchat_blue"
             android:layout_height="0dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

@@ -2,9 +2,11 @@ package com.project.coolz.smack.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -16,6 +18,7 @@ import com.project.coolz.smack.R
 import com.project.coolz.smack.core.queryData.WaitingListQuery
 import com.project.coolz.smack.utils.RealmUtil
 import io.realm.Realm
+import kotlinx.android.synthetic.main.waiting_activity.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 
@@ -33,18 +36,41 @@ class WaitingActivity: AppCompatActivity() {
         setContentView(R.layout.waiting_activity)
         //Use to "close the wall" when the user is found
         RealmUtil().addIsUserFound(true)
+        styleChangerAndChecker()
 
-//        uidMy = FirebaseAuth.getInstance().currentUser?.uid
         uidMy = RealmUtil().retrieveMyId()
         db = FirebaseFirestore.getInstance()
 
         snapshotList = ArrayList()
 
         //Start comparing options and searching for chat
-//        WaitingListQuery(this,this).checkWL()
         checkWListener()
 
         Handler().postDelayed({searchingUsers()}, 1500)
+    }
+
+    //Check what theme user has and update UI
+    fun styleChangerAndChecker() {
+        when (RealmUtil().getStyle()) {
+            1 -> {
+                waitingBackground?.setBackgroundResource(R.drawable.waiting_purple)
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@WaitingActivity, R.color.purpleStatusBar)
+                }
+            }
+            2 -> {
+                waitingBackground?.setBackgroundResource(R.drawable.waiting_blue)
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@WaitingActivity, R.color.blueStatusBar)
+                }
+            }
+            else -> {
+                waitingBackground?.setBackgroundResource(R.drawable.waiting_green)
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@WaitingActivity, R.color.greenStatusBar)
+                }
+            }
+        }
     }
 
 

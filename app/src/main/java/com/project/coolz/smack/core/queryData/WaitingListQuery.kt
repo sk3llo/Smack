@@ -977,12 +977,11 @@ open class WaitingListQuery(var context: Context, var activity: WaitingActivity)
                 check = false
                 Log.d("WAITING_QUERY*: ", "CHECK: $check")
                 RealmUtil().addIsUserFound(false)
-                Log.d("WaitingListQuery**** ", "CONNECTED USER: ${myArray?.elementAt(0).id/*foundUser.id*/}")
+                Log.d("WaitingListQuery**** ", "CONNECTED USER: ${myArray.elementAt(0).id/*foundUser.id*/}")
                 //Start Chat Activity
                 val intent = Intent(context, ChatActivity::class.java)
-                intent.putExtra("foundUser", myArray?.elementAt(0).id)
+                intent.putExtra("foundUser", myArray.elementAt(0).id)
                 context.startActivity(intent)
-//            activity.overridePendingTransition(android.R.anim.fade_out, android.R.anim.fade_in)
                 activity.finish()
             }
             if (!RealmUtil().retrieveIsUserFound()?.isUserFound!! && myArray?.size == 1 && activity.snapshotList?.size!! == 1 && check == true) {

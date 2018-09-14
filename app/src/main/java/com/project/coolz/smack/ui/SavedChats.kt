@@ -1,26 +1,18 @@
 package com.project.coolz.smack.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.*
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import com.project.coolz.smack.R
 import com.project.coolz.smack.adapters.SavedChatsAdapter
-import com.project.coolz.smack.models.chat.EndMessagesSize
-import com.project.coolz.smack.models.chat.SavedChatsTime
-import com.project.coolz.smack.models.chat.StartMessagesSize
-import com.project.coolz.smack.models.firestore.ChatModel
 import com.project.coolz.smack.utils.RealmUtil
-import com.vicpin.krealmextensions.queryAll
 import io.realm.Realm
-import io.realm.Sort
-import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk25.coroutines.onClick
+import kotlinx.android.synthetic.main.activity_saved_chats.*
 
 open class SavedChats : AppCompatActivity() {
 
@@ -37,7 +29,8 @@ open class SavedChats : AppCompatActivity() {
         emptyTextView = findViewById(R.id.emptyChatsText)
 
 
-        window?.setBackgroundDrawableResource(R.drawable.chat_back)
+//        window?.setBackgroundDrawableResource(R.drawable.savedchat_blue)
+        styleChangerAndChecker()
 
         realm = Realm.getDefaultInstance()
         toolbar = findViewById(R.id.savedChatToolbar)
@@ -93,6 +86,33 @@ open class SavedChats : AppCompatActivity() {
             emptyTextView?.visibility = View.VISIBLE
         }
 
+    }
+
+
+    fun styleChangerAndChecker() {
+        when (RealmUtil().getStyle()) {
+            1 -> {
+                savedChatList?.setBackgroundResource(R.drawable.saved_chat_purple)
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@SavedChats, R.color.purpleStatusBar)
+                }
+                savedChatToolbar?.setBackgroundColor(ContextCompat.getColor(this@SavedChats, R.color.purpleToolBar))
+            }
+            2 -> {
+                savedChatList?.setBackgroundResource(R.drawable.savedchat_blue)
+                savedChatToolbar?.setBackgroundColor(ContextCompat.getColor(this@SavedChats, R.color.lightBlueToolbar))
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@SavedChats, R.color.blueStatusBar)
+                }
+            }
+            else -> {
+                savedChatList?.setBackgroundResource(R.drawable.savedchat_green)
+                savedChatToolbar?.setBackgroundColor(ContextCompat.getColor(this@SavedChats, R.color.greenToolBar))
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@SavedChats, R.color.greenStatusBar)
+                }
+            }
+        }
     }
 
 

@@ -2,13 +2,13 @@ package com.project.coolz.smack.utils
 
 import android.view.View
 import com.project.coolz.smack.R
+import com.project.coolz.smack.models.StyleChangerModel
 import com.project.coolz.smack.models.age_looking_for.*
 import com.project.coolz.smack.models.chat.*
 import com.project.coolz.smack.models.firestore.ChatModel
 import com.project.coolz.smack.models.gender.LookingForGenderModel
 import com.project.coolz.smack.models.gender.MyGenderModel
 import com.project.coolz.smack.models.my_age.MyAgeModel
-import com.vicpin.krealmextensions.queryLast
 import io.realm.*
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -75,12 +75,12 @@ open class RealmUtil {
     }
 
     //Query last choice
-    fun under18LookingFor(): Int? = Under18().queryLast()?.under18
+    fun under18LookingFor(): Int? = realm?.where(Under18::class.java)?.findAll()?.last()?.under18
 
-    fun from19to22LookingFor(): Int? = From19to22().queryLast()?.from19to22
-    fun from23to26LookingFor(): Int? = From23to26().queryLast()?.from23to26
-    fun from27to35LookingFor(): Int? = From27to35().queryLast()?.from27to35
-    fun over36LookingFor(): Int? = Over36().queryLast()?.over36
+    fun from19to22LookingFor(): Int? = realm?.where(From19to22::class.java)?.findAll()?.last()?.from19to22
+    fun from23to26LookingFor(): Int? = realm?.where(From23to26::class.java)?.findAll()?.last()?.from23to26
+    fun from27to35LookingFor(): Int? = realm?.where(From27to35::class.java)?.findAll()?.last()?.from27to35
+    fun over36LookingFor(): Int? = realm?.where(Over36::class.java)?.findAll()?.last()?.over36
 
     //My age
     //Add 1(yes) or 0(no) based on option
@@ -124,11 +124,11 @@ open class RealmUtil {
         }
     }
 
-    fun under18My(): Int? = MyAgeModel().queryLast()?.under18
-    fun from19to22My(): Int? = MyAgeModel().queryLast()?.from19to22
-    fun from23to26My(): Int? = MyAgeModel().queryLast()?.from23to26
-    fun from27to35My(): Int? = MyAgeModel().queryLast()?.from27to35
-    fun over36My(): Int? = MyAgeModel().queryLast()?.over36
+    fun under18My(): Int? = realm?.where(MyAgeModel::class.java)?.findAll()?.last()?.under18
+    fun from19to22My(): Int? = realm?.where(MyAgeModel::class.java)?.findAll()?.last()?.from19to22
+    fun from23to26My(): Int? = realm?.where(MyAgeModel::class.java)?.findAll()?.last()?.from23to26
+    fun from27to35My(): Int? = realm?.where(MyAgeModel::class.java)?.findAll()?.last()?.from27to35
+    fun over36My(): Int? = realm?.where(MyAgeModel::class.java)?.findAll()?.last()?.over36
 
     //Choose my and looking for gender
     //Add 1(yes) or 0(no) based on option
@@ -167,10 +167,10 @@ open class RealmUtil {
 
     }
 
-    fun maleGenderMy(): Int? = MyGenderModel().queryLast()?.maleGenderMy
-    fun femaleGenderMy(): Int? = MyGenderModel().queryLast()?.femaleGenderMy
-    fun maleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.maleGenderLookingFor
-    fun femaleGenderLookingFor(): Int? = LookingForGenderModel().queryLast()?.femaleGenderLookingFor
+    fun maleGenderMy(): Int? = realm?.where(MyGenderModel::class.java)?.findAll()?.last()?.maleGenderMy
+    fun femaleGenderMy(): Int? = realm?.where(MyGenderModel::class.java)?.findAll()?.last()?.femaleGenderMy
+    fun maleGenderLookingFor(): Int? = realm?.where(LookingForGenderModel::class.java)?.findAll()?.last()?.maleGenderLookingFor
+    fun femaleGenderLookingFor(): Int? = realm?.where(LookingForGenderModel::class.java)?.findAll()?.last()?.femaleGenderLookingFor
 
     //Add or retrive boolean if user is found
     fun addIsUserFound(isFound: Boolean){
@@ -260,5 +260,13 @@ open class RealmUtil {
 
     fun getStartMessagesSize() = realm?.where(StartMessagesSize::class.java)?.sort("id")?.findAll()!!
     fun getEndMessagesSize() = realm?.where(EndMessagesSize::class.java)?.sort("id")?.findAll()!!
+
+    fun saveStyle(style: Int?){
+        realm?.beginTransaction()
+        realm?.createObject(StyleChangerModel::class.java, getNextKey(StyleChangerModel()))?.setStyle = style
+        realm?.commitTransaction()
+        realm?.close()
+    }
+    fun getStyle() = realm?.where(StyleChangerModel::class.java)?.sort("id")?.findAll()?.last()?.setStyle
 
 }

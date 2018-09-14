@@ -10,17 +10,14 @@
 
     <ImageView
             android:layout_width="0dp"
+            android:contentDescription="Splash Activity"
             android:layout_height="0dp"
-            app:srcCompat="@drawable/splash_bird"
-            android:id="@+id/imageView"
-            android:layout_marginRight="0dp"
+            app:srcCompat="@drawable/splash_blue"
+            android:id="@+id/splashImage"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginLeft="0dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="0dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#5489c6</color>
-    <color name="colorPrimaryDark">#1e4776</color>
+    <color name="colorPrimary">#fe4886d1</color>
+    <color name="colorPrimaryDark">#fe4f539e</color>
     <color name="colorAccent">#5ea0c9</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
@@ -13,12 +13,25 @@
     <color name="primary_text_material_light">#deffffff</color>
     <color name="messageSent">#92d3f5</color>
     <color name="messageReceived">#a5e8ca</color>
-    <color name="toolbar">#949fd4</color>
     <color name="chatStatusBar">#838bb7</color>
     <color name="darkPurple">#4c8593</color>
     <color name="dimBlueLight">#78bcd3</color>
     <color name="dimBlueDark">#87b1bf</color>
-    <color name="supaDupaLightBlue">#b3cef9</color>
     <color name="waitingListBackground">#4d78bc</color>
+
+    <color name="background_material_light">#fcfcfc</color>
+    <color name="blueSavedChatText">#fe676767</color>
+    <color name="blueStatusBar">#5ea0c9</color>
+    <color name="lightBlueToolbar">#b3cef9</color>
+    <color name="blueToolbar">#949fd4</color>
+
+    <color name="purpleSavedChatsText">#fee8e2e2</color>
+    <color name="purpleStatusBar">#e591ce</color>
+    <color name="purpleToolBar">#fed483d5</color>
+    <color name="purpleSavedChatsToolBar">#fed483d5</color>
+
+    <color name="greenStatusBar">#fe599f58</color>
+    <color name="greenToolBar">#fe408940</color>
+    <color name="greenSavedChatsText">#feffe800</color>
 
 </resources>

@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.constraint.ConstraintLayout
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.LinearLayoutManager
@@ -47,6 +48,7 @@ import com.vanniktech.emoji.EmojiPopup
 import com.vanniktech.emoji.EmojiTextView
 import io.realm.Realm
 import io.realm.RealmList
+import kotlinx.android.synthetic.main.chat_activity.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -112,15 +114,9 @@ class ChatActivity : AppCompatActivity() {
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.saved_btn_scale_anim)
         rotationAnim = AnimationUtils.loadAnimation(this, R.anim.saved_btn_rotation_anim)
 
-        //Set image for chat background
+        //Check choosen style and set image for chat background
         //And it has constant size even when keybord is opened
-        window?.setBackgroundDrawableResource(R.drawable.img_chat_background)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window?.statusBarColor = R.color.chatStatusBar
-        }
-
-        //Message time
-//        chatMessageId = System.currentTimeMillis()
+        styleChangerAndChecker()
 
         messages = RealmList()
         realm = Realm.getDefaultInstance()
@@ -133,7 +129,6 @@ class ChatActivity : AppCompatActivity() {
         currentDate = Calendar.getInstance().time
 
         //Uid's
-//        uidMy = FirebaseAuth.getInstance().currentUser!!.uid
         uidMy = RealmUtil().retrieveMyId()
         uidLF = intent.getStringExtra("foundUser")
 
@@ -186,11 +181,12 @@ class ChatActivity : AppCompatActivity() {
         toolbar?.setNavigationIcon(R.drawable.abc_ic_ab_back_material)
         setSupportActionBar(toolbar)
         toolbar?.setNavigationOnClickListener {
-            when (leftChatLayout?.visibility){
+            when (leftChatLayout?.visibility) {
                 View.VISIBLE -> closeActivity()
                 View.GONE -> firstDialog()
             }
         }
+
 
         //Save star on click
         saveStar?.onTouch { v, event ->
@@ -201,8 +197,8 @@ class ChatActivity : AppCompatActivity() {
             doAsync {
                 //Display toast only once
                 //Was on repeat before like 5 times - now this shit is fixed
-                fun displayToast(){
-                    if (toast != null){
+                fun displayToast() {
+                    if (toast != null) {
                         toast?.cancel()
                     }
                     toast = toast("Oops, chat is empty!")
@@ -235,7 +231,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Hide and open widget when spinner layout clicked
         spinnerLayout?.onClick {
-            when (hideLayout?.visibility){
+            when (hideLayout?.visibility) {
                 View.VISIBLE -> {
                     hideLayout?.visibility = View.GONE
                     spinner?.setBackgroundResource(R.drawable.up_arrow)
@@ -249,7 +245,7 @@ class ChatActivity : AppCompatActivity() {
 
         //Hide and open widget when spinner layout clicked
         spinner?.onClick {
-            when (hideLayout?.visibility){
+            when (hideLayout?.visibility) {
                 View.VISIBLE -> {
                     hideLayout?.visibility = View.GONE
                     spinner?.setBackgroundResource(R.drawable.up_arrow)
@@ -261,7 +257,7 @@ class ChatActivity : AppCompatActivity() {
             }
         }
         //Restart WL Activity
-        startOver?.onClick{ _ ->
+        startOver?.onClick { _ ->
             if (ni != null && ni?.isConnectedOrConnecting!!) {
                 //Add doc to Firestore with "Online" Action
                 val realm: FirebaseFirestore? = FirebaseFirestore.getInstance()
@@ -277,7 +273,7 @@ class ChatActivity : AppCompatActivity() {
 //                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                             finish()
-                }
+                        }
             } else {
                 toast("Please, check your Internet connection")
             }
@@ -308,7 +304,7 @@ class ChatActivity : AppCompatActivity() {
 
         //RecyclerView
         adapter = MessagesAdapter(messages!!)
-        val manager = object : LinearLayoutManager(this) {}
+        val manager = object : LinearLayoutManager(this@ChatActivity) {}
         manager.orientation = LinearLayoutManager.VERTICAL
         manager.stackFromEnd = true
 
@@ -316,7 +312,7 @@ class ChatActivity : AppCompatActivity() {
         recyclerView?.layoutManager = manager
         recyclerView?.adapter = adapter
 
-        if(messages?.size != 0) {
+        if (messages?.size != 0) {
             recyclerView?.scrollToPosition(messages?.size!! - 1)
         }
 
@@ -328,13 +324,12 @@ class ChatActivity : AppCompatActivity() {
             if (ni != null && ni?.isConnectedOrConnecting!! || isWifi!! || isMobile!!) {
                 onSendClick()
             } else {
-                Toast.makeText(this, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ChatActivity, "Please, check your Internet connection", Toast.LENGTH_SHORT).show()
             }
         }
 
-
-
     }
+
 
     private fun closeActivity() {
         doAsync {
@@ -487,6 +482,33 @@ class ChatActivity : AppCompatActivity() {
         realm?.commitTransaction()
         realm?.close()
         return num
+    }
+
+    //Check what theme user has and update UI
+    fun styleChangerAndChecker() {
+        when (RealmUtil().getStyle()) {
+            1 -> {
+                window?.setBackgroundDrawableResource(R.drawable.chat_purple)
+                appBarLayout?.setBackgroundColor(ContextCompat.getColor(this@ChatActivity, R.color.purpleToolBar))
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@ChatActivity, R.color.purpleStatusBar)
+                }
+            }
+            2 -> {
+                window?.setBackgroundDrawableResource(R.drawable.chat_blue)
+                appBarLayout?.setBackgroundColor(ContextCompat.getColor(this@ChatActivity, R.color.blueToolbar))
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@ChatActivity, R.color.blueStatusBar)
+                }
+            }
+            else -> {
+                window?.setBackgroundDrawableResource(R.drawable.chat_green)
+                appBarLayout?.setBackgroundColor(ContextCompat.getColor(this@ChatActivity, R.color.greenToolBar))
+                if (Build.VERSION.SDK_INT > 21) {
+                    window.statusBarColor = ContextCompat.getColor(this@ChatActivity, R.color.greenStatusBar)
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {

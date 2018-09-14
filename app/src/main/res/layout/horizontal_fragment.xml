@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:background="@android:color/transparent"
+             android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:orientation="horizontal">
+
+        <Button
+                android:id="@+id/expand_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="fitCenter"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/theme_icon" />
+
+        <net.cachapa.expandablelayout.ExpandableLayout
+                android:id="@+id/expandable_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:el_duration="1000"
+                android:layout_weight="1"
+                app:el_expanded="false"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/theme_button"
+        >
+
+            <ImageButton android:id="@+id/purple_style"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="160dp"
+                    android:background="@drawable/theme_icon_round_corners"
+                         android:src="@drawable/purple_icon"
+            />
+
+            <ImageButton android:id="@+id/blueStyle"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="100dp"
+                    android:background="@drawable/theme_icon_round_corners"
+                         android:src="@drawable/blue_icon"
+            />
+
+            <ImageButton android:layout_width="50dp"
+                    android:layout_marginEnd="40dp"
+                    android:gravity="center"
+                    android:layout_gravity="end"
+                    android:layout_marginStart="12dp"
+                    android:id="@+id/greenStyle"
+                    android:layout_height="50dp"
+                    android:background="@drawable/theme_icon_round_corners"
+                         android:src="@drawable/green_icon"
+            />
+
+        </net.cachapa.expandablelayout.ExpandableLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

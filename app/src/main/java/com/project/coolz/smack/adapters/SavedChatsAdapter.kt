@@ -2,6 +2,7 @@ package com.project.coolz.smack.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.GravityEnum
 import com.afollestad.materialdialogs.MaterialDialog
@@ -22,6 +24,7 @@ import com.project.coolz.smack.ui.SavedChats
 import com.project.coolz.smack.ui.SavedMessages
 import com.project.coolz.smack.utils.RealmUtil
 import io.realm.*
+import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 
 open class SavedChatsAdapter(var recyclerView: RecyclerView,
@@ -36,6 +39,12 @@ open class SavedChatsAdapter(var recyclerView: RecyclerView,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val savedChats: SavedChatsTime? = coll[position]
         val text = "   Chat from " + savedChats?.time?.drop(3)?.dropLast(9)
+        //Change color on saved chats
+        when (RealmUtil().getStyle()){
+            1 -> holder.date?.setTextColor(ContextCompat.getColor(context, R.color.purpleSavedChatsText))
+            2 -> holder.date?.setTextColor(ContextCompat.getColor(context, R.color.blueSavedChatText))
+            3 -> holder.date?.setTextColor(ContextCompat.getColor(context, R.color.greenSavedChatsText))
+        }
         holder.date?.text = text
 
         holder.trash?.setOnClickListener(ClickListener(position))

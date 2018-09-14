@@ -5,13 +5,17 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.Snackbar
+import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -20,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.project.coolz.smack.R
 import com.project.coolz.smack.core.addData.AddOptionsFirestore
 import com.project.coolz.smack.core.queryData.MyOptionsChecker
+import com.project.coolz.smack.models.StyleChangerModel
 import com.project.coolz.smack.models.firestore.LoginCheckerModel
 import com.project.coolz.smack.models.firestore.OnlineChecker
 import com.project.coolz.smack.models.firestore.PresenceModel
@@ -29,6 +34,8 @@ import com.project.coolz.smack.utils.chooser_options.GenderChooser
 import com.project.coolz.smack.utils.chooser_options.LookingForAgeChooser
 import com.project.coolz.smack.utils.chooser_options.MyAgeChooser
 import io.realm.Realm
+import io.realm.RealmChangeListener
+import io.realm.RealmResults
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -71,6 +78,9 @@ class MainActivity : AppCompatActivity() {
 
     //Realm
     var realm : Realm? = null
+    //Style change
+    var styleModel: RealmResults<StyleChangerModel>? = null
+    var mainBack: ImageView? = null
 
     var currentDate: Date? = null
     //Start
@@ -131,6 +141,16 @@ class MainActivity : AppCompatActivity() {
         currentDate = Calendar.getInstance().time
         star = findViewById(R.id.mainStar)
 
+        //Change themes fragment
+        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.themeFragment, ChangeStyleFragment())?.commit()
+
+        //Check if user changed the style
+        styleModel = realm?.where(StyleChangerModel::class.java)?.findAll()
+        mainBack = find(R.id.mainBack)
+        styleChangerAndChecker()
+
+
         //Go to saved chats
         star?.onClick {
             startActivity(Intent(this@MainActivity, SavedChats::class.java))
@@ -164,7 +184,6 @@ class MainActivity : AppCompatActivity() {
         maleGenderLookingFor?.setOnClickListener (GenderChooser())
         femaleGenderLookingFor?.setOnClickListener(GenderChooser())
 
-
         //Start searching for chat person
         val startChat: Button = findViewById(R.id.startChat)
         startChat.setOnClickListener {
@@ -186,6 +205,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     fun onlineChecker() {
         if (db?.collection("Online")?.get()?.exception == null) {
             db?.collection("Online")?.get()?.addOnSuccessListener {
@@ -196,7 +216,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 
     fun startChat() {
@@ -289,6 +308,60 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun styleChangerAndChecker(){
+            //Change style when enter app
+            when (RealmUtil().getStyle()){
+                1 -> {
+                    //setImageDrawale sets image to front instead of background image
+                    mainBack?.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.main_purple))
+                    if (Build.VERSION.SDK_INT > 21) {
+                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.purpleStatusBar)
+                    }
+                    doAsync { setTheme(R.style.PurpleTheme) }
+                }
+                2 -> {
+                    mainBack?.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.main_blue))
+                    if (Build.VERSION.SDK_INT > 21) {
+                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.blueStatusBar)
+                    }
+                    doAsync { setTheme(R.style.BlueTheme) }
+                }
+                3 -> {
+                    mainBack?.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.main_green))
+                    if (Build.VERSION.SDK_INT > 21) {
+                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.greenStatusBar)
+                    }
+                    doAsync { setTheme(R.style.GreenTheme) }
+                } else -> {}
+            }
+        //Add listener to see if user changes the style and update UI
+        styleModel?.addChangeListener(RealmChangeListener {
+            when (it.last()?.setStyle) {
+                1 -> {
+                    mainBack?.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.main_purple))
+                    if (Build.VERSION.SDK_INT > 21) {
+                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.purpleStatusBar)
+                    }
+                    doAsync { setTheme(R.style.PurpleTheme) }
+                }
+                2 -> {
+                    mainBack?.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.main_blue))
+                    if (Build.VERSION.SDK_INT > 21) {
+                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.blueStatusBar)
+                    }
+                    doAsync { setTheme(R.style.BlueTheme) }
+                }
+                3 -> {
+                    mainBack?.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.main_green))
+                    if (Build.VERSION.SDK_INT > 21) {
+                        window.statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.greenStatusBar)
+                    }
+                    doAsync { setTheme(R.style.GreenTheme) }
+                }
+            }
+        })
+    }
+
     override fun onBackPressed() {
         if (!WaitingActivity().isDestroyed){
             WaitingActivity().finish()
@@ -319,6 +392,7 @@ class MainActivity : AppCompatActivity() {
         if (realm != null){
             realm?.close()
         }
+        styleModel?.removeAllChangeListeners()
         //Delete online presence
 //        if (db?.collection("Online")?.document("$myId") != null){
 //            db?.collection("Online")?.document("$myId")?.delete()
